@@ -175,7 +175,7 @@ class TokType(Enum):
     LET = auto()
     MATCH = auto()
     OR = auto()
-    PUTS = auto()
+    PRINT = auto()
     RETURN = auto()
     UNION = auto()
     VAR = auto()
@@ -240,7 +240,7 @@ class TokTypes:
         "nil": TokType.NIL,
         "not": TokType.NOT,
         "or": TokType.OR,
-        "puts": TokType.PUTS,
+        "print": TokType.PRINT,
         "return": TokType.RETURN,
         "self": TokType.SELF,
         "true": TokType.TRUE,

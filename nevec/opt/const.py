@@ -251,17 +251,21 @@ class ConstFold(Pass):
     def folded[T](self, dest_sym: Sym, node: IExpr, value: T) -> Tac:
         expr = None
 
-        match value:
-            case str():
-                expr = IStr(value, node.loc, node.type)
+        match node.type:
+            case Types.STR | Types.STR8 | Types.STR16 | Types.STR32:
+                expr = IStr(str(value), node.loc, node.type)
             
-            case int():
+            case Types.INT:
+                assert isinstance(value, int | float)
+
                 expr = IInt(int(value), node.loc, node.type)
                 
-            case float():
+            case Types.FLOAT:
+                assert isinstance(value, int | float)
+
                 expr = IFloat(float(value), node.loc, node.type)
 
-            case bool():
+            case Types.BOOL:
                 expr = IBool(bool(value), node.loc)
 
         if expr is None:
