@@ -166,6 +166,7 @@ class TokType(Enum):
     AND = auto()
     OR = auto()
 
+    CONST = auto()
     ELSE = auto()
     END = auto()
     FOR = auto()
@@ -233,6 +234,7 @@ class TokTypes:
     KEYWORDS = {
         "and": TokType.AND,
         "bor": TokType.BIT_OR,
+        "const": TokType.CONST,
         "do": TokType.DO,
         "else": TokType.ELSE,
         "end": TokType.END,
