@@ -1,4 +1,4 @@
-from typing import BinaryIO, List, Any, Dict
+from typing import BinaryIO, List, Dict
 
 from nevec.compile.peephole import Peephole
 from nevec.ast.visit import Visit
@@ -133,7 +133,7 @@ class Compile(Visit[Ir, None]):
         # TODO: implement for Opcode.CONST_LONG
         self.emit(Instr(Opcode.PUSH, reg, const_index), line)
     
-    def compile(self, ir: List[Tac]):
+    def compile(self, ir: List[Block]):
         if ir == []:
             return 
 
@@ -143,6 +143,9 @@ class Compile(Visit[Ir, None]):
 
         self.compile(ir[1:])
 
+    def visit_Block(self, block: Block):
+        list(map(self.visit, block.tacs))
+
     def visit_Tac(self, tac: Tac):
         sym  = tac.sym
         dest_reg = self.graph.get_reg(sym)
@@ -151,6 +154,9 @@ class Compile(Visit[Ir, None]):
 
     def visit_IRet(self, ret: IRet, dest_reg: int):
         self.emit(Instr(Opcode.RET, dest_reg), ret.loc.line)
+
+    def visit_IPrint(self, print: IPrint, dest_reg: int):
+        self.emit(Instr(Opcode.PRINT, dest_reg), print.loc.line)
 
     def visit_IUnOp(self, un_op: IUnOp, dest_reg: int):
         operand = self.reg_of(un_op.operand.sym)

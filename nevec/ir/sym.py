@@ -40,6 +40,8 @@ class Sym[T]:
         self.full_name = self.name + str(self.index)
         self.uses: int = 0
 
+        self.is_deleted: bool = False
+
         self.lifetime: Optional[Lifetime] = None
 
     def rename(self, after: Self):
@@ -119,10 +121,13 @@ class Syms:
             return current
 
         def add_to(syms: Dict[str, Sym], sym: Sym):
+            if sym.lifetime is None:
+                sym.last_used(sym.first)
+
             new_sym = give_new_name(syms, sym)
             syms[new_sym.full_name] = new_sym
 
-        self.syms = {n: s for n, s in self.syms.items() if s.uses > 0}
+        self.syms = {n: s for n, s in self.syms.items() if not s.is_deleted}
 
         new_syms = {}
 

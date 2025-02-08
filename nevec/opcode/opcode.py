@@ -44,6 +44,7 @@ class Opcode(Enum):
     TABLESET = auto()
     TABLEGET = auto()
 
+    PRINT = auto()
     RET = auto()
     
     def raw(self) -> int:

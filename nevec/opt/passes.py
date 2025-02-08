@@ -39,6 +39,7 @@ class Pass(Visit[Ir, None]):
         if sym.uses > 0:
             return
 
+        sym.is_deleted = True
         index = self.find_new_index(sym)
 
         if index is None:

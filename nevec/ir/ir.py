@@ -11,7 +11,6 @@ from nevec.opcode.opcode import Opcode
 
 from nevec.lex.tok import Loc
 
-
 class Block:
     def __init__(self, tacs: List["Tac"], label: str):
         self.tacs: List[Tac] = tacs
@@ -27,7 +26,7 @@ class Block:
         return "".join([self.label, ":", *map(self.format, self.tacs)])
 
 
-type Ir = IExpr | IOp | Tac
+type Ir = IExpr | IOp | Tac | Block
 
 
 class IOp:
@@ -39,6 +38,11 @@ class IOp:
 class IRet(IOp):
     def __repr__(self) -> str:
         return f"ret {self.sym}"
+
+
+class IPrint(IOp):
+    def __repr__(self) -> str:
+        return f"print {self.sym}"
 
 
 class IExpr:

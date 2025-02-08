@@ -48,7 +48,25 @@ class ToIr(Visit[Ast, Tac | Block]):
 
     def visit_Program(self, program: Program) -> Block:
         list(map(self.visit, program.decls))
+        last = self.ops[-1]
+
+        ret = IRet(last.sym, last.loc)
+        tac = Tac(last.sym, ret, last.loc)
+
+        self.ops.append(tac)
+
         return self.new_block()
+
+    def visit_Print(self, print: Print) -> Tac:
+        expr = self.visit_Expr(print.expr) 
+        sym = expr.sym
+         
+        expr = IPrint(sym, print.loc)
+
+        tac = Tac(sym, expr, print.loc)
+        self.ops.append(tac)
+
+        return tac
 
     def visit_Expr(self, expr: Expr) -> Tac:
         tac = self.visit(expr)
