@@ -2,5 +2,5 @@
 
 var a = "before"
 var c = a = "var"
-puts a # expect: var
-puts c # expect: var
+print a # expect: var
+print c # expect: var

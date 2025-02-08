@@ -1,0 +1,6 @@
+rec Foo
+end
+
+fun main
+  puts Foo with ?
+end

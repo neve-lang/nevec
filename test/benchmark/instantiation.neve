@@ -1,6 +1,6 @@
 # This benchmark stresses instance creation and initializer calling.
 
-class Foo
+rec Foo
 end
 
 fun main

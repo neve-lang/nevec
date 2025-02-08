@@ -35,23 +35,7 @@ class ToIr(Visit[Ast, Tac]):
         return self.ops
 
     def visit_Program(self, program: Program) -> Tac:
-        expr = self.visit(program.expr)
-
-        ret = IRet(
-            expr.sym,
-            expr.loc
-        )
-
-        expr.sym.last_used(self.next_moment())
-
-        tac = Tac(
-            ret.sym,
-            ret,
-            expr.loc
-        )
-
-        self.ops.append(tac)
-        return tac
+        ...
 
     def visit_Parens(self, parens: Parens) -> Tac: 
         return self.visit(parens.expr)

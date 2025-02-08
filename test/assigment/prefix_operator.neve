@@ -1,4 +1,4 @@
-puts a = "a"
+print a = "a"
 
 # this should be an error
 not a = "value"

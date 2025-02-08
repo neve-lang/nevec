@@ -1,6 +1,5 @@
 # This benchmark stresses just method invocation.
-
-class Foo
+idea for Foo
   fun method0
   end
 

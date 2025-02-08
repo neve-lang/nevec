@@ -1,10 +1,13 @@
-class Tree
+rec Tree
   item Int
   depth Int
 
   left Tree?
   right Tree?
+end
 
+
+idea for Tree
   fun Tree.new(item Int, depth Int)
     var item = item
     var depth = depth
@@ -23,17 +26,18 @@ class Tree
     Tree with
       item = item
       depth = depth
+
       left = left
       right = right
     end
   end
 
   fun check
-    if not self.left
+    if not self.left?
       self.item
     end
 
-    self.item + self.left?.check - self.right?.check
+    self.item + self.left.check - self.right.check
   end
 end
 
@@ -44,12 +48,12 @@ fun main
 
   let start = clock
 
-  puts "stretch tree of depth: #stretch_depthend"
-  puts "check: #Tree.new(0, stretch_depth).checkend"
+  puts "stretch tree of depth: #{stretch_depth}"
+  puts "check: #{Tree.new(0, stretch_depth).check}"
 
   var long_lived_tree = Tree.new 0, max_depth
 
-  # iterations = 2 ** max_depth
+  # iterations = 2 ^ max_depth
   var iterations = 1
   var d = 0
   while d < max_depth

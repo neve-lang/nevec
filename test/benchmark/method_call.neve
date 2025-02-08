@@ -1,6 +1,8 @@
-class Toggle
+rec Toggle
   state Bool
+end
 
+idea for Toggle
   fun Toggle.new(initial_state Bool)
     Toggle with
       state = initial_state
@@ -17,11 +19,13 @@ class Toggle
   end
 end
 
-class NthToggle
+rec NthToggle
   super Toggle
   count Int
   max_count Int
-  
+end  
+
+idea for NthToggle
   fun NthToggle.new(initial_state Bool, max_count Int)
     NthToggle with
       super = Toggle with

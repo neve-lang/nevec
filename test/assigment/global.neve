@@ -1,8 +1,8 @@
 var a = "before"
-puts a # expect: before
+print a # expect: before
 
 a = "after"
-puts a # expect: after
+print a # expect: after
 
-puts a = "arg" # expect: arg
-puts a # expect: arg
+print a = "arg" # expect: arg
+print a # expect: arg

@@ -1,6 +1,6 @@
 let a = "outer"
 
-do
+nest
   let a = "inner"
   puts a # inner
 end

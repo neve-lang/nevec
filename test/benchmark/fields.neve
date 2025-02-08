@@ -1,6 +1,6 @@
 # This benchmark stresses both field and method lookup.
 
-class Foo
+rec Foo
   field0 Int
   field1 Int
   field2 Int
@@ -31,7 +31,10 @@ class Foo
   field27 Int
   field28 Int
   field29 Int
+end
 
+
+idea for Foo
   fun Foo.new
     Foo with
       field0 = 1
@@ -76,115 +79,115 @@ class Foo
   end
 
   fun method2
-      self.field2
+    self.field2
   end
 
   fun method3
-      self.field3
+    self.field3
   end
 
   fun method4
-      self.field4
+    self.field4
   end
 
   fun method5
-      self.field5
+    self.field5
   end
 
   fun method6
-      self.field6
+    self.field6
   end
 
   fun method7
-      self.field7
+    self.field7
   end
 
   fun method8
-      self.field8
+    self.field8
   end
 
   fun method9
-      self.field9
+    self.field9
   end
 
   fun method10
-      self.field10
+    self.field10
   end
 
   fun method11
-      self.field11
+    self.field11
   end
 
   fun method12
-      self.field12
+    self.field12
   end
 
   fun method13
-      self.field13
+    self.field13
   end
 
   fun method14
-      self.field14
+    self.field14
   end
 
   fun method15
-      self.field15
+    self.field15
   end
 
   fun method16
-      self.field16
+    self.field16
   end
 
   fun method17
-      self.field17
+    self.field17
   end
 
   fun method18
-      self.field18
+    self.field18
   end
 
   fun method19
-      self.field19
+    self.field19
   end
 
   fun method20
-      self.field20
+    self.field20
   end
 
   fun method21
-      self.field21
+    self.field21
   end
 
   fun method22
-      self.field22
+    self.field22
   end
 
   fun method23
-      self.field23
+    self.field23
   end
 
   fun method24
-      self.field24
+    self.field24
   end
 
   fun method25
-      self.field25
+    self.field25
   end
 
   fun method26
-      self.field26
+    self.field26
   end
 
   fun method27
-      self.field27
+    self.field27
   end
 
   fun method28
-      self.field28
+    self.field28
   end
 
   fun method29
-      self.field29
+    self.field29
   end
 end
 

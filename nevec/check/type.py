@@ -13,7 +13,7 @@ class TypeCheck(Visit[Ast, bool]):
     def okay(self) -> bool:
         return False
 
-    def any_fail(self, parent: Ast, *what: Ast) -> bool:
+    def any_fail(self, parent: Expr, *what: Expr) -> bool:
         if (
             list(
                 filter(lambda w: self.visit(w) or w.type.is_ignorable(), what)
@@ -29,7 +29,10 @@ class TypeCheck(Visit[Ast, bool]):
         return self.err()
 
     def visit_Program(self, program: Program) -> bool:
-        return self.visit(program.expr)
+        return self.err() in list(map(self.visit, program.decls))
+
+    def visit_Print(self, print: Print) -> bool:
+        return self.visit(print.expr)
 
     def visit_Parens(self, parens: Parens) -> bool: 
         return self.visit(parens.expr)
