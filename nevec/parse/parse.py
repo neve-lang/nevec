@@ -229,6 +229,18 @@ class Parse:
 
         return self.consume()
 
+    def sync(self):
+        self.panic_mode = False
+
+        while not self.is_at_end():
+            if self.had_newline():
+                return
+
+            if TokType.is_stmt_starter(self.curr.type):
+                return
+
+            self.advance()
+
     def parse(self) -> Ast:
         decls = []
 
@@ -244,7 +256,12 @@ class Parse:
         return program
 
     def decl(self) -> Decl:
-        return self.stmt()
+        stmt = self.stmt()
+
+        if self.panic_mode:
+            self.sync()
+
+        return stmt
 
     def stmt(self) -> Stmt:
         if self.check(TokType.PRINT):

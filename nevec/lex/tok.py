@@ -164,17 +164,15 @@ class TokType(Enum):
     QUESTION = auto()
 
     AND = auto()
-    CLASS = auto()
-    DO = auto()
+    OR = auto()
+
     ELSE = auto()
     END = auto()
-    ENUM = auto()
     FOR = auto()
     FUN = auto()
+    IDEA = auto()
     IF = auto()
     LET = auto()
-    MATCH = auto()
-    OR = auto()
     PRINT = auto()
     RETURN = auto()
     UNION = auto()
@@ -194,7 +192,9 @@ class TokType(Enum):
     FLOAT = auto()
     INTERPOL = auto()
 
+    DO = auto()
     FALSE = auto()
+    MATCH = auto()
     NIL = auto()
     NOT = auto()
     SELF = auto()
@@ -222,15 +222,20 @@ class TokType(Enum):
             type.value <= TokType.WITH.value
         )
 
+    @staticmethod
+    def is_stmt_starter(type: "TokType") -> bool:
+        return (
+            type.value >= TokType.ELSE.value and
+            type.value <= TokType.WHILE.value
+        )
+
 class TokTypes:
     KEYWORDS = {
         "and": TokType.AND,
         "bor": TokType.BIT_OR,
-        "class": TokType.CLASS,
         "do": TokType.DO,
         "else": TokType.ELSE,
         "end": TokType.END,
-        "enum": TokType.ENUM,
         "false": TokType.FALSE,
         "for": TokType.FOR,
         "fun": TokType.FUN,
