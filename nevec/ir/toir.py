@@ -381,6 +381,10 @@ class ToIr(Visit[Ast, Tac | Block]):
             interpol.loc.union_hull(interpol.expr.loc)
         )
 
+        next = interpol.next
+        if isinstance(next, Str) and next.value == "":
+            return self.visit_Expr(synthetic_first_concat)
+
         synthetic_second_concat = Concat(
             synthetic_first_concat,
             BinOp.Op.CONCAT,
