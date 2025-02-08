@@ -30,7 +30,24 @@ class Decl(Ast):
         ...
 
 
-class Expr(Ast):
+class Stmt(Decl):
+    def __init__(self, loc: Loc):
+        self.loc: Loc = loc
+
+    def __repr__(self) -> str:
+        ...
+
+
+class Print(Stmt):
+    def __init__(self, loc: Loc, expr: "Expr"):
+        self.loc: Loc = loc
+        self.expr: Expr = expr
+
+    def __repr__(self) -> str:
+        return f"print {self.expr}"
+
+
+class Expr(Stmt):
     def __init__(self, type: Type, loc: Loc):
         self.type = type
         self.loc = loc

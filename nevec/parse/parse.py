@@ -243,6 +243,21 @@ class Parse:
         
         return program
 
+    def decl(self) -> Decl:
+        return self.stmt()
+
+    def stmt(self) -> Stmt:
+        if self.check(TokType.PRINT):
+            return self.print_stmt()
+
+        return self.expr()
+
+    def print_stmt(self) -> Print:
+        tok = self.consume() 
+        expr = self.expr() 
+
+        return Print(tok.loc, expr)
+
     def expr(self) -> Expr:
         return self.bit_or()
 
