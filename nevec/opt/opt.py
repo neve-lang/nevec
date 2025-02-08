@@ -21,7 +21,7 @@ class Opt:
         if do_opt:
             self.all_passes.extend(Opt.PASSES)
 
-    def optimize(self, ir: List[Tac]) -> List[Tac]:
+    def optimize(self, ir: List[Block]) -> List[Block]:
         optimized = self.optimization_cycle(ir, self.all_passes)
 
         if optimized == ir:
@@ -31,15 +31,24 @@ class Opt:
 
     def optimization_cycle(
         self,
-        ir: List[Tac],
+        blocks: List[Block],
         passes: List[type[Pass]]
-    ) -> List[Tac]:
-        if passes == []:
+    ) -> List[Block]:
+        if blocks == []:
             self.syms.cleanup()
-            return ir
+            return []
+
+        head = blocks[0]
+        opt_block = self.optimize_block(head, passes)
+
+        return [opt_block] + self.optimization_cycle(blocks[1:], passes)
+
+    def optimize_block(self, block: Block, passes: List[type[Pass]]) -> Block:
+        if passes == []:
+            return block
 
         opt_pass = passes[0](self.syms)
 
-        opt_ir = opt_pass.optimize(ir)
-
-        return self.optimization_cycle(opt_ir, passes[1:])
+        opt_ir = opt_pass.optimize(block)
+        return self.optimize_block(opt_ir, passes[1:])
+        

@@ -10,14 +10,17 @@ class Pass(Visit[Ir, None]):
 
         self.new_indices: Dict[int, int] = {}
 
-    def optimize(self, ir: List[Tac]) -> List[Tac]:
-        if ir == []:
-            return self.opts
+    def optimize(self, ir: Block) -> Block:
+        return self.optimize_tacs(ir.tacs, ir.label)
 
-        head = ir[0]
+    def optimize_tacs(self, tacs: List[Tac], label: str) -> Block:
+        if tacs == []:
+            return Block(self.opts, label)
+
+        head = tacs[0]
         self.visit(head)
 
-        return self.optimize(ir[1:])
+        return self.optimize_tacs(tacs[1:], label)
 
     def emit(self, *tac: Tac):
         self.opts.extend(tac)

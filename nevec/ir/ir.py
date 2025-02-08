@@ -12,6 +12,21 @@ from nevec.opcode.opcode import Opcode
 from nevec.lex.tok import Loc
 
 
+class Block:
+    def __init__(self, tacs: List["Tac"], label: str):
+        self.tacs: List[Tac] = tacs
+        self.label: str = label
+
+    def format(self, tac: "Tac") -> str:
+        return "\n   " + str(tac)
+        
+    def __eq__(self, other: Self) -> bool:
+        return self.tacs == other.tacs
+
+    def __repr__(self) -> str:
+        return "".join([self.label, ":", *map(self.format, self.tacs)])
+
+
 type Ir = IExpr | IOp | Tac
 
 

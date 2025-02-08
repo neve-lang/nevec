@@ -5,12 +5,13 @@ from nevec.ir.ir import *
 from nevec.ir.reg import *
 from nevec.ir.val import Val
 
-class ToIr(Visit[Ast, Tac]):
+class ToIr(Visit[Ast, Tac | Block]):
     DIGITS = "1234567890"
 
     def __init__(self):
         self.syms: Syms = Syms()
 
+        self.blocks: List[Block] = []
         self.ops: List[Tac] = []
 
     def new_sym[T](
@@ -26,22 +27,40 @@ class ToIr(Visit[Ast, Tac]):
     def next_moment(self) -> Moment:
         return len(self.ops)
 
-    def build_ir(self, ast: Ast) -> List[Tac]:
+    def next_block_label(self) -> str:
+        return f"L{len(self.blocks)}"
+
+    def new_block(self) -> Block:
+        block = Block(self.ops, self.next_block_label())
+
+        self.blocks.append(block)
+        self.ops = []
+
+        return block
+
+    def build_ir(self, ast: Ast) -> List[Block]:
         if not isinstance(ast, Program):
             raise ValueError("Ast must begin with a Program node")
 
         self.visit(ast)
 
-        return self.ops
+        return self.blocks
 
-    def visit_Program(self, program: Program) -> Tac:
-        ...
+    def visit_Program(self, program: Program) -> Block:
+        list(map(self.visit, program.decls))
+        return self.new_block()
+
+    def visit_Expr(self, expr: Expr) -> Tac:
+        tac = self.visit(expr)
+        assert isinstance(tac, Tac)
+
+        return tac
 
     def visit_Parens(self, parens: Parens) -> Tac: 
-        return self.visit(parens.expr)
+        return self.visit_Expr(parens.expr)
 
     def visit_UnOp(self, un_op: UnOp) -> Tac:
-        operand = self.visit(un_op.expr)
+        operand = self.visit_Expr(un_op.expr)
         
         expr = IUnOp(
             IUnOp.Op(un_op.op.value),
@@ -64,8 +83,8 @@ class ToIr(Visit[Ast, Tac]):
         return tac
 
     def visit_Bitwise(self, bitwise: Bitwise) -> Tac:
-        left = self.visit(bitwise.left)
-        right = self.visit(bitwise.right)
+        left = self.visit_Expr(bitwise.left)
+        right = self.visit_Expr(bitwise.right)
 
         op_lexeme = bitwise.tok.lexeme
 
@@ -95,8 +114,8 @@ class ToIr(Visit[Ast, Tac]):
         return tac
 
     def visit_Comparison(self, comparison: Comparison) -> Tac:
-        left = self.visit(comparison.left)
-        right = self.visit(comparison.right)
+        left = self.visit_Expr(comparison.left)
+        right = self.visit_Expr(comparison.right)
 
         op_lexeme = comparison.tok.lexeme
 
@@ -126,8 +145,8 @@ class ToIr(Visit[Ast, Tac]):
         return tac
 
     def visit_Arith(self, arith: Arith) -> Tac:
-        left = self.visit(arith.left)
-        right = self.visit(arith.right)
+        left = self.visit_Expr(arith.left)
+        right = self.visit_Expr(arith.right)
 
         op_lexeme = arith.tok.lexeme
 
@@ -157,8 +176,8 @@ class ToIr(Visit[Ast, Tac]):
         return tac
 
     def visit_Concat(self, concat: Concat) -> Tac:
-        left = self.visit(concat.left)
-        right = self.visit(concat.right)
+        left = self.visit_Expr(concat.left)
+        right = self.visit_Expr(concat.right)
 
         expr = IConcat(
             left.operand(),
@@ -183,7 +202,7 @@ class ToIr(Visit[Ast, Tac]):
         return tac
 
     def visit_Show(self, show: Show) -> Tac:
-        operand = self.visit(show.expr)
+        operand = self.visit_Expr(show.expr)
 
         expr = IUnOp(
             IUnOp.Op.SHOW,
@@ -213,8 +232,8 @@ class ToIr(Visit[Ast, Tac]):
         tac = Tac(self.new_sym(), expr, expr.loc)
         self.ops.append(tac)
 
-        keys = [self.visit(k) for k in table.keys]
-        vals = [self.visit(v) for v in table.vals]
+        keys = [self.visit_Expr(k) for k in table.keys]
+        vals = [self.visit_Expr(v) for v in table.vals]
 
         exprs = list(map(
             lambda i: TableSet(
@@ -353,7 +372,7 @@ class ToIr(Visit[Ast, Tac]):
             synthetic_first_concat.loc.union_hull(interpol.next.loc)
         )
 
-        return self.visit(synthetic_second_concat)
+        return self.visit_Expr(synthetic_second_concat)
 
     def visit_Nil(self, nil: Nil) -> Tac:
         expr = INil(
