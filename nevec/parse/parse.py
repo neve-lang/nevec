@@ -230,13 +230,18 @@ class Parse:
         return self.consume()
 
     def parse(self) -> Ast:
-        ast = self.expr()
+        decls = []
+
+        while not self.match(TokType.EOF):
+            decls.append(self.decl())
+
+        program = Program(decls)
 
         if self.had_err:
-            del ast
-            return Ast(Types.UNKNOWN, Loc.new())
+            del program
+            return Ast.empty()
         
-        return Program(ast)
+        return program
 
     def expr(self) -> Expr:
         return self.bit_or()

@@ -6,27 +6,28 @@ from nevec.lex.tok import Tok, TokType, Loc
 from enum import auto, Enum
 
 class Ast:
-    def __init__(self, type: Type, loc: Loc):
-        self.type = type
+    def __init__(self, loc: Loc):
         self.loc = loc
 
     @staticmethod
     def empty() -> "Ast":
-        return Ast(
-            Types.UNKNOWN,
-            Loc.new()
-        )
+        return Ast(Loc.new())
 
 
 class Program(Ast):
-    def __init__(self, expr: "Expr"):
-        self.expr = expr
-
-    def infer_type(self) -> Type:
-        return self.expr.infer_type()
+    def __init__(self, decls: List["Decl"]):
+        self.decls = decls
 
     def __repr__(self) -> str:
-        return str(self.expr)
+        return "\n".join(map(str, self.decls))
+
+
+class Decl(Ast):
+    def __init__(self, loc: Loc):
+        self.loc: Loc = loc
+
+    def __repr__(self) -> str:
+        ...
 
 
 class Expr(Ast):
