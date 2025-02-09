@@ -2,6 +2,7 @@ import sys
 
 from typing import List
 
+from nevec.ast.pretty import Pretty
 from nevec.check.check import Check
 from nevec.parse.parse import Parse
 from nevec.ir.toir import ToIr
@@ -35,7 +36,8 @@ if __name__ == "__main__":
         if parse.had_err:
             exit(1)
         
-        print(ast)
+        pretty = Pretty().visit(ast)
+        print(pretty)
 
         if Check.err(ast):
             exit(1)

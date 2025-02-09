@@ -22,33 +22,21 @@ class Program(Ast):
     def empty() -> "Program":
         return Program([])
 
-    def __repr__(self) -> str:
-        return "\n".join(map(str, self.decls))
-
 
 class Decl(Ast):
     def __init__(self, loc: Loc):
         self.loc: Loc = loc
-
-    def __repr__(self) -> str:
-        ...
 
 
 class Stmt(Decl):
     def __init__(self, loc: Loc):
         self.loc: Loc = loc
 
-    def __repr__(self) -> str:
-        ...
-
 
 class Print(Stmt):
     def __init__(self, loc: Loc, expr: "Expr"):
         self.loc: Loc = loc
         self.expr: Expr = expr
-
-    def __repr__(self) -> str:
-        return f"print {self.expr}"
 
 
 class Consts(Stmt):
@@ -61,9 +49,6 @@ class Consts(Stmt):
         self.names: List[str] = names
         self.types: List[Type] = types
         self.exprs: List["Expr"] = exprs
-
-    def __repr__(self) -> str:
-        ...
 
 
 class Expr(Stmt):
@@ -91,9 +76,6 @@ class Parens(Expr):
     def infer_type(self) -> Type:
         return self.expr.infer_type()
 
-    def __repr__(self):
-        return f"({self.expr})"
-
 
 class Op(Expr):
     ...
@@ -113,15 +95,6 @@ class UnOp(Op):
 
     def infer_type(self):
         return self.expr.infer_type()
-
-    def __repr__(self):
-        op = (
-            "-"
-            if self.op == self.Op.NEG
-            else "not "
-        )
-
-        return f"{op}{self.expr}"
 
 
 class BinOp(Op):
@@ -175,9 +148,6 @@ class BinOp(Op):
 
         return base_type.unless_unknown(self.left.type, self.right.type)
 
-    def __repr__(self):
-        return f"{self.left} {self.tok.lexeme} {self.right}"
-
 
 class Bitwise(BinOp):
     def infer_type(self, base_type=Types.INT) -> Type:
@@ -230,9 +200,6 @@ class Show(Expr):
     
     def infer_type(self) -> Type:
         return Types.STR
-
-    def __repr__(self) -> str:
-        return f"{self.expr}.show"
 
 
 class Table(Expr):
@@ -288,34 +255,6 @@ class Table(Expr):
 
         return type
 
-    def repr_keys_and_vals(
-        self,
-        keys: List[Expr],
-        vals: List[Expr]
-    ) -> List[str]:
-        if keys == []:
-            return []
-
-        key = keys[0]
-        val = vals[0]
-
-        return [f"{key}: {val}"] + self.repr_keys_and_vals(
-            keys[1:],
-            vals[1:]
-        )
-
-    def __repr__(self) -> str:
-        if self.keys == []:
-            return "[:]"
-
-        keys_and_vals = self.repr_keys_and_vals(self.keys, self.vals)
-
-        return "".join([
-            "[",
-            ", ".join(keys_and_vals),
-            "]"
-        ])
-
 
 class Int(Expr):
     def __init__(self, value: int, loc: Loc):
@@ -327,9 +266,6 @@ class Int(Expr):
     def infer_type(self) -> Type:
         return Types.INT
 
-    def __repr__(self):
-        return str(int(self.value))
-        
 
 class Float(Expr):
     def __init__(self, value: float, loc: Loc):
@@ -354,9 +290,6 @@ class Bool(Expr):
 
     def infer_type(self) -> Type:
         return Types.BOOL
-
-    def __repr__(self):
-        return str(self.value).lower()
 
 
 class Str(Expr):
@@ -393,9 +326,6 @@ class Str(Expr):
         except UnicodeDecodeError:
             return True
 
-    def __repr__(self):
-        return f"\"{self.value}\""
-
 
 class Interpol(Expr):
     def __init__(self, left: str, expr: Expr, next: Self | Str, loc: Loc):
@@ -409,19 +339,6 @@ class Interpol(Expr):
     def infer_type(self) -> Type:
         return Types.STR
 
-    def __repr__(self):
-        return "".join(
-            [
-                "\"", 
-                self.left, 
-                "#{", 
-                str(self.expr), 
-                "}", 
-                Str.trim_quotes(str(self.next)), 
-                "\""
-            ]
-        )
-
 
 class Nil(Expr):
     def __init__(self, loc: Loc):
@@ -431,6 +348,3 @@ class Nil(Expr):
 
     def infer_type(self) -> Type:
         return Types.NIL
-
-    def __repr__(self):
-        return "nil"
