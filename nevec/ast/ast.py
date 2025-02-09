@@ -51,6 +51,21 @@ class Print(Stmt):
         return f"print {self.expr}"
 
 
+class Consts(Stmt):
+    def __init__(
+        self,
+        names: List[str],
+        types: List[Type],
+        exprs: List["Expr"]
+    ):
+        self.names: List[str] = names
+        self.types: List[Type] = types
+        self.exprs: List["Expr"] = exprs
+
+    def __repr__(self) -> str:
+        ...
+
+
 class Expr(Stmt):
     def __init__(self, type: Type, loc: Loc):
         self.type = type
