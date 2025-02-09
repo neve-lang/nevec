@@ -41,6 +41,13 @@ class ParseErr:
             if TokTypes.TOKS[lexeme] == expected
         }
 
+        if len(expected_lexeme) == 0:
+            expected_lexeme = {
+                lexeme
+                for lexeme in TokTypes.KEYWORDS
+                if TokTypes.KEYWORDS[lexeme] == expected
+            }
+
         expected_lexeme = list(expected_lexeme)[0]
 
         err = Report.err(
@@ -266,12 +273,38 @@ class Parse:
         return program
 
     def decl(self) -> Decl:
+        if self.match(TokType.CONST):
+            return self.consts_decl()
+
         stmt = self.stmt()
 
         if self.panic_mode:
             self.sync()
 
         return stmt
+
+    def consts_decl(self) -> Consts:
+        members = []
+
+        # TODO: implement naming `const Named`
+        while not self.check(TokType.END):
+            name = self.consume_expect(TokType.ID)
+
+            loc = name.loc if name is not None else Loc.new()
+            str_name = name.lexeme if name is not None else ""
+            
+            # TODO: implement type hinting `Thing Int`
+
+            self.expect(TokType.ASSIGN) 
+
+            expr = self.expr()
+
+            member = Consts.Member(str_name, expr.type, expr, loc)
+            members.append(member)
+
+        self.consume_expect(TokType.END)
+        
+        return Consts(members)
 
     def stmt(self) -> Stmt:
         if self.check(TokType.PRINT):

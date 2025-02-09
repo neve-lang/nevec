@@ -1,3 +1,6 @@
-print "one"
-print true
-print 2 + 1
+const
+  Hello = "Hello, "
+  World = "World!"
+end
+
+print Hello World

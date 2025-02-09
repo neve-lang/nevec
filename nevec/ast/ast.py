@@ -28,18 +28,7 @@ class Decl(Ast):
         self.loc: Loc = loc
 
 
-class Stmt(Decl):
-    def __init__(self, loc: Loc):
-        self.loc: Loc = loc
-
-
-class Print(Stmt):
-    def __init__(self, loc: Loc, expr: "Expr"):
-        self.loc: Loc = loc
-        self.expr: Expr = expr
-
-
-class Consts(Stmt):
+class Consts(Decl):
     class Member:
         def __init__(
             self,
@@ -55,6 +44,17 @@ class Consts(Stmt):
 
     def __init__(self, members: List[Member]):
         self.members: List[Consts.Member] = members
+
+
+class Stmt(Decl):
+    def __init__(self, loc: Loc):
+        self.loc: Loc = loc
+
+
+class Print(Stmt):
+    def __init__(self, loc: Loc, expr: "Expr"):
+        self.loc: Loc = loc
+        self.expr: Expr = expr
 
 
 class Expr(Stmt):
