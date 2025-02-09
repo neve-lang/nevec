@@ -1,11 +1,9 @@
-from typing import override, List
+from typing import override
 
 from nevec.ast.ast import Expr
 
 from nevec.err.err import *
 from nevec.err.report import Report
-
-from nevec.lex.tok import Loc
 
 class TypeErr(Err):
     def __init__(self, msg: str, locus: Loc, *exprs: Expr):
@@ -125,5 +123,3 @@ class TypeErr(Err):
             lines,
             previous_line=current_line
         )
-
-

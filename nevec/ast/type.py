@@ -51,10 +51,13 @@ class Type:
         return self.kind == TypeKind.UNKNOWN
 
     def is_invalid(self) -> bool:
-        return self == Types.UNKNOWN or self == Types.UNRESOLVED
+        return self == Types.UNKNOWN or self.is_unresolved()
 
     def is_valid(self) -> bool:
-        return self != Types.UNKNOWN and self != Types.UNRESOLVED
+        return self != Types.UNKNOWN and not self.is_unresolved()
+
+    def is_unresolved(self) -> bool:
+        return self == Types.UNRESOLVED
 
     def unless_unknown(self, *others: "Type") -> "Type":
         if (
@@ -63,6 +66,12 @@ class Type:
             return Types.UNKNOWN_SND
         
         return self
+
+    def update(self, to: Self):
+        if not self.is_unresolved():
+            return
+
+        self = to
 
     def __ne__(self, other: Self) -> bool:
         return (

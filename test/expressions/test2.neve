@@ -1,6 +1,6 @@
 const
   Hello = "Hello, "
-  World = "World!"
+  Worl = "World!"
 end
 
 print Hello World

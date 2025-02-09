@@ -42,6 +42,7 @@ class Consts(Decl):
             self.expr: Expr = expr
             self.loc: Loc = loc
 
+
     def __init__(self, members: List[Member]):
         self.members: List[Consts.Member] = members
 

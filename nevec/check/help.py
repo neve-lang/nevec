@@ -1,14 +1,21 @@
+from difflib import SequenceMatcher
 from typing import Callable, List, Optional, Self
 
 from nevec.ast.ast import Ast, Expr, Op
 from nevec.ast.type import Type
 
-from nevec.check.errs import TypeErr
+from nevec.check.errs.type import TypeErr
+from nevec.check.env import Env
 
 from nevec.lex.tok import Loc
 
 from nevec.err.err import Note, Suggestion, Err
 from nevec.err.report import Report
+
+class Fail:
+    @staticmethod
+    def now(err: Err) -> bool:
+        return Assume.that(False).otherwise(err)
 
 class Assume:
     def __init__(
@@ -78,14 +85,14 @@ class Assume:
 
         return self
 
-    def otherwise(self, err: Err) -> bool:
+    def otherwise(self, *errs: Err) -> bool:
         if not self.is_complete:
             raise ValueError("usage of incomplete Assum-ption")
 
         if self.what(self.node.type):
             return False
 
-        err.print()
+        list(map(Err.print, errs))
         return True
 
     def or_fail(
@@ -182,3 +189,40 @@ class Suggest:
             lambda n: Suggest.conversion_for(n, to),
             may_be_converted
         ))
+
+    @staticmethod
+    def similar_name_for(
+        name: str,
+        loc: Loc,
+        based_on: Env,
+    ) -> Optional[Suggestion]:
+        candidates = [s for s in based_on.syms.items()]
+
+        names = list(map(lambda s: s[0], candidates))
+
+        ratios = [
+            (other, SequenceMatcher(None, name, other).ratio())
+            for other in names
+        ]
+
+        most_similar = [r for r in ratios if r[1] >= 0.8]
+
+        best_candidates = sorted(
+            most_similar,
+            key=lambda r: r[1],
+            reverse=True
+        )[:4]
+
+        best_candidates = [r[0] for r in best_candidates]
+
+        if best_candidates == []:
+            return None
+
+        best_candidate = best_candidates[0]
+
+        return Suggestion(
+            f"did you mean one of these: {", ".join(best_candidates)}?",
+            "most similar name",
+            loc,
+            best_candidate
+        )
