@@ -60,6 +60,9 @@ class Pretty(Visit[Ast, str]):
     def visit_Parens(self, parens: Parens) -> str:
         return f"({self.visit(parens.expr)})"
 
+    def visit_Access(self, access: Access) -> str:
+        return access.name
+
     def visit_UnOp(self, un_op: UnOp) -> str:
         op = (
             "-"

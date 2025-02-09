@@ -5,6 +5,9 @@ from typing import Dict, Self
 class TypeKind(Enum):
     UNKNOWN = auto()
     UNKNOWN_SND = auto()
+
+    UNRESOLVED = auto()
+
     INT = auto()
     FLOAT = auto()
     BOOL = auto()
@@ -48,10 +51,10 @@ class Type:
         return self.kind == TypeKind.UNKNOWN
 
     def is_invalid(self) -> bool:
-        return self == Types.UNKNOWN
+        return self == Types.UNKNOWN or self == Types.UNRESOLVED
 
     def is_valid(self) -> bool:
-        return self != Types.UNKNOWN
+        return self != Types.UNKNOWN and self != Types.UNRESOLVED
 
     def unless_unknown(self, *others: "Type") -> "Type":
         if (
@@ -95,6 +98,8 @@ class TableType(Type):
 class Types:
     UNKNOWN = Type(TypeKind.UNKNOWN, "Unknown")
     UNKNOWN_SND = Type(TypeKind.UNKNOWN_SND, "Unknown")
+
+    UNRESOLVED = Type(TypeKind.UNRESOLVED, "Unresolved")
 
     INT = Type(TypeKind.INT, "Int")
     FLOAT = Type(TypeKind.FLOAT, "Float")

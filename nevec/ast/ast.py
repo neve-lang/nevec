@@ -83,6 +83,17 @@ class Parens(Expr):
         return self.expr.infer_type()
 
 
+class Access(Expr):
+    def __init__(self, tok: Tok):
+        self.name: str = tok.lexeme
+        self.loc: Loc = tok.loc
+
+        self.type: Type = Types.UNRESOLVED
+
+    def infer_type(self) -> Type:
+        return Types.UNRESOLVED
+
+
 class Op(Expr):
     ...
 
