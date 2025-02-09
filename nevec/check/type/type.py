@@ -1,18 +1,13 @@
 from nevec.ast.ast import *
-from nevec.ast.visit import Visit
+
+from nevec.check.phase import Phase
 
 from nevec.check.errs import *
 from nevec.check.help import *
 
 from nevec.err.err import Err
 
-class TypeCheck(Visit[Ast, bool]):
-    def err(self) -> bool:
-        return True
-
-    def okay(self) -> bool:
-        return False
-
+class TypeCheck(Phase):
     def any_fail(self, parent: Expr, *what: Expr) -> bool:
         if (
             list(
@@ -184,39 +179,9 @@ class TypeCheck(Visit[Ast, bool]):
 
         return self.err()
 
-    def visit_Int(self, i: Int) -> bool:
-        _ = i
-        
-        return self.okay()
-
-    def visit_Float(self, f: Float) -> bool:
-        _ = f
-
-        return self.okay()
-
-    def visit_Bool(self, b: Bool) -> bool:
-        _ = b
-
-        return self.okay()
-
-    def visit_Str(self, s: Str) -> bool:
-        _ = s
-
-        return self.okay()
-
     def visit_Interpol(self, interpol: Interpol) -> bool:
         if self.any_fail(interpol, interpol.expr, interpol.next):
             return self.err()
 
         # TODO: check if each expression implements Show
         return self.okay()
-
-    def visit_Nil(self, nil: Nil) -> bool:
-        _ = nil
-
-        return self.okay()
-
-    def visit_Ast(self, ast: Ast) -> bool:
-        _ = ast
-
-        return self.err()

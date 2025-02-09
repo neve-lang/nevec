@@ -241,7 +241,7 @@ class Parse:
 
             self.advance()
 
-    def parse(self) -> Ast:
+    def parse(self) -> Program:
         decls = []
 
         while not self.match(TokType.EOF):
@@ -251,7 +251,7 @@ class Parse:
 
         if self.had_err:
             del program
-            return Ast.empty()
+            return Program.empty()
         
         return program
 

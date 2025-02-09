@@ -18,6 +18,10 @@ class Program(Ast):
     def __init__(self, decls: List["Decl"]):
         self.decls = decls
 
+    @staticmethod
+    def empty() -> "Program":
+        return Program([])
+
     def __repr__(self) -> str:
         return "\n".join(map(str, self.decls))
 
