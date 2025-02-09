@@ -54,7 +54,7 @@ class Pretty(Visit[Ast, str]):
                     pairs
                 )
             ) +
-            "end"
+            "\nend\n"
         )
 
     def visit_Parens(self, parens: Parens) -> str:
@@ -62,6 +62,14 @@ class Pretty(Visit[Ast, str]):
 
     def visit_Access(self, access: Access) -> str:
         return access.name
+
+    def visit_Call(self, call: Call) -> str:
+        def make_args(args: Call.Args) -> str:
+            return ", ".join(map(self.visit, args.exprs))
+
+        args = make_args(call.args)
+
+        return f"{self.visit(call.callee)}({args})"
 
     def visit_UnOp(self, un_op: UnOp) -> str:
         op = (

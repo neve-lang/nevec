@@ -423,12 +423,24 @@ class Parse:
         return expr
 
     def fun_call(self, callee: Expr, parens=False) -> Expr:
-        _ = parens
+        args = self.args()
 
-        if callee.type.is_str():
-            return self.str_concat(callee)
+        if parens:
+            self.consume_expect(TokType.RPAREN)
+    
+        return Call(callee, args)
 
-        raise NotImplementedError("function calls not implemented yet")
+    def args(self) -> Call.Args:
+        exprs = []
+
+        while True:
+            exprs.append(self.expr())
+            
+            # TODO: implement multiple arguments
+            # if not self.match(TokType.COMMA):
+            break
+
+        return Call.Args(exprs) 
 
     def str_concat(self, left: Expr) -> Expr:
         right = self.expr()         

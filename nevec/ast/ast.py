@@ -94,6 +94,22 @@ class Access(Expr):
         return Types.UNRESOLVED
 
 
+class Call(Expr):
+    # right now, we only support one argument, but still
+    class Args:
+        def __init__(self, exprs: List[Expr]):
+            self.exprs: List[Expr] = exprs
+
+    def __init__(self, callee: Expr, args: Args):
+        self.callee: Expr = callee
+        self.args: Call.Args = args
+
+        self.type: Type = Types.UNRESOLVED
+
+    def infer_type(self) -> Type:
+        return Types.UNRESOLVED
+
+
 class Op(Expr):
     ...
 
