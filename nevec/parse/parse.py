@@ -203,12 +203,22 @@ class Parse:
 
         self.show_err(ParseErr.unexpected_tok(self.curr, type))
 
+    def allow(self, type: TokType):
+        if self.check(type):
+            self.advance()
+            return
+
     def match(self, *type: TokType) -> bool:
         if self.check(*type):
             self.advance()
             return True
 
         return False
+
+    def ignore_semicol(self, node: Stmt):
+        self.allow(TokType.SEMICOL)
+
+        return node
 
     def had_newline(self) -> bool:
         return self.prev.type == TokType.NEWLINE
@@ -265,9 +275,9 @@ class Parse:
 
     def stmt(self) -> Stmt:
         if self.check(TokType.PRINT):
-            return self.print_stmt()
+            return self.ignore_semicol(self.print_stmt())
 
-        return self.expr()
+        return self.ignore_semicol(self.expr())
 
     def print_stmt(self) -> Print:
         tok = self.consume() 
@@ -278,16 +288,16 @@ class Parse:
     def expr(self) -> Expr:
         return self.bit_or()
 
-    def bit_or(self) -> Bitwise:
+    def bit_or(self) -> BinOp:
         return self.bin_op(Bitwise, self.bit_xor, TokType.BIT_OR)
     
-    def bit_xor(self) -> Bitwise:
+    def bit_xor(self) -> BinOp:
         return self.bin_op(Bitwise, self.bit_and, TokType.BIT_XOR)
     
-    def bit_and(self) -> Bitwise:
+    def bit_and(self) -> BinOp:
         return self.bin_op(Bitwise, self.equality, TokType.BIT_AND)
 
-    def equality(self) -> Comparison:
+    def equality(self) -> BinOp:
         return self.bin_op(
             Comparison,
             self.comparison,
@@ -295,7 +305,7 @@ class Parse:
             TokType.NEQ
         ) 
 
-    def comparison(self) -> Comparison:
+    def comparison(self) -> BinOp:
         return self.bin_op(
             Comparison,
             self.bit_shift,
@@ -305,13 +315,13 @@ class Parse:
             TokType.LTE
         )
 
-    def bit_shift(self) -> Bitwise:
+    def bit_shift(self) -> BinOp:
         return self.bin_op(Bitwise, self.term, TokType.SHL, TokType.SHR)
 
-    def term(self) -> Arith:
+    def term(self) -> BinOp:
         return self.bin_op(Arith, self.factor, TokType.PLUS, TokType.MINUS)
 
-    def factor(self) -> Arith:
+    def factor(self) -> BinOp:
         return self.bin_op(Arith, self.unary, TokType.STAR, TokType.SLASH)
     
     def bin_op(self, type: type, fun: Callable, *ops: TokType) -> BinOp:

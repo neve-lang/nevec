@@ -32,6 +32,9 @@ if __name__ == "__main__":
 
         ast = parse.parse()
 
+        if parse.had_err:
+            exit(1)
+        
         print(ast)
 
         if Check.err(ast):
