@@ -40,15 +40,21 @@ class Print(Stmt):
 
 
 class Consts(Stmt):
-    def __init__(
-        self,
-        names: List[str],
-        types: List[Type],
-        exprs: List["Expr"]
-    ):
-        self.names: List[str] = names
-        self.types: List[Type] = types
-        self.exprs: List["Expr"] = exprs
+    class Member:
+        def __init__(
+            self,
+            name: str,
+            type: Type,
+            expr: "Expr",
+            loc: Loc
+        ):
+            self.name: str = name
+            self.type: Type = type
+            self.expr: Expr = expr
+            self.loc: Loc = loc
+
+    def __init__(self, members: List[Member]):
+        self.members: List[Consts.Member] = members
 
 
 class Expr(Stmt):

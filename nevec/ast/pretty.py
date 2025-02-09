@@ -38,19 +38,22 @@ class Pretty(Visit[Ast, str]):
                 types[1:],
                 exprs[1:]
             )
+        names = [c.name for c in consts.members]
+        types = [c.type for c in consts.members]
+        exprs = [c.expr for c in consts.members]
 
-        pairs = make_pairs(consts.names, consts.types, consts.exprs)
+        pairs = make_pairs(names, types, exprs)
 
         return (
             "const\n" +
-            str("\n".join(
+            "\n".join(
                 map(
                     lambda p: self.indent(
                         f"{p[0]} {p[1]} = {self.visit(p[2])}"
                     ),
                     pairs
                 )
-            )) +
+            ) +
             "end"
         )
 

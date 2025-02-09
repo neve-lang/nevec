@@ -277,6 +277,9 @@ class Parse:
         if self.check(TokType.PRINT):
             return self.ignore_semicol(self.print_stmt())
 
+        if self.check(TokType.CONST):
+            return self.ignore_semicol(self.consts_stmt())
+
         return self.ignore_semicol(self.expr())
 
     def print_stmt(self) -> Print:
