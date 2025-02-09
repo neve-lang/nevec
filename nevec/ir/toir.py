@@ -47,11 +47,21 @@ class ToIr(Visit[Ast, Tac | Block]):
         return self.blocks
 
     def visit_Program(self, program: Program) -> Block:
-        list(map(self.visit, program.decls))
-        last = self.ops[-1]
+        decls = program.decls
 
-        ret = IRet(last.sym, last.loc)
-        tac = Tac(last.sym, ret, last.loc)
+        list(map(self.visit, decls))
+
+        if len(decls) > 0:
+            last = self.ops[-1]
+
+            sym = last.sym
+            loc = last.loc
+        else:
+            sym = self.new_sym(self.next_moment())
+            loc = Loc.new()
+            
+        ret = IRet(sym, loc)
+        tac = Tac(sym, ret, loc)
 
         self.ops.append(tac)
 
