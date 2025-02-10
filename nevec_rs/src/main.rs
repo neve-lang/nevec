@@ -1,15 +1,8 @@
-use clap::Parser;
-
-use cli::Cli;
-
 mod cli;
 
 fn main() {
-    let cli = Cli::parse();
+    let (filename, options) = cli::parse_args();
 
-    let filename = cli.input;
-    let do_opt = cli.no_opt;
-
-    println!("Compiling {}!", filename);
-    println!("Optimizations enabled: {}.", do_opt);
+    println!("Compiling {}", filename);
+    println!("Doing optimizations: {}", &options.do_opt);
 }
