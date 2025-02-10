@@ -37,9 +37,10 @@ if __name__ == "__main__":
             exit(1)
         
         pretty = Pretty().visit(ast)
-        print(pretty)
 
-        if Check.err(ast):
+        ast, had_err = Check.err(ast)
+
+        if had_err:
             exit(1)
 
         toir = ToIr()

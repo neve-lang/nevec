@@ -85,11 +85,26 @@ class Parens(Expr):
 
 
 class Access(Expr):
-    def __init__(self, tok: Tok):
+    def __init__(self, tok: Tok, type: Type=Types.UNRESOLVED):
         self.name: str = tok.lexeme
         self.loc: Loc = tok.loc
 
-        self.type: Type = Types.UNRESOLVED
+        self.type: Type = type
+
+    def infer_type(self) -> Type:
+        return Types.UNRESOLVED
+
+
+class AccessConst(Expr):
+    def __init__(self, name: str, loc: Loc, type: Type=Types.UNRESOLVED):
+        self.name: str = name
+        self.loc: Loc = loc
+
+        self.type: Type = type
+
+    @staticmethod
+    def from_access(access: Access) -> "AccessConst":
+        return AccessConst(access.name, access.loc, access.type)
 
     def infer_type(self) -> Type:
         return Types.UNRESOLVED

@@ -9,11 +9,11 @@ from nevec.err.report import Report
 from nevec.lex.tok import Loc
 
 class NeverBoundErr(Err):
-    def __init__(self, name: str, locus: Loc, syms: Env):
+    def __init__(self, name: str, locus: Loc, based_on: Env):
         self.name: str = name
         self.locus: Loc = locus
 
-        self.err = self.make_err(syms)
+        self.err = self.make_err(based_on)
 
     @override
     def emit(self) -> str:

@@ -45,6 +45,15 @@ class IPrint(IOp):
         return f"print {self.sym}"
 
 
+class ISpill(IOp):
+    def __init__(self, sym: Sym, loc: Loc):
+        self.sym: Sym = sym
+        self.loc: Loc = loc
+
+    def __repr__(self) -> str:
+        return f"spill {self.sym}"
+
+
 class IExpr:
     def __init__(self, type: Type, loc: Loc):
         self.type: Type = type
@@ -121,7 +130,7 @@ class Tac:
         if isinstance(self.expr, IOp | SetIExpr):
             return str(self.expr)
 
-        return f"{self.sym} = {self.expr}" 
+        return f"{self.sym} = {self.expr}"
 
 
 class IUnOp(IExpr):

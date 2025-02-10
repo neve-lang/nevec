@@ -63,6 +63,9 @@ class Pretty(Visit[Ast, str]):
     def visit_Access(self, access: Access) -> str:
         return access.name
 
+    def visit_AccessConst(self, access: AccessConst) -> str:
+        return access.name
+
     def visit_Call(self, call: Call) -> str:
         def make_args(args: Call.Args) -> str:
             return ", ".join(map(self.visit, args.exprs))
@@ -94,6 +97,9 @@ class Pretty(Visit[Ast, str]):
 
     def visit_Comparison(self, comparison: Comparison) -> str:
         return self.visit_BinOp(comparison)
+
+    def visit_Concat(self, concat: Concat) -> str:
+        return self.visit_BinOp(concat)
 
     def visit_Show(self, show: Show) -> str:
         return f"{self.visit(show.expr)}.show"
@@ -150,4 +156,6 @@ class Pretty(Visit[Ast, str]):
         )
 
     def visit_Nil(self, nil: Nil) -> str:
+        _ = nil
+
         return "nil"

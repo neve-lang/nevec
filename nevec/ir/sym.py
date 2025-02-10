@@ -44,8 +44,8 @@ class Sym[T]:
 
         self.lifetime: Optional[Lifetime] = None
 
-    def rename(self, after: Self):
-        self.index = after.index + 1
+    def rename(self, after: Self, assume_next=True):
+        self.index = after.index + int(assume_next)
         self.full_name = self.name + str(self.index)
 
     def propagate(self):
@@ -104,6 +104,11 @@ class Syms:
         next_name = f"{sym.name}{index}"
 
         return self.syms.get(next_name)
+
+    def rename(self, sym: Sym, to: str):
+        model = self.new_sym(sym.first, name=to, value=sym.value)
+
+        sym.rename(after=model, assume_next=False)
 
     def cleanup(self):
         def give_new_name(syms: Dict[str, Sym], current: Sym) -> Sym:

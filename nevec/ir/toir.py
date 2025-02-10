@@ -38,6 +38,9 @@ class ToIr(Visit[Ast, Tac | Block]):
 
         return block
 
+    def rename_sym(self, sym: Sym, to: str):
+        self.syms.rename(sym, to)
+
     def build_ir(self, ast: Ast) -> List[Block]:
         if not isinstance(ast, Program):
             raise ValueError("Ast must begin with a Program node")
@@ -67,6 +70,30 @@ class ToIr(Visit[Ast, Tac | Block]):
 
         return self.new_block()
 
+    def visit_Consts(self, consts: Consts) -> Tac:
+        exprs = [m.expr for m in consts.members]
+        names = [m.name for m in consts.members]
+
+        tac_exprs = [self.visit_Expr(e) for e in exprs]
+
+        # i am sincerely sorry about this too
+        # i *cannot* wait to rewrite this compiler in Neve
+        # i should’ve started with an ML language like OCaml
+        # or even Rust, but silly me decided to do everything in 
+        # Python
+        list(map(
+            lambda t: self.rename_sym(t[1].sym, to=names[t[0]]),
+            enumerate(tac_exprs)
+        ))
+
+        spills = [ISpill(t.sym, t.loc) for t in tac_exprs]
+
+        tacs = [Tac(s.sym, s, s.loc) for s in spills]
+
+        self.ops.extend(tacs)
+
+        return tacs[-1]
+
     def visit_Print(self, print: Print) -> Tac:
         expr = self.visit_Expr(print.expr) 
         sym = expr.sym
@@ -84,8 +111,11 @@ class ToIr(Visit[Ast, Tac | Block]):
 
         return tac
 
-    def visit_Parens(self, parens: Parens) -> Tac: 
+    def visit_Parens(self, parens: Parens) -> Tac:
         return self.visit_Expr(parens.expr)
+
+    def visit_AccessConst(self, access: AccessConst) -> Tac:
+        ...
 
     def visit_UnOp(self, un_op: UnOp) -> Tac:
         operand = self.visit_Expr(un_op.expr)
