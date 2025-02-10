@@ -9,4 +9,9 @@ __pycache__/
 .DS_Store
 geada_writer.py
 
+debug/
+target/
+
+**/*.rs.bk
+
 *.geada
