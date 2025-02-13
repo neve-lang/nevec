@@ -7,3 +7,8 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.5.28", features = ["derive"] }
+clippy = "0.0.302"
+supports-color = "3.0.2"
+
+# For our compiler error messages
+unicode-width = "0.2.0"

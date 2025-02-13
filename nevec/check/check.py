@@ -8,15 +8,15 @@ from nevec.check.type.type import TypeCheck
 class Check:
     @staticmethod
     def err(ast: Ast) -> Tuple[Ast, bool]:
-        sem = SemCheck()
+        # sem = SemCheck()
 
-        new_ast = sem.visit(ast)
+        # new_ast = sem.visit(ast)
 
-        if sem.had_err:
-            return ast, True
+        # if sem.had_err:
+        #     return ast, True
 
         # TODO: add analysis
 
         type = TypeCheck()
 
-        return new_ast, type.visit(new_ast)
+        return ast, type.visit(ast)

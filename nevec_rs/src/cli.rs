@@ -18,9 +18,9 @@ pub struct CliOptions {
     pub do_opt: bool,
 }
 
-impl CliOptions {
-    fn from(cli: &Cli) -> CliOptions {
-        CliOptions {
+impl From<&Cli> for CliOptions {
+    fn from(cli: &Cli) -> Self {
+        Self {
             do_opt: !cli.no_opt,
         }
     }
