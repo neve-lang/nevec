@@ -1,0 +1,86 @@
+rec Tree
+  item Int
+  depth Int
+
+  left Tree?
+  right Tree?
+end
+
+
+idea for Tree
+  fun Tree.new(item Int, depth Int)
+    var item = item
+    var depth = depth
+
+    var left Tree? = nil
+    var right Tree? = nil
+
+    if depth > 0
+      let item2 = item + item
+      depth = depth - 1
+
+      left = Tree.new(item2 - 1, depth)
+      right = Tree.new(item2, depth)
+    end
+
+    Tree with
+      item = item
+      depth = depth
+
+      left = left
+      right = right
+    end
+  end
+
+  fun check
+    if not self.left?
+      self.item
+    end
+
+    self.item + self.left.check - self.right.check
+  end
+end
+
+fun main
+  let min_depth = 4
+  let max_depth = 14
+  let stretch_depth = max_depth + 1
+
+  let start = clock
+
+  puts "stretch tree of depth: #{stretch_depth}"
+  puts "check: #{Tree.new(0, stretch_depth).check}"
+
+  var long_lived_tree = Tree.new 0, max_depth
+
+  # iterations = 2 ^ max_depth
+  var iterations = 1
+  var d = 0
+  while d < max_depth
+    iterations = iterations * 2
+    d = d + 1
+  end
+
+  var depth = min_depth
+
+  while depth < stretch_depth
+    var check = 0
+    var i = 1
+
+    while i <= iterations
+      check = check + Tree.new(i, depth).check + Tree.new(-i, depth).check
+      i = i + 1
+    end
+
+    puts "num trees: #{iterations * 2}"
+    puts "depth: #{depth}"
+    puts "check: #{check}"
+
+    iterations = iterations / 4
+    depth = depth + 2
+  end
+
+  puts "long lived tree of depth: #{max_depth}"
+  puts "check: #{long_lived_tree.check}"
+  puts "elapsed: #{clock - start}"
+end

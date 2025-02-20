@@ -1,0 +1,6 @@
+const
+  Hello = "Hello, "
+  World = "World!"
+end
+
+print Hello World

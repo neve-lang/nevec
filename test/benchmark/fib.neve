@@ -1,0 +1,14 @@
+fun fib(n Int)
+  if n < 2
+    n
+  end
+
+  fib(n - 2) + fib(n - 1)
+end
+
+fun main
+  let start = clock
+
+  puts fib(35) == 9227465
+  puts clock - start
+end

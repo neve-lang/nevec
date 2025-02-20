@@ -1,0 +1,135 @@
+# This benchmark stresses just method invocation.
+idea for Foo
+  fun method0
+  end
+
+  fun method1
+  end
+
+  fun method2
+  end
+
+  fun method3
+  end
+
+  fun method4
+  end
+
+  fun method5
+  end
+
+  fun method6
+  end
+
+  fun method7
+  end
+
+  fun method8
+  end
+
+  fun method9
+  end
+
+  fun method10
+  end
+
+  fun method11
+  end
+
+  fun method12
+  end
+
+  fun method13
+  end
+
+  fun method14
+  end
+
+  fun method15
+  end
+
+  fun method16
+  end
+
+  fun method17
+  end
+
+  fun method18
+  end
+
+  fun method19
+  end
+
+  fun method20
+  end
+
+  fun method21
+  end
+
+  fun method22
+  end
+
+  fun method23
+  end
+
+  fun method24
+  end
+
+  fun method25
+  end
+
+  fun method26
+  end
+
+  fun method27
+  end
+
+  fun method28
+  end
+
+  fun method29
+  end
+end
+
+fun main
+  let foo = Foo with ?
+
+  let start = clock
+
+  var i = 0
+  while i < 500000
+    foo.method0
+    foo.method1
+    foo.method2
+    foo.method3
+    foo.method4
+    foo.method5
+    foo.method6
+    foo.method7
+    foo.method8
+    foo.method9
+    foo.method10
+    foo.method11
+    foo.method12
+    foo.method13
+    foo.method14
+    foo.method15
+    foo.method16
+    foo.method17
+    foo.method18
+    foo.method19
+    foo.method20
+    foo.method21
+    foo.method22
+    foo.method23
+    foo.method24
+    foo.method25
+    foo.method26
+    foo.method27
+    foo.method28
+    foo.method29
+    i = i + 1;
+  end
+
+  puts clock - start
+end

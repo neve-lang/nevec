@@ -1,0 +1,13 @@
+rec Foo
+  my Foo
+end
+
+fun main
+  let my_foo = Foo with
+    my = Foo with
+      # error
+      my = nil
+    end
+  end
+end
+

@@ -1,0 +1,3 @@
+puts not true    # expect: false
+puts not false   # expect: true
+puts not not true   # expect: true

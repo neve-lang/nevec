@@ -1,0 +1,8 @@
+let a = "outer"
+
+nest
+  let a = "inner"
+  puts a # inner
+end
+
+puts a # outer

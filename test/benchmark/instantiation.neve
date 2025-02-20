@@ -1,0 +1,45 @@
+# This benchmark stresses instance creation and initializer calling.
+
+rec Foo
+end
+
+fun main
+  let start = clock
+  var i = 0
+
+  while i < 500000
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    Foo with ?
+    i = i + 1;
+  end
+
+  puts clock - start
+end

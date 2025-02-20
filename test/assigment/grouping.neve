@@ -1,0 +1,4 @@
+var a = "a"
+
+# this should be an error
+(a) = "value"

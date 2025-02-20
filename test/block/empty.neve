@@ -1,0 +1,16 @@
+fun main
+  nest end
+
+  if true
+  end
+
+  if false
+  else
+  end
+
+  # once we get lambdas:
+  let a = do end
+  a
+
+  puts "okay"
+end

@@ -1,10 +1,15 @@
-import cli.CliOptions
+import cli.CliArgs
 import cli.Options
 
 fun main(args: Array<String>) {
-    val cliOptions = CliOptions.read(args.toList())
+    val (file, cliOptions) = try {
+        CliArgs.parse(args)
+    } catch (e: IllegalArgumentException) {
+        println(e.message)
+        return
+    }
 
-    println("Running!!")
+    println("Running with $file!!")
 
     if (cliOptions.isEnabled(Options.NO_OPT)) {
         println("Optimizations disabled.")
