@@ -99,8 +99,8 @@ class Line(
             if (col != head.hang) {
                 out.write(" ")
             } else {
-                when {
-                    head == last -> Write.paintedIn(head.color()).saying("╰─ ").and(head.msg).then().print(out)
+                when (head) {
+                    last -> Write.paintedIn(head.color()).saying("╰─ ").and(head.msg).then().print(out)
                     else -> Write.paintedIn(head.color()).saying("│").then().print(out)
                 }
 
