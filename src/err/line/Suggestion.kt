@@ -4,7 +4,6 @@ import err.note.Note
 import info.span.Loc
 import info.span.LocBuilder
 import util.extension.map
-import kotlin.math.min
 
 class Suggestion(loc: Loc) {
     companion object {
