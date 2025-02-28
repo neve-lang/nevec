@@ -4,10 +4,10 @@ import err.write.Out
 import file.span.Loc
 
 class Note(private val kind: NoteKind, val loc: Loc, val msg: String) {
-    private val len = loc.termCol + loc.termWidth - 1u
-    private val begin = loc.termCol
+    private val len = loc.col + loc.len - 1u
+    private val begin = loc.col
 
-    val hang = loc.termCol + loc.termWidth / 2u
+    val hang = loc.col + loc.len / 2u
     val end = begin + len
 
     companion object {
