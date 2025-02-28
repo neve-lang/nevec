@@ -1,6 +1,8 @@
 import cli.CliArgs
 import cli.Options
 import err.line.Line
+import err.msg.Msg
+import err.msg.MsgKind
 import err.note.Note
 import err.write.Out
 import info.span.Loc
@@ -31,6 +33,13 @@ fun main(args: Array<String>) {
     val line = Line.builder(Loc(4u, 2u, 4u)).add(notes).header("silly made-up error msg").withLine(original)
         .withPrevious(previous).build()
 
+    val otherNotes = listOf(Note.info(Loc(5u, 1u, 4u), "function declared here"))
+    val otherLine = Line.builder(Loc(5u, 1u, 4u)).add(otherNotes).withLine(previous).build()
+
+    val msg =
+        Msg.builder().filename(file).msg("okay here's the error").loc(Loc.onLine(2u)).lines(listOf(line, otherLine))
+            .kind(MsgKind.WARN).build()
+
     val out = Out(3)
-    line.emit(out)
+    msg.emit(out)
 }

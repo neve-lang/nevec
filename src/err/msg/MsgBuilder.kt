@@ -1,16 +1,17 @@
 package err.msg
 
 import err.line.Line
+import err.line.LineBuilder
 import info.span.Loc
 
 class MsgBuilder {
-    var kind: MsgKind? = null
+    private var kind: MsgKind? = null
 
-    var filename: String? = null
-    var msg: String? = null
-    var loc: Loc? = null
+    private var filename: String? = null
+    private var msg: String? = null
+    private var loc: Loc? = null
 
-    var lines: List<Line>? = null
+    private var lines: List<Line>? = null
 
     fun kind(kind: MsgKind) = apply { this.kind = kind }
     fun filename(filename: String) = apply { this.filename = filename }
@@ -25,10 +26,10 @@ class MsgBuilder {
         // take a look at this:
         //
         // fun build
-        // where
+        // where (
         //   self.lines? and self.kind? and self.filename? and
         //   self.msg? and self.loc?
-        // end
+        // )
         //   Line with
         //     kind
         //     lines
@@ -49,6 +50,25 @@ class MsgBuilder {
         require(msg != null) { "A message must be provided" }
         require(loc != null) { "A Loc must be provided" }
 
-        return Msg(kind!!, filename!!, msg!!, loc!!, lines!!)
+        val cleanedUpLines = cleanup()
+        return Msg(kind!!, filename!!, msg!!, loc!!, cleanedUpLines)
+    }
+
+    private fun cleanup(): List<Line> {
+        val newLines = lines!!.sortedBy { it.number }
+        val firstLine = newLines.first()
+
+        return listOf(firstLine) + newLines.windowed(size = 2, step = 1) { window ->
+            val a = window[0]
+            val b = window[1]
+
+            if (a.isJustAbove(b)) {
+                LineBuilder.from(b).withoutPrevious().build()
+            } else {
+                b
+            }
+        }
     }
 }
+
+fun Line.isJustAbove(another: Line) = this.number + 1u == another.number

@@ -8,13 +8,17 @@ import info.span.Loc
 
 class Line(
     private val notes: List<Note>,
-    private val number: UInt,
+    val number: UInt,
     private val header: String?,
     private val previous: String?,
     private val line: String
 ) {
     companion object {
         fun builder(loc: Loc) = LineBuilder(loc)
+    }
+
+    fun asBuilder(): LineBuilder {
+        return LineBuilder(Loc.onLine(number)).add(notes).header(header).withLine(line).withPrevious(previous)
     }
 
     fun emit(out: Out) {
