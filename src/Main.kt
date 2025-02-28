@@ -1,6 +1,7 @@
 import cli.CliArgs
 import cli.Options
 import err.line.Line
+import err.line.Suggestion
 import err.msg.Msg
 import err.msg.MsgKind
 import err.note.Note
@@ -36,8 +37,13 @@ fun main(args: Array<String>) {
     val otherNotes = listOf(Note.info(Loc(5u, 1u, 4u), "function declared here"))
     val otherLine = Line.builder(Loc(5u, 1u, 4u)).add(otherNotes).withLine(previous).build()
 
+    val suggestion =
+        Suggestion(Loc(17u, 2u, 1u)).header("you can make 10 a bool").withMsg("turns it into a Bool")
+            .withOriginal(original).fix(".bool").insert().build()
+
     val msg =
-        Msg.builder().filename(file).msg("okay here's the error").loc(Loc.onLine(2u)).lines(listOf(line, otherLine))
+        Msg.builder().filename(file).msg("okay here's the error").loc(Loc.onLine(2u))
+            .lines(listOf(line, otherLine, suggestion))
             .kind(MsgKind.WARN).build()
 
     val out = Out(3)

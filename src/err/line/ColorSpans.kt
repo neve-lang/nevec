@@ -2,7 +2,7 @@ package err.line
 
 import err.write.Out
 
-class ColorSpans(val spans: List<ColorSpan>, val chars: CharSequence) {
+class ColorSpans(private val spans: List<ColorSpan>, private val chars: CharSequence) {
     fun color(out: Out) {
         val froms = spans.map { it.from }
         val tos = spans.map { it.to }

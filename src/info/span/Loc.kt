@@ -11,5 +11,11 @@ data class Loc(
         fun onLine(number: UInt) = Loc(1u, number, 1u, 1u, 1u)
     }
 
+    fun begin() = col
+    fun end() = col + len
+
+    fun asBuilder() = LocBuilder().col(col).line(line).len(len).termCol(termCol).termWidth(termWidth)
+    fun extremes() = Pair(begin(), end())
+
     override fun toString() = "$line:$col"
 }

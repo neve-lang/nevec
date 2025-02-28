@@ -25,6 +25,7 @@ class MsgBuilder {
         // at *compile time*!!  yes, seriously!!
         // take a look at this:
         //
+        // ```
         // fun build
         // where (
         //   self.lines? and self.kind? and self.filename? and
@@ -36,6 +37,7 @@ class MsgBuilder {
         //     ...
         //   end
         // end
+        // ```
         //
         // then, when using this function:
         //
