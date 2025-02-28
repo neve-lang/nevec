@@ -4,7 +4,7 @@ import err.line.Line
 import err.write.Color
 import err.write.Out
 import err.write.Write
-import info.span.Loc
+import file.span.Loc
 
 class Msg(
     private val kind: MsgKind,

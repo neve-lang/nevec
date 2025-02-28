@@ -1,4 +1,4 @@
-package info.span
+package file.span
 
 data class Loc(
     val col: UInt,

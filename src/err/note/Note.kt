@@ -1,7 +1,7 @@
 package err.note
 
 import err.write.Out
-import info.span.Loc
+import file.span.Loc
 
 class Note(private val kind: NoteKind, val loc: Loc, val msg: String) {
     private val len = loc.termCol + loc.termWidth - 1u

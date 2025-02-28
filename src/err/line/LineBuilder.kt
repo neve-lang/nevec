@@ -1,7 +1,7 @@
 package err.line
 
 import err.note.Note
-import info.span.Loc
+import file.span.Loc
 
 class LineBuilder(loc: Loc) {
     companion object {

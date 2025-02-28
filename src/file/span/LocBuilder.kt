@@ -1,4 +1,4 @@
-package info.span
+package file.span
 
 class LocBuilder {
     companion object {

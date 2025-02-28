@@ -2,7 +2,7 @@ package err.msg
 
 import err.line.Line
 import err.line.LineBuilder
-import info.span.Loc
+import file.span.Loc
 
 class MsgBuilder {
     private var kind: MsgKind? = null

@@ -1,8 +1,8 @@
 package err.line
 
 import err.note.Note
-import info.span.Loc
-import info.span.LocBuilder
+import file.span.Loc
+import file.span.LocBuilder
 import util.extension.map
 
 class Suggestion(loc: Loc) {
