@@ -7,7 +7,6 @@ class ColorSpans(private val spans: List<ColorSpan>, private val chars: CharSequ
         val froms = spans.map { it.from }
         val tos = spans.map { it.to }
 
-
         colorChars(froms, tos, out)
     }
 

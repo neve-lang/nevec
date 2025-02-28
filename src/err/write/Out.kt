@@ -6,6 +6,10 @@ import kotlin.math.log10
 class Out(maxLine: Int) {
     private val offset = maxLine.digits()
 
+    companion object {
+        fun fatal() = Out(0)
+    }
+
     fun write(what: CharSequence) {
         System.err.print(what)
     }
