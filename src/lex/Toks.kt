@@ -13,6 +13,8 @@ object Toks {
         "for" to FOR,
         "fun" to FUN,
         "if" to IF,
+        "in" to IN,
+        "is" to IS,
         "let" to LET,
         "match" to MATCH,
         "or" to OR,
