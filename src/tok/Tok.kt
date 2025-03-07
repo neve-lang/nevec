@@ -5,7 +5,9 @@ import file.span.Loc
 class Tok(val kind: TokKind, private val lexeme: String, val loc: Loc) {
     fun isEof() = kind == TokKind.EOF
 
-    override fun toString(): String {
-        return "\"$lexeme\" ($kind) $loc"
-    }
+    fun isOf(other: TokKind) = kind == other
+
+    operator fun plus(other: Tok): Pair<String, Loc> = Pair(lexeme + other.lexeme, (loc + other.loc).build())
+
+    override fun toString() = "\"$lexeme\" ($kind) $loc"
 }
