@@ -141,6 +141,24 @@ class LexTest {
             ), "\"👋 Hello \" \"world!\"".lex()
         )
     }
+
+    @Test
+    fun testRelex() {
+        assertEquals(
+            listOf(
+                IF, ID, NOT_IN, ID, OR, ID, IS_NOT, ID, ID, EOF
+            ), "if a not in list or list is not InBoundsOf other_list".lex()
+        )
+    }
+
+    @Test
+    fun testRelexNewlines() {
+        assertEquals(
+            listOf(
+                LET, ID, ASSIGN, ID, DOT, ID, PIPE, ID, PIPE, LPAREN, ID, IS, NEWLINE, NOT, ID, ID, NEWLINE, RPAREN, EOF
+            ), "let safe_indices = indices.filter |i| (i is\n  not InBoundsOf list\n)".lex()
+        )
+    }
 }
 
 fun Lex.all(): List<Tok> {

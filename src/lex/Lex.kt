@@ -4,6 +4,7 @@ import file.contents.Chars
 import file.span.Loc
 import lex.interpol.InterpolState
 import lex.interpol.InterpolTooDeepException
+import lex.relex.Relex
 import tok.Tok
 import tok.TokKind
 
@@ -12,8 +13,13 @@ class Lex(contents: String) {
     private val loc = Loc.new()
     private val captured = mutableListOf<Char>()
     private val state = InterpolState()
+    private val relex = Relex()
 
     fun next(): Tok {
+        return relex.consume(::lexNext)
+    }
+
+    private fun lexNext(): Tok {
         skipWs()
 
         if (isAtEnd()) {
