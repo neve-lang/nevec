@@ -5,7 +5,9 @@ import tok.TokKind
 
 class Combine(private val left: Tok, private val right: Tok) {
     fun into(kind: TokKind): Tok {
-        val (lexeme, loc) = left + right
+        val loc = left + right
+        val lexeme = loc.lexeme()
+
         return Tok(kind, lexeme, loc)
     }
 }
