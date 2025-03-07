@@ -35,9 +35,9 @@ class Relex {
         peephole = peephole.takeLast(1).toMutableList()
     }
 
-    private fun merge(left: Tok, right: Tok) = when {
-        left.isOf(TokKind.NOT) && right.isOf(TokKind.IN) -> Combine(left, right).into(TokKind.NOT_IN)
-        left.isOf(TokKind.IS) && right.isOf(TokKind.NOT) -> Combine(left, right).into(TokKind.IS_NOT)
+    private fun merge(left: Tok, right: Tok) = when (Pair(left.kind, right.kind)) {
+        Pair(TokKind.NOT, TokKind.IN) -> Combine(left, right).into(TokKind.NOT_IN)
+        Pair(TokKind.IS, TokKind.NOT) -> Combine(left, right).into(TokKind.IS_NOT)
         else -> null
     }
 
