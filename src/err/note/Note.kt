@@ -12,7 +12,9 @@ class Note(private val kind: NoteKind, val loc: Loc, val msg: String) {
 
     companion object {
         fun info(loc: Loc, msg: String) = Note(NoteKind.INFO, loc, msg)
+
         fun err(loc: Loc, msg: String) = Note(NoteKind.ERR, loc, msg)
+
         fun fix(loc: Loc, msg: String) = Note(NoteKind.FIX, loc, msg)
     }
 

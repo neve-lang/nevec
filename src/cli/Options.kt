@@ -8,6 +8,6 @@ enum class Options {
             "--no-opt" to NO_OPT
         )
 
-        fun from(string: String): Options? = MAP[string]
+        fun from(string: String) = MAP[string]
     }
 }

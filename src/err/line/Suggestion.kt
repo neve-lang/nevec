@@ -18,12 +18,6 @@ class Suggestion(loc: Loc) {
     private var header: String? = null
     private var insert: Boolean = false
 
-    fun withOriginal(line: String) = apply { this.originalLine = line }
-    fun withMsg(msg: String) = apply { this.msg = msg }
-    fun fix(fix: String) = apply { this.fix = fix }
-    fun header(msg: String) = apply { this.header = msg }
-    fun insert() = apply { this.insert = true }
-
     fun build(): Line {
         require(originalLine != null) { "An original line must be given" }
         require(fix != null) { "A fix must be given" }
@@ -49,4 +43,14 @@ class Suggestion(loc: Loc) {
             originalLine!!.replaceRange(from, to, fix!!)
         }
     }
+
+    fun withOriginal(line: String) = apply { this.originalLine = line }
+
+    fun withMsg(msg: String) = apply { this.msg = msg }
+
+    fun fix(fix: String) = apply { this.fix = fix }
+
+    fun header(msg: String) = apply { this.header = msg }
+
+    fun insert() = apply { this.insert = true }
 }

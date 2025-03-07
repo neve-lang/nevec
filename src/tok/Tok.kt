@@ -7,7 +7,7 @@ class Tok(val kind: TokKind, private val lexeme: String, val loc: Loc) {
 
     fun isOf(other: TokKind) = kind == other
 
-    operator fun plus(other: Tok): Pair<String, Loc> = Pair(lexeme + other.lexeme, (loc + other.loc).build())
+    operator fun plus(other: Tok) = Pair(lexeme + other.lexeme, (loc + other.loc).build())
 
     override fun toString() = "\"$lexeme\" ($kind) $loc"
 }

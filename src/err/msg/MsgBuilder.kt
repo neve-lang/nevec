@@ -13,12 +13,6 @@ class MsgBuilder {
 
     private var lines: List<Line>? = null
 
-    fun kind(kind: MsgKind) = apply { this.kind = kind }
-    fun filename(filename: String) = apply { this.filename = filename }
-    fun msg(msg: String) = apply { this.msg = msg }
-    fun loc(loc: Loc) = apply { this.loc = loc }
-    fun lines(lines: List<Line>) = apply { this.lines = lines }
-
     fun build(): Msg {
         // this could definitely be better, but, hey, we’ll play by Kotlin’s rules
         // something awesome about Neve is that it allows you to do these checks
@@ -71,6 +65,16 @@ class MsgBuilder {
             }
         }
     }
+
+    fun kind(kind: MsgKind) = apply { this.kind = kind }
+
+    fun filename(filename: String) = apply { this.filename = filename }
+
+    fun msg(msg: String) = apply { this.msg = msg }
+
+    fun loc(loc: Loc) = apply { this.loc = loc }
+
+    fun lines(lines: List<Line>) = apply { this.lines = lines }
 }
 
 fun Line.isJustAbove(another: Line) = this.number + 1u == another.number
