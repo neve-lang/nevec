@@ -32,6 +32,17 @@ data class Loc(
         len = 0u
     }
 
+    operator fun plus(other: Loc): LocBuilder {
+        val max = if (col > other.col) this else other
+
+        val minCol = col.coerceAtMost(other.col)
+        val maxCol = col.coerceAtLeast(other.col)
+
+        val len = maxCol - minCol + max.len
+
+        return LocBuilder.from(this).col(minCol).len(len)
+    }
+
     private fun begin() = col
 
     override fun toString() = "$line:$col"
