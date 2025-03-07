@@ -1,6 +1,6 @@
 import cli.CliArgs
 import err.report.Report
-import file.Src
+import file.contents.Src
 import java.io.IOException
 
 fun main(args: Array<String>) {

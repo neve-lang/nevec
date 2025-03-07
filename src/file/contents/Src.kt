@@ -1,4 +1,4 @@
-package file
+package file.contents
 
 import err.report.Report
 import java.io.File

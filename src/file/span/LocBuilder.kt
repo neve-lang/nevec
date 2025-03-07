@@ -3,8 +3,6 @@ package file.span
 class LocBuilder {
     companion object {
         fun from(other: Loc) = other.asBuilder()
-
-        fun onLine(number: UInt) = Loc(1u, number, 1u).asBuilder()
     }
 
     private var col: UInt? = null
@@ -12,9 +10,7 @@ class LocBuilder {
     private var len: UInt? = null
 
     fun line(line: UInt) = apply { this.line = line }
-
     fun col(col: UInt) = apply { this.col = col }
-
     fun len(len: UInt) = apply { this.len = len }
 
     fun build(): Loc {
