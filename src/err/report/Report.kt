@@ -8,7 +8,7 @@ import file.span.indexable
 import util.extension.map
 
 object Report {
-    private lateinit var FILENAME: String
+    lateinit var FILENAME: String
     private lateinit var LINES: List<String>
 
     fun setup(filename: String, lines: List<String>) {

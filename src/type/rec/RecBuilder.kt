@@ -1,15 +1,16 @@
 package type.rec
 
+import file.module.Module
 import type.Type
 import type.gen.TypeParams
 
 class RecBuilder {
-    private var module: String? = null
+    private var module: Module? = null
     private var name: String? = null
     private var fields: Fields? = null
     private var params: TypeParams? = null
 
-    fun from(module: String) = apply { this.module = module }
+    fun from(module: Module) = apply { this.module = module }
 
     fun named(name: String) = apply { this.name = name }
 

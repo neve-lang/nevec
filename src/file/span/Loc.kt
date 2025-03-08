@@ -1,15 +1,17 @@
 package file.span
 
 import err.report.Report
+import file.module.Module
 
 data class Loc(
+    val module: Module,
     var col: UInt,
     var line: UInt,
     var len: UInt,
 ) {
     companion object {
-        fun new() = Loc(1u, 1u, 0u)
-        fun onLine(number: UInt) = Loc(1u, number, 1u)
+        fun new() = Loc(Module.curr(), 1u, 1u, 0u)
+        fun onLine(number: UInt) = Loc(Module.curr(), 1u, number, 1u)
     }
 
     fun advance() {

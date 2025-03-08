@@ -1,5 +1,7 @@
 package file.span
 
+import file.module.Module
+
 class LocBuilder {
     companion object {
         fun from(other: Loc) = other.asBuilder()
@@ -18,6 +20,6 @@ class LocBuilder {
         require(line != null) { "A line must be provided" }
         require(len != null) { "A length must be provided" }
 
-        return Loc(col!!, line!!, len!!)
+        return Loc(Module.curr(), col!!, line!!, len!!)
     }
 }

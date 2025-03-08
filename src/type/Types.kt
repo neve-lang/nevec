@@ -11,12 +11,12 @@ object Types {
 }
 
 // using '!!' here because Types does not allow registering poisoned types
-fun Type.fullName() = module()!! + "." + name()!!
+fun Type.fullName() = moduleName()!! + "." + name()!!
 
-fun Type.module(): String? = when (this) {
-    is Type.PrimType -> prim.type.module()
-    is Type.RecType -> rec.module
-    is Type.RefineType -> type.module()
+fun Type.moduleName(): String? = when (this) {
+    is Type.PrimType -> prim.type.moduleName()
+    is Type.RecType -> rec.module.name
+    is Type.RefineType -> type.moduleName()
     is Type.PoisonedType -> null
 }
 
