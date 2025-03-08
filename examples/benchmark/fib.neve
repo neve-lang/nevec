@@ -1,9 +1,8 @@
-fun fib(n Int)
-  if n < 2
-    n
+fun fib(n Nat)
+  match
+    | n < 2 = n
+    | else = fib(n - 1) + fib(n - 2)
   end
-
-  fib(n - 2) + fib(n - 1)
 end
 
 fun main

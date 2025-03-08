@@ -8,6 +8,6 @@ fun main
   rec Foo
   end
 
-  (Foo with ?)()
+  (Foo with ..)()
   "str"()
 end

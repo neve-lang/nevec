@@ -2,5 +2,5 @@ rec Foo
 end
 
 fun main
-  puts Foo with ?
+  puts Foo with ..
 end

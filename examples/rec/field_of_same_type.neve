@@ -11,3 +11,15 @@ fun main
   end
 end
 
+rec Bar
+  my Bar?
+end
+
+fun main
+  let my_bar = Bar with
+    my = Bar with
+      # okay
+      my = nil
+    end
+  end
+end

@@ -1,4 +1,6 @@
-var a = "a"
+nest
+  var a = "a"
 
-# this should be an error
-(a) = "value"
+  # this should be an error
+  (a) = "value"
+end

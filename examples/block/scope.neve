@@ -1,8 +1,10 @@
-let a = "outer"
-
 nest
-  let a = "inner"
-  puts a # inner
-end
+  let a = "outer"
 
-puts a # outer
+  nest
+    let a = "inner"
+    puts a # inner
+  end
+
+  puts a # outer
+end

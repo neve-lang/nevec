@@ -92,12 +92,11 @@ idea for Foo
 end
 
 fun main
-  let foo = Foo with ?
+  let foo = Foo with ..
 
   let start = clock
 
-  var i = 0
-  while i < 500000
+  500000.times do
     foo.method0
     foo.method1
     foo.method2
@@ -128,7 +127,6 @@ fun main
     foo.method27
     foo.method28
     foo.method29
-    i = i + 1;
   end
 
   puts clock - start

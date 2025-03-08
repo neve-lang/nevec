@@ -6,7 +6,6 @@ rec Tree
   right Tree?
 end
 
-
 idea for Tree
   fun Tree.new(item Int, depth Int)
     var item = item

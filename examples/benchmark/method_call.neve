@@ -3,9 +3,9 @@ rec Toggle
 end
 
 idea for Toggle
-  fun Toggle.new(initial_state Bool)
+  fun Toggle.new(state Bool)
     Toggle with
-      state = initial_state
+      state
     end
   end
 
@@ -26,12 +26,9 @@ rec NthToggle
 end  
 
 idea for NthToggle
-  fun NthToggle.new(initial_state Bool, max_count Int)
+  fun NthToggle.new(stat Bool, max_count Int)
     NthToggle with
-      super = Toggle with
-        state = initial_state
-      end
-
+      super = Toggle.new state
       max_count = max_count
       count = 0
     end
@@ -56,8 +53,7 @@ fun main
   var val = true
   let toggle = Toggle.new val
 
-  var i = 0
-  for i < n with i += 1
+  n.times do
     val = toggle.activate.value
     val = toggle.activate.value
     val = toggle.activate.value
@@ -71,13 +67,10 @@ fun main
   end
 
   puts toggle.value 
-
   val = true
-
   var ntoggle = NthToggle.new val, 3
-  
-  var i = 0
-  for i < n with i += 1
+
+  n.times do
     val = ntoggle.activate.value
     val = ntoggle.activate.value
     val = ntoggle.activate.value
@@ -93,4 +86,25 @@ fun main
   puts ntoggle.value
 
   puts clock - start
+end
+
+idea Repeat
+  fun times(f Fun)
+  fun times(f |Self|)
+end
+
+idea Repeat for Nat
+  fun times(f Fun)
+    var i = 0
+    for i <= self where i += 1
+      f
+    end
+  end
+
+  fun times(f |Self|)
+    var i = 0
+    for i <= self where i += 1
+      f i
+    end
+  end
 end

@@ -5,41 +5,39 @@ end
 
 fun main
   let start = clock
-  var i = 0
 
-  while i < 500000
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    Foo with ?
-    i = i + 1;
+  500000.times do
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
+    Foo with ..
   end
 
-  puts clock - start
+  puts "#{clock - start}ms."
 end

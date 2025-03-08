@@ -1,4 +1,6 @@
-print a = "a"
+nest
+  print a = "a"
 
-# this should be an error
-not a = "value"
+  # this should be an error
+  not a = "value"
+end

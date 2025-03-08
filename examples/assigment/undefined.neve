@@ -1,2 +1,7 @@
-# this should fail
+nest
+  # this should fail
+  unknown = "what"
+end
+
+# this should too
 unknown = "what"
