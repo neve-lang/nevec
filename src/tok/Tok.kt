@@ -2,7 +2,12 @@ package tok
 
 import file.span.Loc
 
-class Tok(val kind: TokKind, private val lexeme: String, val loc: Loc) {
+/**
+ * A source code token.
+ *
+ * @see TokKind
+ */
+class Tok(val kind: TokKind, val lexeme: String, val loc: Loc) {
     fun isEof() = kind == TokKind.EOF
 
     fun isOf(other: TokKind) = kind == other

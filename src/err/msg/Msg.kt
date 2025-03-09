@@ -6,6 +6,13 @@ import err.write.Out
 import err.write.Write
 import file.span.Loc
 
+/**
+ * An error message.
+ *
+ * It may be an error or a simple warning.
+ *
+ * @see MsgKind
+ */
 class Msg(
     private val kind: MsgKind,
     private val filename: String,

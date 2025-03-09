@@ -2,7 +2,14 @@ package err.line
 
 import err.write.Out
 
+/**
+ * Responsible for coloring the characters on a line based on a List of [ColorSpan].
+ */
 class ColorSpans(private val spans: List<ColorSpan>, private val chars: CharSequence) {
+    /**
+     * Colors the line based on the given [chars].
+     * The line is immediately output to STDERR.
+     */
     fun color(out: Out) {
         val froms = spans.map { it.from }
         val tos = spans.map { it.to }

@@ -1,7 +1,11 @@
 package lex
 
+import tok.TokKind
 import tok.TokKind.*
 
+/**
+ * Abstracts away the process of matching [tok.Tok]s based on their lexemes.
+ */
 object Toks {
     const val MAX_TOK_LEN = 3
 
@@ -93,4 +97,13 @@ object Toks {
     }
 
     fun findKeyword(lexeme: String) = KEYWORDS[lexeme]
+
+    fun lexemeOf(kind: TokKind): String? {
+        return ONE_CHAR_TOKS.key(from = kind)?.toString() ?: TWO_CHAR_TOKS.key(from = kind)
+        ?: THREE_CHAR_TOKS.key(from = kind)
+    }
 }
+
+fun <K, V> Map<K, V>.key(from: V): K? = filterValues { it == from }.keys.firstOrNull()
+
+fun TokKind.lexeme() = Toks.lexemeOf(this)

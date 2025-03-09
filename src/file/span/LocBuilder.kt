@@ -2,6 +2,9 @@ package file.span
 
 import file.module.Module
 
+/**
+ * Simplifies the process of building a [Loc].
+ */
 class LocBuilder {
     companion object {
         fun from(other: Loc) = other.asBuilder()

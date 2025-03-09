@@ -1,5 +1,8 @@
 package lex.interpol
 
+/**
+ * Abstracts away state management for string interpolation in a single-pass Lexer.
+ */
 class InterpolState {
     companion object {
         private const val MAX_INTERPOL_DEPTH = 255

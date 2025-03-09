@@ -3,6 +3,11 @@ package err.note
 import err.write.Out
 import file.span.Loc
 
+/**
+ * A note that goes along a [err.line.Line].
+ *
+ * A [err.line.Line] may have multiple.
+ */
 class Note(private val kind: NoteKind, val loc: Loc, val msg: String) {
     private val len = loc.col + loc.len - 1u
     private val begin = loc.col

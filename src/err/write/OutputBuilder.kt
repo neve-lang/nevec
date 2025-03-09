@@ -1,11 +1,12 @@
 package err.write
 
+/**
+ * Simplifies the process of building a stylized String for STDERR.
+ */
 class OutputBuilder {
     private val strings = mutableListOf<String>()
 
     private var withOffset = false
-
-    fun offset() = apply { withOffset = true }
 
     fun print(out: Out) {
         val string = strings.joinToString("")
@@ -16,6 +17,8 @@ class OutputBuilder {
 
         out.write(string)
     }
+
+    fun offset() = apply { withOffset = true }
 
     fun saying(msg: String) = apply { strings.add(msg) }
 

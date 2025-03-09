@@ -3,6 +3,16 @@ package lex.relex
 import tok.Tok
 import tok.TokKind
 
+/**
+ * Functions as a peephole--takes two [Tok]s and merges them into one if possible.
+ *
+ * # Example
+ *
+ * ```
+ * TokKind.NOT, TokKind.IN -> TokKind.NOT_IN
+ * TokKind.IS, TokKind.NOT -> TokKind.IS_NOT
+ * ```
+ */
 class Relex {
     private var peephole = mutableListOf<Tok>()
 

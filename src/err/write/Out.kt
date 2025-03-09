@@ -3,10 +3,18 @@ package err.write
 import kotlin.math.abs
 import kotlin.math.log10
 
+/**
+ * Abstraction layer around the process of writing to STDERR and managing [offset].
+ *
+ * @param maxLine The number of lines in the source file.
+ */
 class Out(maxLine: Int) {
     private val offset = maxLine.digits()
 
     companion object {
+        /**
+         * Errors that occur before reading the source file.
+         */
         fun fatal() = Out(0)
     }
 

@@ -1,6 +1,15 @@
 package cli
 
+/**
+ * Possible CLI Options.
+ */
 enum class Options {
+    /**
+     * Disables all non-memory related optimizations.
+     *
+     * Optimizations that *will remain* include:
+     *  - Constant propagation
+     */
     NO_OPT;
 
     companion object {

@@ -1,5 +1,10 @@
 package tok
 
+/**
+ * A kind of token.
+ *
+ * Each keyword is treated as a distinct token.
+ */
 enum class TokKind {
     SEMICOL, COL, COMMA, DOT, DOT_DOT,
 

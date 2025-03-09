@@ -8,6 +8,13 @@ import lex.relex.Relex
 import tok.Tok
 import tok.TokKind
 
+/**
+ * Lexes the given contents of the file.
+ *
+ * Implemented as a single-pass Lexer, it functions as an iterator.
+ *
+ * @param contents The string contents of the source file.
+ */
 class Lex(contents: String) {
     private val chars = Chars(contents)
     private val loc = Loc.new()

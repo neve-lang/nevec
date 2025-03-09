@@ -4,6 +4,9 @@ import ast.hierarchy.expr.Expr
 import file.span.Loc
 import type.Type
 
+/**
+ * This sealed class denotes all supported expression literals in Neve so far.
+ */
 sealed class Lit {
     data class IntLit(val loc: Loc, val type: Type, val value: Int) : Lit()
     data class FloatLit(val loc: Loc, val type: Type, val value: Float) : Lit()

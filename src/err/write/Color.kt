@@ -1,5 +1,8 @@
 package err.write
 
+/**
+ * A limited set of colors and their codes for [err.msg.Msg]s.
+ */
 enum class Color(val code: String) {
     RED("\u001b[31m"),
     GREEN("\u001b[32m"),

@@ -7,11 +7,20 @@ import file.span.Loc
 import tok.Tok
 import type.Type
 
+/*
+ * This sealed class denotes all kinds of supported Neve expressions so far.
+ */
 sealed class Expr {
     data class Parens(val loc: Loc, val expr: Expr) : Expr()
     data class Show(val loc: Loc, val expr: Expr) : Expr()
     data class Access(val type: Type, val tok: Tok) : Expr()
+
+    /**
+     * Different from an [Access]; the distinction only appears in later compilation stages, after semantic resolving.
+     * It is used to facilitate resolving when building the IR.
+     */
     data class AccessConst(val loc: Loc, val type: Type, val name: String) : Expr()
+
     data class UnOpExpr(val unOp: UnOp) : Expr()
     data class BinOpExpr(val binOp: BinOp) : Expr()
     data class LitExpr(val lit: Lit) : Expr()

@@ -5,6 +5,15 @@ import file.span.Loc
 import file.span.LocBuilder
 import util.extension.map
 
+/**
+ * A disguised [Line] builder tailored specifically for fix suggestions.
+ *
+ * @property originalLine The original unmodified line.
+ * @property fix The replacement you want to make at [fixLoc].
+ * @property msg The message that goes under the fix [Note].
+ * @property header An optional header message.
+ * @property insert Whether the [fix] should be *inserted* at [fixLoc] or should be treated as a replacement at [fixLoc].
+ */
 class Suggestion(loc: Loc) {
     companion object {
         fun builder(loc: Loc) = Suggestion(loc)
@@ -50,7 +59,7 @@ class Suggestion(loc: Loc) {
 
     fun fix(fix: String) = apply { this.fix = fix }
 
-    fun header(msg: String) = apply { this.header = msg }
+    fun header(msg: String?) = apply { this.header = msg }
 
-    fun insert() = apply { this.insert = true }
+    fun insert(insert: Boolean = true) = apply { this.insert = insert }
 }

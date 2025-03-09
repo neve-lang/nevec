@@ -4,6 +4,9 @@ import err.line.Line
 import err.line.LineBuilder
 import file.span.Loc
 
+/**
+ * Simplifies the process of building a [Msg].
+ */
 class MsgBuilder {
     private var kind: MsgKind? = null
 

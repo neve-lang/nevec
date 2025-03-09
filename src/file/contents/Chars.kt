@@ -1,5 +1,8 @@
 package file.contents
 
+/**
+ * Used alongside [lex.Lex]; stores the chars in the source string as an iterator.
+ */
 class Chars(private var string: String) {
     private var at: Int = 0
 

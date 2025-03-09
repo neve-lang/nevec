@@ -3,6 +3,11 @@ package err.line
 import err.note.Note
 import file.span.Loc
 
+/**
+ * Simplifies the process of building a [Line] object.
+ *
+ * @see Line for properties.
+ */
 class LineBuilder(loc: Loc) {
     companion object {
         fun from(line: Line) = line.asBuilder()

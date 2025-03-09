@@ -6,6 +6,15 @@ import err.write.Out
 import err.write.Write
 import file.span.Loc
 
+/**
+ * Represents a line that will be output in a [err.msg.Msg].
+ *
+ * @property notes The notes that come with the line.
+ * @property number The line number.
+ * @property header An optional header for the line.
+ * @property previous An optional previous line that will be put above the current one and colored in gray.
+ * @property line The original source line.
+ */
 class Line(
     private val notes: List<Note>,
     val number: UInt,
