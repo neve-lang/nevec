@@ -1,5 +1,6 @@
 package ast.hierarchy.expr
 
+import ast.hierarchy.GetLoc
 import ast.hierarchy.Wrap
 import ast.hierarchy.lit.Lit
 import ast.hierarchy.unop.UnOp
@@ -12,7 +13,7 @@ import type.Type
 /*
  * This sealed class denotes all kinds of supported Neve expressions so far.
  */
-sealed class Expr : Wrap<Stmt> {
+sealed class Expr : Wrap<Stmt>, GetLoc {
     data class Parens(val loc: Loc, val expr: Expr) : Expr()
     data class Show(val loc: Loc, val expr: Expr) : Expr()
     data class Access(val type: Type, val tok: Tok) : Expr()
@@ -28,4 +29,14 @@ sealed class Expr : Wrap<Stmt> {
     data class LitExpr(val lit: Lit) : Expr()
 
     override fun wrap() = Stmt.ExprStmt(this)
+
+    override fun loc() = when (this) {
+        is Parens -> loc
+        is Show -> loc
+        is Access -> tok.loc
+        is AccessConst -> loc
+        is UnOpExpr -> unOp.loc()
+        is BinOpExpr -> binOp.loc()
+        is LitExpr -> lit.loc()
+    }
 }

@@ -1,5 +1,6 @@
 package ast.hierarchy.decl
 
+import ast.hierarchy.GetLoc
 import ast.hierarchy.stmt.Stmt
 import file.span.Loc
 import type.Type
