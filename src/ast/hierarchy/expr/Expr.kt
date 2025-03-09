@@ -1,8 +1,10 @@
 package ast.hierarchy.expr
 
+import ast.hierarchy.Wrap
 import ast.hierarchy.lit.Lit
 import ast.hierarchy.unop.UnOp
 import ast.hierarchy.binop.BinOp
+import ast.hierarchy.stmt.Stmt
 import file.span.Loc
 import tok.Tok
 import type.Type
@@ -10,7 +12,7 @@ import type.Type
 /*
  * This sealed class denotes all kinds of supported Neve expressions so far.
  */
-sealed class Expr {
+sealed class Expr : Wrap<Stmt> {
     data class Parens(val loc: Loc, val expr: Expr) : Expr()
     data class Show(val loc: Loc, val expr: Expr) : Expr()
     data class Access(val type: Type, val tok: Tok) : Expr()
@@ -24,4 +26,6 @@ sealed class Expr {
     data class UnOpExpr(val unOp: UnOp) : Expr()
     data class BinOpExpr(val binOp: BinOp) : Expr()
     data class LitExpr(val lit: Lit) : Expr()
+
+    override fun wrap() = Stmt.ExprStmt(this)
 }

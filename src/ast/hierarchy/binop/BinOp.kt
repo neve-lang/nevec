@@ -1,5 +1,6 @@
 package ast.hierarchy.binop
 
+import ast.hierarchy.Wrap
 import ast.hierarchy.expr.Expr
 import file.span.Loc
 
@@ -10,9 +11,11 @@ import file.span.Loc
  *
  * @see Operator
  */
-sealed class BinOp {
+sealed class BinOp : Wrap<Expr> {
     data class Bitwise(val loc: Loc, val left: Expr, val operator: Operator, val right: Expr) : BinOp()
     data class Arith(val loc: Loc, val left: Expr, val operator: Operator, val right: Expr) : BinOp()
     data class Comp(val loc: Loc, val left: Expr, val operator: Operator, val right: Expr) : BinOp()
     data class Concat(val loc: Loc, val left: Expr, val right: Expr) : BinOp()
+
+    override fun wrap() = Expr.BinOpExpr(this)
 }
