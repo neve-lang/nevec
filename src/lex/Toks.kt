@@ -11,6 +11,7 @@ object Toks {
 
     private val KEYWORDS = mapOf(
         "and" to AND,
+        "const" to CONST,
         "do" to DO,
         "else" to ELSE,
         "end" to END,
@@ -107,3 +108,7 @@ object Toks {
 fun <K, V> Map<K, V>.key(from: V): K? = filterValues { it == from }.keys.firstOrNull()
 
 fun TokKind.lexeme() = Toks.lexemeOf(this)
+
+fun TokKind.isStmtStarter() = inBetween(ELSE, WHILE)
+
+fun TokKind.inBetween(min: TokKind, max: TokKind) = ordinal >= min.ordinal && ordinal <= max.ordinal

@@ -8,7 +8,15 @@ import file.span.Loc
  * @see TokKind
  */
 class Tok(val kind: TokKind, val lexeme: String, val loc: Loc) {
+    companion object {
+        fun eof() = Tok(TokKind.EOF, "", Loc.new())
+    }
+
     fun isEof() = kind == TokKind.EOF
+
+    fun isNewline() = kind == TokKind.NEWLINE
+
+    fun isErr() = kind == TokKind.ERR
 
     fun isOf(other: TokKind) = kind == other
 
