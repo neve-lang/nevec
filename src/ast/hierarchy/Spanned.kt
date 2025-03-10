@@ -2,6 +2,6 @@ package ast.hierarchy
 
 import file.span.Loc
 
-interface GetLoc {
+interface Spanned {
     fun loc(): Loc
 }
