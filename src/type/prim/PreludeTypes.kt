@@ -16,6 +16,8 @@ object PreludeTypes {
         TypeParams.from("K", "V")
     ).build().wrap().into(PrimKind.TABLE)
 
+    private val NIL = Rec.prelude("Nil").build().wrap().into(PrimKind.NIL)
+
     // once possible:
     // private val NAT = Rec.prelude("Nat").build().wrap().into(PrimKind.INT).refined("self > 0".parse())
 }

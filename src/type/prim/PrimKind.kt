@@ -6,4 +6,5 @@ enum class PrimKind {
     BOOL,
     STR,
     TABLE,
+    NIL,
 }
