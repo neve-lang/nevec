@@ -109,6 +109,8 @@ fun <K, V> Map<K, V>.key(from: V): K? = filterValues { it == from }.keys.firstOr
 
 fun TokKind.lexeme() = Toks.lexemeOf(this)
 
-fun TokKind.isStmtStarter() = inBetween(ELSE, WHILE)
+fun TokKind.isStmtStarter() = isInBetween(ELSE, WHILE)
 
-fun TokKind.inBetween(min: TokKind, max: TokKind) = ordinal >= min.ordinal && ordinal <= max.ordinal
+fun TokKind.isExprStarter() = isInBetween(LPAREN, WITH)
+
+fun TokKind.isInBetween(min: TokKind, max: TokKind) = ordinal >= min.ordinal && ordinal <= max.ordinal
