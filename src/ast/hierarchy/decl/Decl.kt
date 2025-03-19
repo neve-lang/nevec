@@ -31,5 +31,6 @@ sealed class Decl : Ast {
      * ```
      */
     data class Consts(val name: String?, val consts: List<Const>) : Decl()
+
     data class StmtDecl(val stmt: Stmt) : Decl()
 }

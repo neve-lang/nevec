@@ -17,7 +17,8 @@ sealed class Lit : Ast, Wrap<Expr>, Spanned, Typed {
     data class BoolLit(val value: Boolean, val loc: Loc, val type: Type = Type.unresolved()) : Lit()
     data class StrLit(val value: String, val loc: Loc, val type: Type = Type.unresolved()) : Lit()
     data class NilLit(val loc: Loc, val type: Type = Type.unresolved()) : Lit()
-    data class TableLit(val keys: List<Expr>, val vals: List<Expr>, val loc: Loc, val type: Type = Type.unresolved()) : Lit()
+    data class TableLit(val keys: List<Expr>, val vals: List<Expr>, val loc: Loc, val type: Type = Type.unresolved()) :
+        Lit()
 
     override fun wrap() = Expr.LitExpr(this)
 

@@ -32,6 +32,15 @@ sealed class Expr : Ast, Wrap<Stmt>, Spanned, Typed {
     data class LitExpr(val lit: Lit) : Expr()
     data class InterpolExpr(val interpol: Interpol) : Expr()
 
+    /**
+     * Dummy node: this node shouldn't ever appear in a valid AST.  It is returned when the parser encounters an
+     * unexpected token in the context of an expression.
+     *
+     * It still carries a [Loc] ([loc]) and a [Type] ([type]) because it needs to adhere to the [Wrap], [Spanned], and
+     * [Typed] interfaces, albeit [type] is *always* set to `Type.unresolved()`.
+     *
+     * @see parse.Parse.primary
+     */
     data class Empty(val loc: Loc, val type: Type = Type.unresolved()) : Expr()
 
     override fun wrap() = Stmt.ExprStmt(this)

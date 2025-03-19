@@ -1,7 +1,5 @@
 package ast.hierarchy
 
-import ast.hierarchy.decl.Decl
-
 /**
  * An AST node that can be wrapped into its supertype in the AST hierarchy.
  *
@@ -16,6 +14,8 @@ import ast.hierarchy.decl.Decl
  *   else -> stmt().wrap()
  * }
  * ```
+ *
+ * @see parse.Parse.primary
  */
 interface Wrap<Super> {
     fun wrap(): Super

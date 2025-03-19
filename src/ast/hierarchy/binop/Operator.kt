@@ -8,23 +8,11 @@ import tok.TokKind
  * Denotes all kinds of possible operators for a BinOp.
  */
 enum class Operator {
-    PLUS,
-    MINUS,
-    MUL,
-    DIV,
+    PLUS, MINUS, MUL, DIV,
 
-    SHL,
-    SHR,
-    BIT_AND,
-    BIT_XOR,
-    BIT_OR,
+    SHL, SHR, BIT_AND, BIT_XOR, BIT_OR,
 
-    NEQ,
-    EQ,
-    GT,
-    GTE,
-    LT,
-    LTE;
+    NEQ, EQ, GT, GTE, LT, LTE;
 
     companion object {
         fun from(tok: Tok) = from(tok.kind)
@@ -44,11 +32,17 @@ enum class Operator {
                 return null
             }
 
-           return entries[kind.clamped()]
+            return entries[kind.clamped()]
         }
     }
 }
 
+/**
+ * Checks whether [this] can be mapped to [Operator.entries] if [clamped].
+ */
 fun TokKind.isOpKind() = isInBetween(TokKind.PLUS, TokKind.LTE)
 
+/**
+ * Returns an *ordinal* that can be mapped to [Operator.entries] **if and only if** the TokKind in question [isOpKind].
+ */
 fun TokKind.clamped() = ordinal - TokKind.PLUS.ordinal

@@ -39,7 +39,7 @@ object Pretty : Visit<Program, String> {
         is Expr.Parens -> visitParens(expr)
         is Expr.Access -> visitAccess(expr)
         is Expr.AccessConst -> visitAccessConst(expr)
-        is Expr.Empty -> visitEmpty(expr)
+        is Expr.Empty -> visitEmpty()
         is Expr.Show -> visitShow(expr)
     }
 
@@ -114,7 +114,7 @@ object Pretty : Visit<Program, String> {
         return access.name
     }
 
-    private fun visitEmpty(empty: Expr.Empty): String {
+    private fun visitEmpty(): String {
         return "(empty)"
     }
 
