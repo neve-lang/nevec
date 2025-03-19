@@ -17,12 +17,24 @@ class InterpolState {
 
     fun inInterpol() = depth > 0
 
+    /**
+     * Returns whether the LexState was in a string interpolation.
+     *
+     * *Implicitly updates the state* after being called.
+     */
     fun wasInInterpol(): Boolean {
         val previousState = state
         update()
 
         return previousState == State.AFTER_INTERPOL
     }
+
+    /**
+     * Returns whether the LexState was in a string interpolation.
+     *
+     * *Does not* implicitly update the state after being called.
+     */
+    fun isAfterInterpol() = state == State.AFTER_INTERPOL
 
     fun deepenInterpol() {
         if (depth >= MAX_INTERPOL_DEPTH) {
