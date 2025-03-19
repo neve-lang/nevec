@@ -1,6 +1,10 @@
 package file.contents
 
 import err.report.Report
+import err.write.Out
+import file.span.Loc
+import file.span.indexable
+import util.extension.map
 import java.io.File
 import java.io.IOException
 
@@ -8,6 +12,9 @@ import java.io.IOException
  * Abstraction layer around setting up [Report] and reading a file.
  */
 object Src {
+    lateinit var FILENAME: String
+    private lateinit var LINES: List<String>
+
     /**
      * Reads the file named [filename].
      *
@@ -23,8 +30,26 @@ object Src {
 
         val contents = lines.joinToString("")
 
-        Report.setup(filename, lines)
+        setup(filename, lines)
 
         return Pair(contents, lines)
+    }
+
+    fun setup(filename: String, lines: List<String>) {
+        FILENAME = filename
+        LINES = lines
+        Report.setup(lines.size)
+    }
+
+    fun lexeme(at: Loc): String {
+        val (begin, end) = at.extremes().map(UInt::indexable)
+
+        return at.line().substring(begin..end)
+    }
+
+    fun line(at: Loc) = try {
+        LINES[at.line.indexable()]
+    } catch (e: IndexOutOfBoundsException) {
+        ""
     }
 }
