@@ -1,0 +1,47 @@
+package parse
+
+import ast.pretty.Pretty
+import file.contents.Src
+import lex.Lex
+import lex.all
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+
+class ParseTest {
+    @Test
+    fun testOne() {
+        assertOkay("(1 + 2 == 3)")
+    }
+
+    @Test
+    fun testTwo() {
+        assertOkay("---not --not -not (1 + 2 + 3 < (4 > 2) * 3)")
+    }
+
+    @Test
+    fun testThree() {
+        assertOkay("1 bor 2 xor 3849348 / 23 * 9 + nil / true band false")
+    }
+
+    @Test
+    fun testFour() {
+        assertOkay("1 bor \"Hello, world!\" + -34.5 / 92 xor \"()\"")
+    }
+
+    @Test
+    fun testFive() {
+        assertOkay("\"Hello, #{\"world!\"}  From #{\"Mars!\"}  This message took #{1.5 * 2} minutes to #{\"reach #{\"Earth\"}.\"}\"")
+    }
+
+    private fun assertOkay(input: String) {
+        assertEquals(input, input.parse())
+    }
+}
+
+fun String.parse(): String {
+    Src.setup("test.neve", lines())
+
+    val parse = Parse(this)
+    val pretty = Pretty.visit(parse.parse())
+    return pretty
+}
