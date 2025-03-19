@@ -1,6 +1,7 @@
 package file.span
 
 import err.report.Report
+import file.contents.Src
 import file.module.Module
 
 /**
@@ -80,9 +81,9 @@ data class Loc(
         return LocBuilder.from(this).col(minCol).len(len)
     }
 
-    fun lexeme() = Report.lexeme(at = this)
+    fun lexeme() = Src.lexeme(at = this)
 
-    fun line() = Report.line(at = this)
+    fun line() = Src.line(at = this)
 
     fun end() = col + len
 

@@ -1,4 +1,4 @@
-package parse
+package parse.err
 
 import err.msg.Msg
 import err.note.Note
@@ -29,7 +29,7 @@ object ParseErr {
         val valid = expected.lexeme()
         val got = tok.lexeme
 
-        val displayed = expected.display()
+        val displayed: String = expected.display()
 
         val suggestion = if (valid != null)
             listOf(Suggest.replacing(at = loc, with = valid))
@@ -37,7 +37,7 @@ object ParseErr {
             emptyList()
 
         return Report.err(loc, "unexpected token").lines(
-            Lines.of(Note.err(loc, "expected $displayed but found $got")) + suggestion
+            Lines.of(Note.err(loc, "expected $displayed, but found $got")) + suggestion
         ).build()
     }
 
@@ -76,4 +76,4 @@ object ParseErr {
 
 fun Tok.display() = kind.display()
 
-fun TokKind?.display() = if (this != null && this != TokKind.EOF) lexeme() else "end of file"
+fun TokKind?.display() = this?.lexeme() ?: "end of file"
