@@ -1,5 +1,7 @@
 package ast.hierarchy
 
+import ast.hierarchy.decl.Decl
+
 /**
  * An AST node that can be wrapped into its supertype in the AST hierarchy.
  *

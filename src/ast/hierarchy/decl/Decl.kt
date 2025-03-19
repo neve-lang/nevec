@@ -1,6 +1,7 @@
 package ast.hierarchy.decl
 
-import ast.hierarchy.GetLoc
+import ast.hierarchy.Ast
+import ast.hierarchy.expr.Expr
 import ast.hierarchy.stmt.Stmt
 import file.span.Loc
 import type.Type
@@ -8,7 +9,7 @@ import type.Type
 /**
  * This sealed class denotes all kinds of supported Neve declarations so far.
  */
-sealed class Decl {
+sealed class Decl : Ast {
     /**
      * A single constant declaration in [Consts].
      *
@@ -18,7 +19,7 @@ sealed class Decl {
      * end
      * ```
      */
-    data class Const(val loc: Loc, val type: Type) : Decl()
+    data class Const(val name: String, val expr: Expr, val loc: Loc, val type: Type) : Decl()
 
     /**
      * A set of [Const] declarations.
@@ -29,6 +30,6 @@ sealed class Decl {
      * end
      * ```
      */
-    data class Consts(val consts: List<Const>) : Decl()
+    data class Consts(val name: String?, val consts: List<Const>) : Decl()
     data class StmtDecl(val stmt: Stmt) : Decl()
 }
