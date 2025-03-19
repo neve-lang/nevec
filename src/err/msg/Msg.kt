@@ -1,6 +1,7 @@
 package err.msg
 
 import err.line.Line
+import err.report.Report
 import err.write.Color
 import err.write.Out
 import err.write.Write
@@ -35,4 +36,6 @@ class Msg(
 
         Write.paintedIn(Color.BLUE).saying(" ╰─ ").offset().then().print(out)
     }
+
+    fun print() = emit(Report.OUT)
 }
