@@ -6,7 +6,7 @@ package util.extension
  * # Example
  *
  * ```
- * val (begin, end) = loc.extremes.map(UInt::indexable)
+ * val (begin, end) = loc.extremes().map(UInt::indexable)
  * ```
  */
 fun <A, B> Pair<A, A>.map(to: ((A) -> B)) = Pair(to(this.first), to(this.second))
