@@ -179,6 +179,12 @@ class Lex(contents: String) {
     }
 
     private fun skipWs() {
+        if (state.isAfterInterpol()) {
+            // do nothing; after a string interpolation, we might have spaces separating the interpolated expression
+            // and the next string.
+            return
+        }
+
         if (match('#')) {
             skipComment()
         }
