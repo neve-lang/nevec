@@ -1,6 +1,7 @@
 package lex
 
 import err.report.Report
+import file.contents.Src
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import tok.Tok
@@ -176,7 +177,7 @@ fun Lex.all(): List<Tok> {
 fun List<Tok>.simplified() = map { it.kind }
 
 fun String.lex(): List<TokKind> {
-    Report.setup("test.neve", this.lines())
+    Src.setup("test.neve", this.lines())
 
     return Lex(this).all().simplified()
 }
