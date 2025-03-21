@@ -1,6 +1,5 @@
 package ast.hierarchy.binop
 
-import lex.isInBetween
 import tok.Tok
 import tok.TokKind
 
