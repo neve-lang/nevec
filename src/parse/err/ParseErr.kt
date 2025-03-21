@@ -41,35 +41,25 @@ object ParseErr {
         ).build()
     }
 
-    fun expectedTok(loc: Loc, expected: TokKind): Msg {
+    fun expectedTok(at: Loc, expected: TokKind): Msg {
         val valid = expected.lexeme()
 
         val suggestion = if (valid != null)
-            listOf(Suggest.adding(valid, at = loc, saying = "however, you can insert it"))
+            listOf(Suggest.adding(valid, at, saying = "however, you can insert it"))
         else
             emptyList()
 
-        return Report.err(loc, "'$valid' was expected, but found nothing").lines(
-            Lines.of(Note.err(loc, "expected '$valid'")) + suggestion
+        return Report.err(at, "'$valid' was expected, but found nothing").lines(
+            Lines.of(Note.err(at, "expected '$valid'")) + suggestion
         ).build()
     }
 
     fun expectedExpr(tok: Tok): Msg {
         val loc = tok.loc
-
-        val isAtEnd = tok.isEof()
         val lexeme = tok.display()
 
         return Report.err(loc, "expected an expression").lines(
             Lines.of(Note.err(loc, "expected an expression, but found '$lexeme'"))
-        ).build()
-    }
-
-    fun expected(what: String, got: Tok): Msg {
-        val loc = got.loc
-
-        return Report.err(loc, "expected $what").lines(
-            Lines.of(Note.err(loc, "not $what"))
         ).build()
     }
 }
