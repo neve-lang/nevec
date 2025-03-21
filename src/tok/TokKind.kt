@@ -33,4 +33,10 @@ enum class TokKind {
     INTERPOL_SEP,
 
     NEWLINE, ERR, EOF;
+
+    fun isStmtStarter() = isInBetween(ELSE, WHILE)
+
+    fun isExprStarter() = isInBetween(LPAREN, WITH)
+
+    fun isInBetween(min: TokKind, max: TokKind) = ordinal >= min.ordinal && ordinal <= max.ordinal
 }

@@ -2,6 +2,7 @@ package lex
 
 import tok.TokKind
 import tok.TokKind.*
+import util.extension.key
 
 /**
  * Abstracts away the process of matching [tok.Tok]s based on their lexemes.
@@ -99,18 +100,13 @@ object Toks {
 
     fun findKeyword(lexeme: String) = KEYWORDS[lexeme]
 
+    /**
+     * @return the **usually associated lexeme** with the given [kind], or null if there is none.
+     */
     fun lexemeOf(kind: TokKind): String? {
         return ONE_CHAR_TOKS.key(from = kind)?.toString() ?: TWO_CHAR_TOKS.key(from = kind)
         ?: THREE_CHAR_TOKS.key(from = kind)
     }
 }
 
-fun <K, V> Map<K, V>.key(from: V): K? = filterValues { it == from }.keys.firstOrNull()
-
 fun TokKind.lexeme() = Toks.lexemeOf(this)
-
-fun TokKind.isStmtStarter() = isInBetween(ELSE, WHILE)
-
-fun TokKind.isExprStarter() = isInBetween(LPAREN, WITH)
-
-fun TokKind.isInBetween(min: TokKind, max: TokKind) = ordinal >= min.ordinal && ordinal <= max.ordinal
