@@ -1,6 +1,5 @@
 package file.span
 
-import err.report.Report
 import file.contents.Src
 import file.module.Module
 
@@ -51,6 +50,49 @@ data class Loc(
         len = 0u
     }
 
+    fun lexeme() = Src.lexeme(at = this)
+
+    fun line() = Src.line(at = this)
+
+    fun end() = col + len
+
+    fun asBuilder() = LocBuilder().col(col).line(line).len(len)
+
+    fun extremes() = Pair(begin(), end())
+
+    fun copy() = asBuilder().build()
+
+    override fun toString() = "$line:$col"
+
+    /**
+     * Tries to merge two optional [Loc]s if possible.
+     *
+     * @return a non-null [Loc] that is:
+     *  * equal to [Loc.new] if either [this] or the argument given are null
+     *  * equal to [this] plus the argument given, **as a built LocBuilder** (i.e. it returns a [Loc], unlike [Loc.plus])
+     */
+    fun Loc?.tryMerge(with: Loc?): Loc {
+        if (this == null || with == null) {
+            return new()
+        }
+
+        return (this + with).build()
+    }
+
+    /**
+     * Tries to merge two [Loc]s if possible, where `this` is non-null.
+     *
+     * @return a non-null [Loc] that is:
+     *  * equal to [Loc.new] if the argument given is null
+     *  * equal to `this` plus the argument given, **as a built LocBuilder** (i.e. it returns a [Loc], unlike [Loc.plus])
+     */
+    fun tryMerge(with: Loc?): Loc {
+        return if (with == null)
+            new()
+        else
+            (this + with).build()
+    }
+
     /**
      * Adds two Locs as a **convex hull**.
      *
@@ -81,21 +123,7 @@ data class Loc(
         return LocBuilder.from(this).col(minCol).len(len)
     }
 
-    fun lexeme() = Src.lexeme(at = this)
-
-    fun line() = Src.line(at = this)
-
-    fun end() = col + len
-
-    fun asBuilder() = LocBuilder().col(col).line(line).len(len)
-
-    fun extremes() = Pair(begin(), end())
-
-    fun copy() = asBuilder().build()
-
     private fun begin() = col
-
-    override fun toString() = "$line:$col"
 }
 
 /**

@@ -1,7 +1,6 @@
 package file.contents
 
 import err.report.Report
-import err.write.Out
 import file.span.Loc
 import file.span.indexable
 import util.extension.map
