@@ -8,12 +8,12 @@ class ParseState {
         isPanicking = false
     }
 
-    fun panic() {
-        isPanicking = true
-    }
-
-    fun hadErr() {
+    fun markErr() {
         hadErr = true
         panic()
+    }
+
+    private fun panic() {
+        isPanicking = true
     }
 }

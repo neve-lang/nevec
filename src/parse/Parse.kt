@@ -1,6 +1,5 @@
 package parse
 
-import ast.hierarchy.Spanned
 import ast.hierarchy.binop.BinOp
 import ast.hierarchy.binop.Operator
 import ast.hierarchy.decl.Decl
@@ -12,8 +11,6 @@ import ast.hierarchy.stmt.Stmt
 import ast.hierarchy.unop.UnOp
 import err.msg.Msg
 import file.span.Loc
-import lex.isExprStarter
-import lex.isStmtStarter
 import parse.binop.AnyBinOp
 import parse.err.ParseErr
 import parse.state.ParseState
@@ -59,7 +56,7 @@ class Parse(contents: String) {
     private fun constsDecl(): Decl.Consts {
         consume()
 
-        val name = if (hadNewline()) null
+        val scope = if (hadNewline()) null
         else consume(TokKind.ID)?.lexeme
 
         val members = until({ check(TokKind.END) }, {
@@ -76,7 +73,7 @@ class Parse(contents: String) {
         })
 
         consume(TokKind.END)
-        return Decl.Consts(name, members)
+        return Decl.Consts(scope, members)
     }
 
     private fun stmt() = when (kind()) {
@@ -137,7 +134,7 @@ class Parse(contents: String) {
             // using '!!' here because 'op.kind' is defined to be valid
             val operator = Operator.from(op)!!
 
-            val loc = merged(left, right)
+            val loc = (left.loc() + right.loc()).build()
             left = into(AnyBinOp(loc, left, operator, right)).wrap()
         }
 
@@ -152,13 +149,13 @@ class Parse(contents: String) {
         val op = consume()
         val operand = unary()
 
-        val loc = merged(op.loc, operand.loc())
+        val loc = op.loc.tryMerge(with = operand.loc())
         return when (op.kind) {
             TokKind.NOT -> UnOp.Not(operand, loc).wrap()
             TokKind.MINUS -> UnOp.Neg(operand, loc).wrap()
             // this, by definition, shouldn't ever happen--check() restricts our possible types down to TokKind.MINUS
-            // and TokKind.NOT, but Kotlin doesn't see that, so we're doing this silly workaround here.
-            else -> operand
+            // and TokKind.NOT.
+            else -> Expr.Empty(here())
         }
     }
 
@@ -200,7 +197,7 @@ class Parse(contents: String) {
         val expr = expr()
         val to = consume(TokKind.RPAREN)?.loc
 
-        return Expr.Parens(expr, merged(from, to))
+        return Expr.Parens(expr, from.tryMerge(with = to))
     }
 
     private fun interpol(): Interpol {
@@ -215,8 +212,7 @@ class Parse(contents: String) {
         consume(TokKind.INTERPOL_SEP)
         val next = interpol()
 
-        val loc = merged(begin, next.loc())
-
+        val loc = begin.tryMerge(with = next.loc())
         return Interpol.Some(string, expr, next, loc)
     }
 
@@ -236,7 +232,7 @@ class Parse(contents: String) {
 
     private fun emptyTable(leftBracket: Loc): Lit.TableLit {
         val rightBracket = consume(TokKind.RBRACKET)?.loc
-        val loc = merged(leftBracket, rightBracket)
+        val loc = leftBracket.tryMerge(with = rightBracket)
 
         return Lit.TableLit(emptyList(), emptyList(), loc)
     }
@@ -258,29 +254,16 @@ class Parse(contents: String) {
         }
 
         val rightBracket = consume(TokKind.RBRACKET)?.loc
-        val loc = merged(leftBracket, rightBracket)
+        val loc = leftBracket.tryMerge(with = rightBracket)
 
         return Lit.TableLit(keys, vals, loc)
-    }
-
-    private fun showMsg(msg: Msg) {
-        if (state.isPanicking) {
-            return
-        }
-
-        state.hadErr()
-        msg.print()
     }
 
     private fun sync() {
         state.relax()
 
         while (!isAtEnd()) {
-            if (hadNewline()) {
-                return
-            }
-
-            if (kind().isStmtStarter()) {
+            if (hadNewline() || kind().isStmtStarter()) {
                 return
             }
 
@@ -302,12 +285,13 @@ class Parse(contents: String) {
         showMsg(ParseErr.unexpectedTok(curr(), kind))
     }
 
-    private fun merged(a: Loc?, b: Loc?): Loc {
-        if (a == null || b == null) {
-            return Loc.new()
+    private fun showMsg(msg: Msg) {
+        if (state.isPanicking) {
+            return
         }
 
-        return (a + b).build()
+        state.markErr()
+        msg.print()
     }
 
     private fun consume(kind: TokKind): Tok? {
@@ -335,8 +319,6 @@ class Parse(contents: String) {
     // fun raw_string_of(tok StrTok)
     // with StrTok = Tok where self.kind in [TokKind.Str, TokKind.Interpol]
     private fun stringOf(tok: Tok) = tok.lexeme
-
-    private fun merged(a: Spanned, b: Spanned) = merged(a.loc(), b.loc())
 
     private fun check(vararg kinds: TokKind) = window.check(*kinds)
 
