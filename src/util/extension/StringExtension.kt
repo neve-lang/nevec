@@ -1,6 +1,6 @@
 package util.extension
 
-import java.util.Locale
+import java.util.*
 
 fun String.capitalize() = replaceFirstChar {
     if (it.isLowerCase())
@@ -23,7 +23,21 @@ fun Pair<String, String>.infixWith(what: String) = first + what + second
 
 fun List<String>.indent() = map { "  $it" }
 
-fun List<String>.wrappedIn(begin: String, end: String) = listOf(begin) + this + listOf(end)
+/**
+ * Wraps the first and last elements of the list by respectively:
+ * * Prefixing [first] with the given [begin] argument
+ * * Suffixing [last] with the given [end] argument
+ *
+ * @return a new list with the two new first and last elements modified as described.
+ */
+fun List<String>.wrappedIn(begin: String, end: String): List<String> {
+    val newFirst = first().prefixWith(begin)
+    val newLast = last().suffixWith(end)
+
+    val withoutExtremes = drop(1).take(size - 2)
+
+    return listOf(newFirst) + withoutExtremes + listOf(newLast)
+}
 
 /**
  * Trims the quotes *around* a string.

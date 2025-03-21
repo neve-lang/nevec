@@ -34,10 +34,6 @@ class Parse(contents: String) {
         consume()
     }
 
-    fun hadErr(): Boolean {
-        return state.hadErr
-    }
-
     fun parse(): Program {
         val decls = until(::isAtEnd, ::decl)
 
@@ -240,14 +236,10 @@ class Parse(contents: String) {
     private fun table(leftBracket: Loc, firstKey: Expr): Lit.TableLit {
         val firstVal = expr()
 
-        // val (keys, vals) = Rule(this).whileHas(TokKind.COL)
-        // .consume(::expr).sepBy(TokKind.COL)
-        // .then(TokKind.RBRACKET).take()
-
         val keys = mutableListOf(firstKey)
         val vals = mutableListOf(firstVal)
 
-        while (match(TokKind.COL)) {
+        while (match(TokKind.COMMA)) {
             keys.add(expr())
             consume(TokKind.COL)
             vals.add(expr())
@@ -292,6 +284,10 @@ class Parse(contents: String) {
 
         state.markErr()
         msg.print()
+    }
+
+    private fun hadErr(): Boolean {
+        return state.hadErr
     }
 
     private fun consume(kind: TokKind): Tok? {

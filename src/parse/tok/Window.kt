@@ -13,16 +13,16 @@ class Window(contents: String) {
 
     var curr = Tok.eof()
     private var prev = Tok.eof()
+    private var prevBeforeNewline = Tok.eof()
 
     fun advance(): Tok {
-        prev = curr
-        curr = lex.next()
+        update()
 
         if (curr.isNewline()) {
             return advance()
         }
 
-        return prev
+        return prevBeforeNewline
     }
 
     fun match(vararg kinds: TokKind): Boolean {
@@ -43,4 +43,14 @@ class Window(contents: String) {
     fun here() = curr.loc
 
     fun kind() = curr.kind
+
+    private fun update() {
+        prev = curr
+
+        if (!prev.isOf(TokKind.NEWLINE)) {
+            prevBeforeNewline = prev
+        }
+
+        curr = lex.next()
+    }
 }

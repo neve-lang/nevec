@@ -52,7 +52,12 @@ object Pretty : Visit<Program, String> {
     }
 
     private fun visitConsts(consts: Decl.Consts): List<String> {
-        return consts.consts.map { visitConst(it) }.indent().wrappedIn(begin = "const ${consts.name}", end = "end")
+        return consts.consts.map { visitConst(it) }
+            .indent()
+            .wrappedIn(
+                begin = "const ${consts.name ?: ""}",
+                end = "end"
+            )
     }
 
     private fun visitPrint(print: Stmt.Print): String {

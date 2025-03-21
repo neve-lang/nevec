@@ -31,6 +31,13 @@ class ParseTest {
         assertOkay("\"Hello, #{\"world!\"}  From #{\"Mars!\"}  This message took #{1.5 * 2} minutes to #{\"reach #{\"Earth\"}.\"}\"")
     }
 
+    @Test
+    fun testSix() {
+        assertOkay(
+            "[\"My\": 10, \"Table\": 20, \"Is\": 30, \"Awesome\": 40]"
+        )
+    }
+
     private fun assertOkay(input: String) {
         assertEquals(input, input.parse())
     }

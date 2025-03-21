@@ -25,7 +25,9 @@ class Msg(
         fun builder() = MsgBuilder()
     }
 
-    fun emit(out: Out) {
+    fun print() = emit(Report.OUT)
+
+    private fun emit(out: Out) {
         Write.paintedIn(kind.color).saying(" ").saying(kind.symbol.toString()).saying(" ").then().saying(msg).newline()
             .print(out)
 
@@ -36,6 +38,4 @@ class Msg(
 
         Write.paintedIn(Color.BLUE).saying(" ╰─ ").offset().then().print(out)
     }
-
-    fun print() = emit(Report.OUT)
 }

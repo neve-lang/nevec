@@ -3,6 +3,7 @@ package err.line
 import err.note.Note
 import file.span.Loc
 import file.span.LocBuilder
+import file.span.indexable
 import util.extension.map
 
 /**
@@ -40,9 +41,9 @@ class Suggestion(loc: Loc) {
     }
 
     private fun modify(): String {
-        val (from, to) = fixLoc.extremes().map(UInt::toInt)
+        val (from, to) = fixLoc.extremes().map(UInt::indexable)
 
-        if (from >= fix!!.length) {
+        if (from >= originalLine!!.length) {
             return originalLine + fix!!
         }
 
