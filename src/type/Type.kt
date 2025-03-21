@@ -1,5 +1,6 @@
 package type
 
+import type.hinted.Hinted
 import type.poison.Poison
 import type.prim.Prim
 import type.rec.Rec
@@ -13,6 +14,7 @@ sealed class Type {
     data class RecType(val rec: Rec) : Type()
     data class RefineType(val refine: Refine, val type: Type) : Type()
     data class PoisonedType(val poison: Poison) : Type()
+    data class HintedType(val hinted: Hinted) : Type()
 
     fun isPoisoned() = this is PoisonedType
 
