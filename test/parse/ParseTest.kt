@@ -2,8 +2,6 @@ package parse
 
 import ast.pretty.Pretty
 import file.contents.Src
-import lex.Lex
-import lex.all
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
