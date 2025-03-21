@@ -9,4 +9,4 @@ package util.extension
  * val (begin, end) = loc.extremes().map(UInt::indexable)
  * ```
  */
-fun <A, B> Pair<A, A>.map(to: ((A) -> B)) = Pair(to(this.first), to(this.second))
+fun <From, To> Pair<From, From>.map(to: ((From) -> To)) = Pair(to(first), to(second))
