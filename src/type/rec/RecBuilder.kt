@@ -1,8 +1,9 @@
 package type.rec
 
 import file.module.Module
-import type.Type
-import type.gen.TypeParams
+import type.gen.param.TypeParams
+import type.rec.field.Field
+import type.rec.field.Fields
 
 class RecBuilder {
     private var module: Module? = null
@@ -14,7 +15,7 @@ class RecBuilder {
 
     fun named(name: String) = apply { this.name = name }
 
-    fun fields(vararg pairs: Pair<String, Type>) = apply { this.fields = Fields(*pairs) }
+    fun fields(vararg fields: Field) = apply { this.fields = Fields(*fields) }
 
     fun params(params: TypeParams) = apply { this.params = params }
 

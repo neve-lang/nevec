@@ -1,7 +1,9 @@
 package type.prim
 
-import type.gen.TypeParams
+import type.gen.param.TypeParams
 import type.rec.Rec
+import type.rec.field.Field
+import type.rec.field.Tag
 
 object PreludeTypes {
     private val INT = Rec.prelude("Int").build().wrap().into(PrimKind.INT)
@@ -9,7 +11,7 @@ object PreludeTypes {
     private val BOOL = Rec.prelude("Bool").build().wrap().into(PrimKind.BOOL)
 
     private val STR = Rec.prelude("Str").fields(
-        "len" to INT
+        Field("len", INT, listOf(Tag.ALIEN))
     ).build().wrap().into(PrimKind.STR)
 
     private val TABLE = Rec.prelude("Table").params(

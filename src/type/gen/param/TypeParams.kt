@@ -1,4 +1,4 @@
-package type.gen
+package type.gen.param
 
 class TypeParams(val params: List<TypeParam>) {
     companion object {

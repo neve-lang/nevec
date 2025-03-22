@@ -14,6 +14,7 @@ object PrettyType {
         is Type.RefineType -> prettyRefine(type)
         is Type.RecType -> type.name()
         is Type.PrimType -> type.name()
+        is Type.HintedType -> type.name()
     }
 
     private fun prettyRefine(type: Type.RefineType): String {

@@ -3,7 +3,8 @@ package type.rec
 import file.module.Module
 import type.Type
 import type.WrappedType
-import type.gen.TypeParams
+import type.gen.param.TypeParams
+import type.rec.field.Fields
 
 data class Rec(val module: Module, val name: String, val fields: Fields, val params: TypeParams) : WrappedType {
     companion object {

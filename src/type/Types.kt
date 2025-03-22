@@ -17,6 +17,7 @@ fun Type.moduleName(): String? = when (this) {
     is Type.PrimType -> prim.type.moduleName()
     is Type.RecType -> rec.module.name
     is Type.RefineType -> type.moduleName()
+    is Type.HintedType -> hinted.type.moduleName()
     is Type.PoisonedType -> null
 }
 
@@ -24,5 +25,6 @@ fun Type.name(): String? = when (this) {
     is Type.PrimType -> prim.type.name()
     is Type.RecType -> rec.name
     is Type.RefineType -> type.name()
+    is Type.HintedType -> hinted.type.name()
     is Type.PoisonedType -> null
 }
