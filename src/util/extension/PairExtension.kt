@@ -10,3 +10,5 @@ package util.extension
  * ```
  */
 fun <From, To> Pair<From, From>.map(to: ((From) -> To)) = Pair(to(first), to(second))
+
+fun <T, U> T.zip(with: U) = Pair(this, with)

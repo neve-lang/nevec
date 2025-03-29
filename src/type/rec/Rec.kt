@@ -6,7 +6,9 @@ import type.WrappedType
 import type.gen.param.TypeParams
 import type.rec.field.Fields
 
-data class Rec(val module: Module, val name: String, val fields: Fields, val params: TypeParams) : WrappedType {
+data class Rec(
+    val module: Module, val name: String, val fields: Fields, val params: TypeParams
+) : WrappedType {
     companion object {
         private fun builder() = RecBuilder()
 

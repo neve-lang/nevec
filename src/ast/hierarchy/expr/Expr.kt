@@ -23,7 +23,11 @@ sealed class Expr : Ast, Wrap<Stmt>, Spanned, Typed {
 
     /**
      * Different from an [Access]; the distinction only appears in later compilation stages, after semantic resolving.
-     * It is used to facilitate resolving when building the IR.
+     * It is used to facilitate resolving when building the IR, as Consts aren't stored in the same place as regular
+     * symbols are.
+     *
+     * Right now, only [AccessConst]s are supported.  [Access] nodes will not make it past the semantic resolving phase;
+     * they will all become [AccessConst].
      */
     data class AccessConst(val loc: Loc, val type: Type, val name: String) : Expr()
 
@@ -42,6 +46,10 @@ sealed class Expr : Ast, Wrap<Stmt>, Spanned, Typed {
      * @see parse.Parse.primary
      */
     data class Empty(val loc: Loc, val type: Type = Type.unresolved()) : Expr()
+
+    companion object {
+        fun empty() = Empty(Loc.new())
+    }
 
     override fun wrap() = Stmt.ExprStmt(this)
 

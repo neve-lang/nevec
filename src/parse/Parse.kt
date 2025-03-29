@@ -173,7 +173,7 @@ class Parse(contents: String) {
         TokKind.STR -> strLit().wrap()
         TokKind.INTERPOL -> interpol().wrap()
 
-        else -> Expr.Empty(here()).also { showMsg(ParseErr.expectedExpr(consume())) }
+        else -> Expr.empty().also { showMsg(ParseErr.expectedExpr(consume())) }
     }
 
     private fun intLit(): Lit.IntLit {
