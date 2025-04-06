@@ -1,13 +1,12 @@
 package check.infer
 
-import check.analys.Analys
 import ast.hierarchy.expr.Expr
-import ast.hierarchy.unop.UnOp
 import type.Type
 import visit.Visit
 
 object Infer : Visit<Expr, Type> {
-    override fun visit(what: Expr) = when (what) {
+    override fun visit(what: Expr) = TODO()
+        /*
         is Expr.UnOpExpr -> visitUnOp(what.unOp)
         is Expr.BinOpExpr -> visitBinOp(what.binOp)
         is Expr.LitExpr -> visitLit(what.lit)
@@ -31,4 +30,5 @@ object Infer : Visit<Expr, Type> {
         // NOTE: once we can, replace this with idea sharing checks
         Analys.visit()
     }
+         */
 }

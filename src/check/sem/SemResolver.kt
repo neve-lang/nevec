@@ -6,6 +6,9 @@ import visit.Visit
 
 object SemResolver : Visit<Program, Program> {
     override fun visit(what: Program): Program {
+        TODO()
+    }
+        /*
         return Program(what.decls.map { visitDecl(it) })
     }
 
@@ -17,6 +20,6 @@ object SemResolver : Visit<Program, Program> {
 
     fun visitConst(const: Decl.Const): Decl.Const {
         val expr = visitExpr(const.expr)
-
     }
+         */
 }

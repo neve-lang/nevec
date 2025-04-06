@@ -1,31 +1,25 @@
 package check.analys
 
-import ast.hierarchy.expr.Expr
-import ast.hierarchy.unop.UnOp
 import ast.typeful.TypefulExpr
+import ast.typeful.binop.TypefulBinOp
 import ast.typeful.unop.TypefulUnOp
-import type.chance.Chances
+import chance.Chances
 import visit.Visit
 
 /**
  * The value analysis module.
+ *
+ * Currently on the works--I’m taking a tiny step back from the compiler because the whole “value analysis” problem
+ * turned out to be incredibly more complex than I thought.
  */
-object Analys : Visit<TypefulExpr, Chances?> {
-    override fun visit(what: TypefulExpr): Chances? {
-        return when (what) {
-            is TypefulExpr.UnOpExpr -> visitUnOp(what.unOp)
+object Analys /* : Visit<TypefulExpr, Chances?> */ {
+    private fun visitUnOp(unOp: TypefulUnOp) = when (unOp) {
+        is TypefulUnOp.Neg -> With(unOp).of<Chances.OfNum> {
+            Chances.OfNum(it.chances.map { a -> -a })
         }
-    }
 
-    private fun visitUnOp(unOp: TypefulUnOp): Chances? {
-        return when (unOp) {
-            is TypefulUnOp.Neg -> With(unOp.operand.chances).of<Chances.OfNum> {
-                Chances.OfNum(it.chances.map { a -> -a })
-            }
-
-            is UnOp.Not -> With(type).of<Chances.OfBool> {
-                Chances.OfBool(it.chances.map { a -> !a })
-            }
+        is TypefulUnOp.Not -> With(unOp).of<Chances.OfBool> {
+            Chances.OfBool(it.chances.map { a -> !a })
         }
     }
 }
