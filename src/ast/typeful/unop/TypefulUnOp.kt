@@ -1,14 +1,14 @@
 package ast.typeful.unop
 
-import ast.typeful.FirstType
+import ast.typeful.Typeful
 import file.span.Loc
-import type.chance.Chance
+import type.chance.ChanceWrapper
 
-sealed class TypefulUnOp : FirstType {
-    data class Not(val operand: Chance, val loc: Loc) : TypefulUnOp()
-    data class Neg(val operand: Chance, val loc: Loc) : TypefulUnOp()
+sealed class TypefulUnOp : Typeful {
+    data class Not(val operand: ChanceWrapper, val loc: Loc) : TypefulUnOp()
+    data class Neg(val operand: ChanceWrapper, val loc: Loc) : TypefulUnOp()
 
-    override fun firstType() = when (this) {
+    override fun patientType() = when (this) {
         is Not -> operand
         is Neg -> operand
     }
