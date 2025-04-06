@@ -1,4 +1,4 @@
-package type.chance.repr.num
+package chance.repr.num
 
 /**
  * An edge in a [NumRange].  An edge may be:
@@ -28,8 +28,33 @@ sealed class Edge {
         is Excl -> value > than
     }
 
+    fun isLarger(than: Edge) = roughValue() >= than.roughValue()
+
+    fun isSmaller(than: Double) = when (this) {
+        is Incl -> value <= than
+        is Excl -> value < than
+    }
+
+    fun isSmaller(than: Edge) = roughValue() <= than.roughValue()
+
+    private fun roughValue() = when (this) {
+        is Incl -> value
+
+        // -0.00000000001 to approximate the exclusion
+        // not using Double.MIN_VALUE because
+        // a < a - Double.MIN_VALUE
+        // evaluates to false for some reason.
+        is Excl -> value - 0.00000000001
+    }
+
     fun map(to: (Double) -> Double) = when (this) {
         is Incl -> Incl(to(value))
         is Excl -> Excl(to(value))
+    }
+
+    override fun equals(other: Any?) = when {
+        this is Incl && other is Incl -> value == other.value
+        this is Excl && other is Excl -> value == other.value
+        else -> false
     }
 }

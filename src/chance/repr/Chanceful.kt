@@ -1,4 +1,4 @@
-package type.chance.repr
+package chance.repr
 
 /**
  * Mandatory operations for any kind of chance representation.

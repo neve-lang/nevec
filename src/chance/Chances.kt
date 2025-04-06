@@ -1,7 +1,8 @@
-package type.chance
+package chance
 
-import type.chance.repr.ChanceRepr
-import type.chance.repr.num.NumChances
+import chance.repr.bool.BoolChances
+import chance.repr.num.NumChances
+import chance.repr.str.StrChances
 
 /**
  * Chances represent a type's *possible values*.  Their possible value representation depends on the type being
@@ -13,8 +14,8 @@ import type.chance.repr.num.NumChances
  */
 sealed class Chances {
     data class OfNum(val chances: NumChances) : Chances()
-    data class OfStr(val chances: ChanceRepr<String>) : Chances()
-    data class OfBool(val chances: ChanceRepr<Boolean>) : Chances()
+    data class OfStr(val chances: StrChances) : Chances()
+    data class OfBool(val chances: BoolChances) : Chances()
     // TODO: add chance representation for tables
 
     data object OfNil : Chances()
