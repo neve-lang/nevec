@@ -2,7 +2,6 @@ package type.pretty
 
 import ast.pretty.Pretty
 import type.Type
-import type.name
 import util.extension.capitalize
 
 /**
@@ -15,6 +14,9 @@ object PrettyType {
         is Type.RecType -> type.name()
         is Type.PrimType -> type.name()
         is Type.HintedType -> type.name()
+        is Type.ChanceType -> TODO()
+        is Type.FreeType -> TODO()
+        is Type.GenType -> TODO()
     }
 
     private fun prettyRefine(type: Type.RefineType): String {

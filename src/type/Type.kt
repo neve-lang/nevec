@@ -1,7 +1,6 @@
 package type
 
-import type.chance.Chance
-import type.chance.Chances
+import type.chance.ChanceWrapper
 import type.gen.Free
 import type.gen.Gen
 import type.hinted.Hinted
@@ -22,7 +21,7 @@ sealed class Type {
 
     data class RefineType(val refine: Refine, val type: Type) : Type()
 
-    data class ChanceType(val chance: Chance) : Type()
+    data class ChanceType(val chance: ChanceWrapper) : Type()
 
     data class PoisonedType(val poison: Poison) : Type()
 
@@ -62,7 +61,10 @@ sealed class Type {
 
     fun fullName() = moduleName() + "." + name()
 
-    override fun equals(other: Any?) = other is Type && fullName() == other.fullName()
+    override fun equals(other: Any?) = when {
+        this is ChanceType && other is ChanceType -> chance == other.chance
+        else -> other is Type && fullName() == other.fullName()
+    }
 
     override fun hashCode() = javaClass.hashCode()
 }
