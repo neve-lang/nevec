@@ -11,4 +11,6 @@ package util.extension
  */
 fun <From, To> Pair<From, From>.map(to: ((From) -> To)) = Pair(to(first), to(second))
 
-fun <T, U> T.zip(with: U) = Pair(this, with)
+fun <A> Pair<A, A>.all(predicate: (A) -> Boolean) = predicate(first) && predicate(second)
+
+fun <A, B> Pair<A, B>.each(predicate: (A, B) -> Boolean) = predicate(first, second)
