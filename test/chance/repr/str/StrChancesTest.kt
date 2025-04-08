@@ -2,6 +2,7 @@ package chance.repr.str
 
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.TestTemplate
 
 class StrChancesTest {
     companion object {
@@ -29,6 +30,21 @@ class StrChancesTest {
         assertEquals(
             daysOfTheWeek(),
             daysOfTheWeek()
+        )
+    }
+
+    @Test
+    fun testFive() {
+        assertNotEquals(
+            StrChances.Every,
+            daysOfTheWeek()
+        )
+    }
+
+    @Test
+    fun testSix() {
+        assertTrue(
+            StrChances.Every includes "Monday"
         )
     }
 }
