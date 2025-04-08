@@ -13,7 +13,7 @@ data class NumChances(val chances: List<NumRange>) : Chanceful<Double> {
         fun of(range: NumRange) = NumChances(listOf(range))
     }
 
-    infix fun includes(some: Double) = chances.any { it.includes(some) }
+    override infix fun includes(some: Double) = chances.any { it.includes(some) }
 
     infix fun includes(some: NumChances) = chances.any { a -> some.chances.all { b -> a.includes(b) } }
 

@@ -18,5 +18,7 @@ enum class BoolChances : Chanceful<Boolean> {
 
     fun into() = this == ALWAYS_TRUE
 
+    override infix fun includes(some: Boolean) = this == from(some)
+
     override fun map(to: (Boolean) -> Boolean) = BoolChances.from(to(into()))
 }
