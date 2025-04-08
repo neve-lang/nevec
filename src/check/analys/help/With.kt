@@ -1,4 +1,4 @@
-package check.analys
+package check.analys.help
 
 import ast.typeful.Typeful
 import chance.Chances
