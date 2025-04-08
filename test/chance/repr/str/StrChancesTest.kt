@@ -2,7 +2,6 @@ package chance.repr.str
 
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.TestTemplate
 
 class StrChancesTest {
     companion object {

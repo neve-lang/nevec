@@ -20,4 +20,6 @@ data class NumChances(val chances: List<NumRange>) : Chanceful<Double> {
     override fun map(to: (Double) -> Double) = NumChances(chances.map { it.map(to) })
 
     override fun equals(other: Any?) = other is NumChances && chances == other.chances
+
+    override fun hashCode() = chances.hashCode()
 }
