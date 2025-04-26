@@ -1,6 +1,5 @@
 package check.sem
 
-import ast.hierarchy.decl.Decl
 import ast.hierarchy.program.Program
 import visit.Visit
 

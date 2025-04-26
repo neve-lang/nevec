@@ -11,6 +11,9 @@ import type.Type
  * @property table The table storing the types mapped by their full-qualified names.
  */
 data class TypeTable(val table: HashMap<String, Type> = hashMapOf()) {
+    /**
+     * Registers [type] into the type table.
+     */
     fun register(type: Type) {
         table[type.named()] = type
     }
