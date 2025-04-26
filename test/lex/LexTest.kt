@@ -1,6 +1,5 @@
 package lex
 
-import err.report.Report
 import file.contents.Src
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertEquals

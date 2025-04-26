@@ -1,6 +1,6 @@
 package parse
 
-import ast.pretty.Pretty
+import pretty.Pretty
 import file.contents.Src
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test

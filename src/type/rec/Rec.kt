@@ -1,21 +1,26 @@
 package type.rec
 
 import file.module.Module
-import type.Type
+import type.NamedType
+import type.kind.TypeKind
 import type.WrappedType
 import type.gen.param.TypeParams
 import type.rec.field.Fields
 
 data class Rec(
     val module: Module, val name: String, val fields: Fields, val params: TypeParams
-) : WrappedType {
+) : WrappedType, NamedType {
     companion object {
-        private fun builder() = RecBuilder()
-
-        fun prelude(name: String) = builder().from(Module.prelude()).named(name)
+        fun builder(): RecBuilder {
+            return RecBuilder()
+        }
     }
 
-    override fun wrap(): Type {
-        return Type.RecType(this)
+    override fun wrap(): TypeKind {
+        return TypeKind.OfRec(this)
+    }
+
+    override fun named(): String {
+        return name
     }
 }

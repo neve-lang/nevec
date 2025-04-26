@@ -16,6 +16,9 @@ import tok.TokKind
 class Relex {
     private var peephole = mutableListOf<Tok>()
 
+    /**
+     * Consumes a [predicate] twice, then returns a single [Tok].
+     */
     fun consume(predicate: () -> Tok): Tok {
         pushUntil(::canFlush, predicate)
         return flush()
@@ -51,5 +54,7 @@ class Relex {
         else -> null
     }
 
-    private fun canFlush() = peephole.size == 2
+    private fun canFlush(): Boolean {
+        return peephole.size == 2
+    }
 }

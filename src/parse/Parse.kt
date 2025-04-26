@@ -1,14 +1,14 @@
 package parse
 
 import ast.hierarchy.binop.BinOp
-import ast.hierarchy.binop.Operator
-import ast.hierarchy.decl.Decl
+import ast.hierarchy.binop.operator.Operator
 import ast.hierarchy.expr.Expr
 import ast.hierarchy.interpol.Interpol
 import ast.hierarchy.lit.Lit
 import ast.hierarchy.program.Program
 import ast.hierarchy.stmt.Stmt
 import ast.hierarchy.unop.UnOp
+import ast.info.Info
 import err.msg.Msg
 import file.span.Loc
 import parse.binop.AnyBinOp
@@ -22,7 +22,7 @@ import util.extension.until
 /**
  * Takes the source code and parses it.
  *
- * No prior lexical analysis is required--the Lexer works alongside the Parser.
+ * No prior lexical analysis is required — the Lexer works alongside the Parser.
  *
  * @param contents The contents of the source file.
  */
@@ -34,6 +34,15 @@ class Parse(contents: String) {
         consume()
     }
 
+    /**
+     * Parses the source contents given.
+     *
+     * @return A regular [Program] node if no errors occurred, an empty [Program] node otherwise.
+     *
+     * Note that this behavior may be updated in the future.
+     *
+     * @see Program
+     */
     fun parse(): Program {
         val decls = until(::isAtEnd, ::decl)
 
@@ -45,31 +54,7 @@ class Parse(contents: String) {
     }
 
     private fun decl() = when (kind()) {
-        TokKind.CONST -> constsDecl()
         else -> stmt().wrap()
-    }
-
-    private fun constsDecl(): Decl.Consts {
-        consume()
-
-        val scope = if (hadNewline()) null
-        else consume(TokKind.ID)?.lexeme
-
-        val members = until({ check(TokKind.END) }, {
-            val name = consume(TokKind.ID)
-            val loc = name?.loc ?: Loc.new()
-            val lexeme = name?.lexeme ?: ""
-
-            // TODO: implement type hinting: `Thing Int`
-            expect(TokKind.ASSIGN)
-
-            val expr = expr()
-
-            Decl.Const(lexeme, expr, loc, expr.type())
-        })
-
-        consume(TokKind.END)
-        return Decl.Consts(scope, members)
     }
 
     private fun stmt() = when (kind()) {
@@ -81,7 +66,7 @@ class Parse(contents: String) {
         val tok = consume()
         val expr = expr()
 
-        return Stmt.Print(tok.loc, expr)
+        return Stmt.Print(expr, tok.loc)
     }
 
     private fun expr(): Expr {
@@ -131,7 +116,7 @@ class Parse(contents: String) {
             val operator = Operator.from(op)!!
 
             val loc = (left.loc() + right.loc()).build()
-            left = into(AnyBinOp(loc, left, operator, right)).wrap()
+            left = into(AnyBinOp(left, operator, right, Info.at(loc))).wrap()
         }
 
         return left
@@ -146,9 +131,10 @@ class Parse(contents: String) {
         val operand = unary()
 
         val loc = op.loc.tryMerge(with = operand.loc())
+
         return when (op.kind) {
-            TokKind.NOT -> UnOp.Not(operand, loc).wrap()
-            TokKind.MINUS -> UnOp.Neg(operand, loc).wrap()
+            TokKind.NOT -> UnOp.Not(operand, Info.at(loc)).wrap()
+            TokKind.MINUS -> UnOp.Neg(operand, Info.at(loc)).wrap()
             // this, by definition, shouldn't ever happen--check() restricts our possible types down to TokKind.MINUS
             // and TokKind.NOT.
             else -> Expr.Empty(here())
@@ -162,7 +148,6 @@ class Parse(contents: String) {
     private fun primary() = when (kind()) {
         TokKind.LPAREN -> grouped()
 
-        TokKind.ID -> Expr.Access(consume())
         TokKind.TRUE -> Lit.BoolLit(true, consumeHere()).wrap()
         TokKind.FALSE -> Lit.BoolLit(false, consumeHere()).wrap()
         TokKind.NIL -> Lit.NilLit(consumeHere()).wrap()
@@ -173,19 +158,21 @@ class Parse(contents: String) {
         TokKind.STR -> strLit().wrap()
         TokKind.INTERPOL -> interpol().wrap()
 
+        TokKind.ID -> consume().let { Expr.Access(it.lexeme, Info.at(it.loc)) }
+
         else -> Expr.empty().also { showMsg(ParseErr.expectedExpr(consume())) }
     }
 
     private fun intLit(): Lit.IntLit {
-        return consume().let { Lit.IntLit(value = it.lexeme.toInt(), it.loc) }
+        return consume().let { Lit.IntLit(value = it.lexeme.toInt(), Info.at(it.loc)) }
     }
 
     private fun floatLit(): Lit.FloatLit {
-        return consume().let { Lit.FloatLit(value = it.lexeme.toFloat(), it.loc) }
+        return consume().let { Lit.FloatLit(value = it.lexeme.toFloat(), Info.at(it.loc)) }
     }
 
     private fun strLit(): Lit.StrLit {
-        return consume().let { Lit.StrLit(value = stringOf(it), it.loc) }
+        return consume().let { Lit.StrLit(value = stringOf(it), Info.at(it.loc)) }
     }
 
     private fun grouped(): Expr.Parens {
@@ -193,7 +180,7 @@ class Parse(contents: String) {
         val expr = expr()
         val to = consume(TokKind.RPAREN)?.loc
 
-        return Expr.Parens(expr, from.tryMerge(with = to))
+        return Expr.Parens(expr, Info.at(from.tryMerge(with = to)))
     }
 
     private fun interpol(): Interpol {
@@ -201,7 +188,7 @@ class Parse(contents: String) {
             return Interpol.End(stringOf(curr()), consumeHere())
         }
 
-        val begin = here()
+        val begin = here().loc()
         val string = stringOf(consume())
 
         val expr = expr()
@@ -209,7 +196,7 @@ class Parse(contents: String) {
         val next = interpol()
 
         val loc = begin.tryMerge(with = next.loc())
-        return Interpol.Some(string, expr, next, loc)
+        return Interpol.Some(string, expr, next, Info.at(loc))
     }
 
     private fun listOrTable(): Lit {
@@ -230,7 +217,7 @@ class Parse(contents: String) {
         val rightBracket = consume(TokKind.RBRACKET)?.loc
         val loc = leftBracket.tryMerge(with = rightBracket)
 
-        return Lit.TableLit(emptyList(), emptyList(), loc)
+        return Lit.TableLit(emptyList(), emptyList(), Info.at(loc))
     }
 
     private fun table(leftBracket: Loc, firstKey: Expr): Lit.TableLit {
@@ -248,7 +235,7 @@ class Parse(contents: String) {
         val rightBracket = consume(TokKind.RBRACKET)?.loc
         val loc = leftBracket.tryMerge(with = rightBracket)
 
-        return Lit.TableLit(keys, vals, loc)
+        return Lit.TableLit(keys, vals, Info.at(loc))
     }
 
     private fun sync() {
@@ -270,7 +257,7 @@ class Parse(contents: String) {
         }
 
         if (check(TokKind.EOF, TokKind.NEWLINE)) {
-            showMsg(ParseErr.expectedTok(here(), kind))
+            showMsg(ParseErr.expectedTok(here().loc(), kind))
             return
         }
 
@@ -309,26 +296,50 @@ class Parse(contents: String) {
         return tok
     }
 
-    private fun funCallWithoutParens() = kind().isExprStarter() && !hadNewline()
+    private fun funCallWithoutParens(): Boolean {
+        return kind().isExprStarter() && !hadNewline()
+    }
 
     // in Neve, we would have an additional restriction here:
-    // fun raw_string_of(tok StrTok)
+    // fun string_of(tok StrTok)
     // with StrTok = Tok where self.kind in [TokKind.Str, TokKind.Interpol]
-    private fun stringOf(tok: Tok) = tok.lexeme
+    private fun stringOf(tok: Tok): String {
+        return tok.lexeme
+    }
 
-    private fun check(vararg kinds: TokKind) = window.check(*kinds)
+    private fun check(vararg kinds: TokKind): Boolean {
+        return window.check(*kinds)
+    }
 
-    private fun match(vararg kinds: TokKind) = window.match(*kinds)
+    private fun match(vararg kinds: TokKind): Boolean {
+        return window.match(*kinds)
+    }
 
-    private fun consumeHere() = here().also { consume() }
+    private fun consumeHere(): Info {
+        return here().also { consume() }
+    }
 
-    private fun hadNewline() = window.hadNewline()
+    private fun hadNewline(): Boolean {
+        return window.hadNewline()
+    }
 
-    private fun isAtEnd() = window.isAtEnd()
+    private fun isAtEnd(): Boolean {
+        return window.isAtEnd()
+    }
 
-    private fun curr() = window.curr
+    private fun curr(): Tok {
+        return window.curr
+    }
 
-    private fun here() = window.here()
+    private fun here(expr: Expr): Info {
+        return Info(window.here(), expr.type())
+    }
 
-    private fun kind() = window.kind()
+    private fun here(): Info {
+        return Info.at(window.here())
+    }
+
+    private fun kind(): TokKind {
+        return window.kind()
+    }
 }

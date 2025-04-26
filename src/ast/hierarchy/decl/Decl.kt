@@ -3,34 +3,16 @@ package ast.hierarchy.decl
 import ast.hierarchy.Ast
 import ast.hierarchy.expr.Expr
 import ast.hierarchy.stmt.Stmt
-import file.span.Loc
-import type.Type
+import ast.info.Info
 
 /**
  * This sealed class denotes all kinds of supported Neve declarations so far.
  */
 sealed class Decl : Ast {
     /**
-     * A single constant declaration in [Consts].
+     * Wrapper around a [Stmt].
      *
-     * ```
-     * const Math
-     *   Pi = 3.14 # <-- this would be a Const.
-     * end
-     * ```
+     * @see Stmt
      */
-    data class Const(val name: String, val expr: Expr, val loc: Loc, val type: Type) : Decl()
-
-    /**
-     * A set of [Const] declarations.
-     *
-     * ```
-     * const Math
-     *   Pi = 3.14
-     * end
-     * ```
-     */
-    data class Consts(val name: String?, val consts: List<Const>) : Decl()
-
-    data class StmtDecl(val stmt: Stmt) : Decl()
+    data class OfStmt(val stmt: Stmt) : Decl()
 }

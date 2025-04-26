@@ -34,9 +34,37 @@ enum class TokKind {
 
     NEWLINE, ERR, EOF;
 
-    fun isStmtStarter() = isInBetween(ELSE, WHILE)
+    /**
+     * @return whether `this` kind could be a token that starts a statement.
+     */
+    fun isStmtStarter(): Boolean {
+        return isInBetween(ELSE, WHILE)
+    }
 
-    fun isExprStarter() = isInBetween(LPAREN, WITH)
+    /**
+     * @return whether `this` kind could be a token that starts an expression.
+     */
+    fun isExprStarter(): Boolean {
+        return isInBetween(LPAREN, WITH)
+    }
 
-    fun isInBetween(min: TokKind, max: TokKind) = ordinal >= min.ordinal && ordinal <= max.ordinal
+    /**
+     * @return whether [ordinal] is between the ordinals of [min] and [max], **inclusive**.
+     */
+    fun isInBetween(min: TokKind, max: TokKind): Boolean {
+        return ordinal >= min.ordinal && ordinal <= max.ordinal
+    }
+
+    /**
+     * Often used when converting [TokKinds][TokKind] to other kinds of enums whose entries can be
+     * mapped to [TokKind], when the [TokKind] is clamped (i.e.
+     * [ArithOperator][ast.hierarchy.binop.operator.ArithOperator]).
+     *
+     * @param kind The [TokKind] whose [ordinal] should be used to clamp.
+     *
+     * @return `this` [ordinal] minus the ordinal of [kind].
+     */
+    fun clampedFrom(kind: TokKind): Int {
+        return ordinal - kind.ordinal
+    }
 }

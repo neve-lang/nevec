@@ -11,18 +11,35 @@ class RecBuilder {
     private var fields: Fields? = null
     private var params: TypeParams? = null
 
-    fun from(module: Module) = apply { this.module = module }
+    fun prelude(name: String): RecBuilder {
+        return from(Module.PRELUDE).named(name)
+    }
 
-    fun named(name: String) = apply { this.name = name }
+    fun from(module: Module): RecBuilder {
+        return apply { this.module = module }
+    }
 
-    fun fields(vararg fields: Field) = apply { this.fields = Fields(*fields) }
+    fun named(name: String): RecBuilder {
+        return apply { this.name = name }
+    }
 
-    fun params(params: TypeParams) = apply { this.params = params }
+    fun fields(vararg fields: Field): RecBuilder {
+        return apply { this.fields = Fields(*fields) }
+    }
+
+    fun params(params: TypeParams): RecBuilder {
+        return apply { this.params = params }
+    }
 
     fun build(): Rec {
         require(module != null) { "A module must be provided" }
         require(name != null) { "A name must be provided" }
 
-        return Rec(module!!, name!!, fields ?: Fields(), params ?: TypeParams.none())
+        return Rec(
+            module!!,
+            name!!,
+            fields ?: Fields(),
+            params ?: TypeParams.none()
+        )
     }
 }

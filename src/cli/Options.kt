@@ -17,6 +17,11 @@ enum class Options {
             "--no-opt" to NO_OPT
         )
 
-        fun from(string: String) = MAP[string]
+        /**
+         * @return An [Options] variant from [string] if it’s a valid option, `null` otherwise.
+         */
+        fun from(string: String): Options? {
+            return MAP[string]
+        }
     }
 }

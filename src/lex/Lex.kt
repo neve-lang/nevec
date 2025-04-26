@@ -108,7 +108,7 @@ class Lex(contents: String) {
     private fun endInterpol(): Tok {
         advance()
 
-        if (!state.inInterpol()) {
+        if (!state.isInInterpol()) {
             return err("'}' outside string interpolation")
         }
 
@@ -140,18 +140,18 @@ class Lex(contents: String) {
     private fun id(): Tok {
         takeWhile { isOnAlpha() }
 
-        val kind = Toks.findKeyword(lexeme()) ?: TokKind.ID
+        val kind = Match.findKeyword(lexeme()) ?: TokKind.ID
         return newTok(kind)
     }
 
-    private fun simpleTok(len: Int = Toks.MAX_TOK_LEN): Tok {
+    private fun simpleTok(len: Int = Match.MAX_TOK_LEN): Tok {
         if (len == 0) {
             advance()
             return err("invalid character")
         }
 
         val peephole = peek(len) ?: return simpleTok(len - 1)
-        val kind = Toks.findTok(peephole) ?: return simpleTok(len - 1)
+        val kind = Match.findTok(peephole) ?: return simpleTok(len - 1)
 
         capture(len)
         return newTok(kind)

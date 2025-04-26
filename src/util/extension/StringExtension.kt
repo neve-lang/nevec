@@ -2,31 +2,74 @@ package util.extension
 
 import java.util.*
 
-fun String.capitalize() = replaceFirstChar {
-    if (it.isLowerCase())
-        it.titlecase(Locale.getDefault())
-    else
-        it.toString()
+/**
+ * @return [this] with the first char capitalized.
+ */
+fun String.capitalize(): String {
+    return replaceFirstChar {
+        if (it.isLowerCase())
+            it.titlecase(Locale.getDefault())
+        else
+            it.toString()
+    }
 }
 
-fun String.prefixWith(what: String) = "$what$this"
+/**
+ * @return [this] prefixed with [what].
+ */
+fun String.prefixWith(what: String): String {
+    return "$what$this"
+}
 
-fun String.suffixWith(what: String) = "$this$what"
+/**
+ * @return [this] suffixed with [what].
+ */
+fun String.suffixWith(what: String): String {
+    return "$this$what"
+}
 
-fun String.wrappedIn(begin: String, end: String) = prefixWith(begin).suffixWith(end)
+/**
+ * @param begin The prefix to be applied.
+ * @param end The suffix to be applied.
+ *
+ * @return [this] prefixed with [begin] and suffixed with [end].
+ */
+fun String.wrappedIn(begin: String, end: String): String {
+    return prefixWith(begin).suffixWith(end)
+}
 
-fun String.wrappedInQuotes() = wrappedIn("\"", "\"")
+/**
+ * @return [this] prefixed and suffixed with `"` characters.
+ */
+fun String.wrappedInQuotes(): String {
+    return wrappedIn("\"", "\"")
+}
 
-fun String.parenthesized() = wrappedIn("(", ")")
+/**
+ * @return [this] prefixed and suffixed with `(` and `)` characters, respectively.
+ */
+fun String.parenthesized(): String {
+    return wrappedIn("(", ")")
+}
 
-fun Pair<String, String>.infixWith(what: String) = first + what + second
+/**
+ * @return Both members of the [Pair] of [String] concatenated, with [what] in between them.
+ */
+fun Pair<String, String>.infixWith(what: String): String {
+    return first + what + second
+}
 
-fun List<String>.indent() = map { "  $it" }
+/**
+ * @return [this] with each element of the list prefixed with two spaces.
+ */
+fun List<String>.indent(): List<String> {
+    return map { it.prefixWith("  ") }
+}
 
 /**
  * Wraps the first and last elements of the list by respectively:
- * * Prefixing [first] with the given [begin] argument
- * * Suffixing [last] with the given [end] argument
+ * - Prefixing [first] with the given [begin] argument
+ * - Suffixing [last] with the given [end] argument
  *
  * @return a new list with the two new first and last elements modified as described.
  */
@@ -68,4 +111,9 @@ fun String.trimQuotesAround(): String {
     return substring(begin..end)
 }
 
-fun String.isIdentityWithQuotes() = length <= 2 && filterNot { it == '"' }.isEmpty()
+/**
+ * @return whether `this` is equal to an empty string with quotes: i.e. `\"\"`
+ */
+fun String.isIdentityWithQuotes(): Boolean {
+    return length <= 2 && filterNot { it == '"' }.isEmpty()
+}

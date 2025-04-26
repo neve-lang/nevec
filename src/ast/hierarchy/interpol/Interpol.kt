@@ -1,12 +1,13 @@
 package ast.hierarchy.interpol
 
 import ast.hierarchy.Ast
-import ast.hierarchy.Spanned
-import ast.hierarchy.Typed
+import ast.info.Spanned
+import ast.info.Typed
 import ast.hierarchy.Wrap
 import ast.hierarchy.expr.Expr
+import ast.info.Info
 import file.span.Loc
-import type.Type
+import type.kind.TypeKind
 
 /**
  * A union-like sealed class to denote the type of each component of a string interpolation expression.
@@ -33,7 +34,7 @@ sealed class Interpol : Ast, Wrap<Expr>, Spanned, Typed {
      * the node of a linked-list.
      */
     data class Some(
-        val string: String, val expr: Expr, val next: Interpol, val loc: Loc, val type: Type = Type.unresolved()
+        val string: String, val expr: Expr, val next: Interpol, val info: Info
     ) : Interpol()
 
     /**
@@ -47,17 +48,19 @@ sealed class Interpol : Ast, Wrap<Expr>, Spanned, Typed {
      *
      * `End`'s [string] will simply be an empty one.
      */
-    data class End(val string: String, val loc: Loc, val type: Type = Type.unresolved()) : Interpol()
+    data class End(val string: String, val info: Info) : Interpol()
 
-    override fun wrap() = Expr.InterpolExpr(this)
+    override fun wrap(): Expr.OfInterpol {
+        return Expr.OfInterpol(this)
+    }
 
     override fun loc() = when (this) {
-        is Some -> loc
-        is End -> loc
+        is Some -> info.loc()
+        is End -> info.loc()
     }
 
     override fun type() = when (this) {
-        is Some -> type
-        is End -> type
+        is Some -> info.type()
+        is End -> info.type()
     }
 }

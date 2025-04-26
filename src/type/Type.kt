@@ -1,70 +1,46 @@
 package type
 
-import type.chance.ChanceWrapper
-import type.gen.Free
-import type.gen.Gen
-import type.hinted.Hinted
-import type.poison.Poison
-import type.prim.Prim
-import type.rec.Rec
-import type.refine.Refine
+import domain.Domain
+import type.kind.TypeKind
 
 /**
- * Represents all kinds of types in the Neve compiler.
+ * Represents a type in the Neve compiler.
+ *
+ * Unlike [TypeKind], this representation includes a [Domain], which serves to represent
+ * each individual type’s **domain of possible values**.
+ *
+ * [Types][Type] may be unique to every expression and symbol, whereas [TypeKind] represent a
+ * type with no domain representation attached to them.
+ *
+ * It is worth noting, however, that the [type table][type.table.TypeTable] does not store
+ * named types as [TypeKinds][TypeKind], but rather as [Type], because refinement types
+ * need to be registered too.
+ *
+ * @property kind The underlying type’s [TypeKind].
+ * @property domain The type’s domain of possible values.
+ *
+ * @see TypeKind
+ * @see type.table.TypeTable
+ * @see Domain
  */
-sealed class Type {
-    data class PrimType(val prim: Prim) : Type()
-    data class RecType(val rec: Rec) : Type()
-    data class HintedType(val hinted: Hinted) : Type()
-    data class GenType(val gen: Gen) : Type()
-    data class FreeType(val free: Free) : Type()
-
-    data class RefineType(val refine: Refine, val type: Type) : Type()
-
-    data class ChanceType(val chance: ChanceWrapper) : Type()
-
-    data class PoisonedType(val poison: Poison) : Type()
-
+data class Type(val kind: TypeKind, val domain: Domain) : NamedType {
     companion object {
-        fun unresolved() = PoisonedType(Poison.UNRESOLVED)
+        /**
+         * @return A [Type] with [kind] of `OfPoison(Poison.UNRESOLVED)` and [domain] of [Domain.Undefined].
+         */
+        fun unresolved(): Type {
+            return Type(TypeKind.unresolved(), Domain.Undefined)
+        }
 
-        fun unknown() = PoisonedType(Poison.UNKNOWN)
+        /**
+         * @return A [Type] with [kind] of `OfPoison(Poison.UNKNOWN)` and [domain] of [Domain.Undefined].
+         */
+        fun unknown(): Type {
+            return Type(TypeKind.unknown(), Domain.Undefined)
+        }
     }
 
-    fun isPoisoned() = this is PoisonedType
-
-    fun isFree() = this is FreeType
-
-    fun name(): String? = when (this) {
-        is RecType -> rec.name
-        is PrimType -> prim.type.name()
-        is RefineType -> type.name()
-        is HintedType -> hinted.type.name()
-        is GenType -> gen.type.name()
-        is ChanceType -> chance.type.name()
-
-        is FreeType -> null
-        is PoisonedType -> null
+    override fun named(): String {
+        return kind.named()
     }
-
-    fun moduleName(): String? = when (this) {
-        is RecType -> rec.module.name
-        is PrimType -> prim.type.moduleName()
-        is RefineType -> type.moduleName()
-        is HintedType -> hinted.type.moduleName()
-        is GenType -> gen.type.moduleName()
-        is ChanceType ->  chance.type.moduleName()
-
-        is FreeType -> null
-        is PoisonedType -> null
-    }
-
-    fun fullName() = moduleName() + "." + name()
-
-    override fun equals(other: Any?) = when {
-        this is ChanceType && other is ChanceType -> chance == other.chance
-        else -> other is Type && fullName() == other.fullName()
-    }
-
-    override fun hashCode() = javaClass.hashCode()
 }

@@ -1,5 +1,6 @@
 package parse.tok
 
+import file.span.Loc
 import lex.Lex
 import tok.Tok
 import tok.TokKind
@@ -7,14 +8,24 @@ import tok.TokKind
 /**
  * Works just like a sliding window for the Parser, keeping track of a [curr] and [prev] token that get updated
  * every [advance] call, using [Lex].
+ *
+ * @see Lex
  */
 class Window(contents: String) {
     private val lex = Lex(contents)
 
+    /**
+     * The current [Tok].
+     */
     var curr = Tok.eof()
+
     private var prev = Tok.eof()
     private var prevBeforeNewline = Tok.eof()
 
+    /**
+     * Updates the current [Tok] and returns the previous one.  It skips [TokKind.NEWLINE] tokens
+     * by recursively calling [advance] when it encounters one.
+     */
     fun advance(): Tok {
         update()
 
@@ -25,6 +36,11 @@ class Window(contents: String) {
         return prevBeforeNewline
     }
 
+    /**
+     * **Advances** if [curr]’s kind matches one of [kinds].
+     *
+     * @return whether [curr]’s kind matches one of [kinds].
+     */
     fun match(vararg kinds: TokKind): Boolean {
         if (check(*kinds)) {
             advance()
@@ -34,15 +50,39 @@ class Window(contents: String) {
         return false
     }
 
-    fun check(vararg kinds: TokKind) = kinds.contains(kind())
+    /**
+     * @return whether [curr]’s kind matches one of [kinds].
+     */
+    fun check(vararg kinds: TokKind): Boolean {
+        return kinds.contains(kind())
+    }
 
-    fun hadNewline() = prev.isNewline()
+    /**
+     * @return whether the previous [TokKind] was a newline.
+     */
+    fun hadNewline(): Boolean {
+        return prev.isNewline()
+    }
 
-    fun isAtEnd() = curr.isEof()
+    /**
+     * @return whether [curr] is an EOF [Tok].
+     */
+    fun isAtEnd(): Boolean {
+        return curr.isEof()
+    }
 
-    fun here() = curr.loc
+    /**
+     * @return [curr]’s [Loc].
+     */
+    fun here(): Loc {
+        return curr.loc
+    }
 
-    fun kind() = curr.kind
+    /**
+     * @return [curr]’s [TokKind]. */
+    fun kind(): TokKind {
+        return curr.kind
+    }
 
     private fun update() {
         prev = curr

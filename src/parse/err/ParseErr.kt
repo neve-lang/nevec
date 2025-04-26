@@ -12,8 +12,15 @@ import tok.TokKind
 
 /**
  * Provides helper functions for the most common compiler errors that occur during the parsing phase errors.
+ *
+ * @see Msg
  */
 object ParseErr {
+    /**
+     * @param tok The unexpected character error [Tok].
+     *
+     * @return an error message for unexpected character [Toks][Tok].
+     */
     fun unexpectedChar(tok: Tok): Msg {
         val msg = tok.lexeme
         val loc = tok.loc
@@ -23,6 +30,13 @@ object ParseErr {
         ).build()
     }
 
+    /**
+     * @param tok The unexpected [Tok] in question.
+     *
+     * @param expected The actual expected [TokKind].
+     *
+     * @return an error message for unexpected [Toks][Tok].
+     */
     fun unexpectedTok(tok: Tok, expected: TokKind): Msg {
         val loc = tok.loc
 
@@ -41,6 +55,13 @@ object ParseErr {
         ).build()
     }
 
+    /**
+     * @param at The location where the [Tok] didn’t match.
+     *
+     * @param expected The actual expected [TokKind].
+     *
+     * @return an error message for cases where the [Tok] found doesn’t match the expected one.
+     */
     fun expectedTok(at: Loc, expected: TokKind): Msg {
         val valid = expected.lexeme()
 
@@ -54,6 +75,11 @@ object ParseErr {
         ).build()
     }
 
+    /**
+     * @param tok The token where the expression was expected.
+     *
+     * @return an error message for unexpected tokens in places where an expression was expected.
+     */
     fun expectedExpr(tok: Tok): Msg {
         val loc = tok.loc
         val lexeme = tok.display()
@@ -64,6 +90,11 @@ object ParseErr {
     }
 }
 
-fun Tok.display() = kind.display()
+/**
+ * @return
+ */
+fun Tok.display(): String  {
+    return kind.display()
+}
 
 fun TokKind?.display() = this?.lexeme() ?: "end of file"

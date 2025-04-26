@@ -1,7 +1,7 @@
 package ast.hierarchy.stmt
 
 import ast.hierarchy.Ast
-import ast.hierarchy.Spanned
+import ast.info.Spanned
 import ast.hierarchy.Wrap
 import ast.hierarchy.decl.Decl
 import ast.hierarchy.expr.Expr
@@ -11,13 +11,27 @@ import file.span.Loc
  * This sealed class denotes all kinds of supported Neve statements so far.
  */
 sealed class Stmt : Ast, Wrap<Decl>, Spanned {
-    data class Print(val loc: Loc, val expr: Expr) : Stmt()
-    data class ExprStmt(val expr: Expr) : Stmt()
+    /**
+     * A print statement.
+     *
+     * NOTE: Print statements in Neve are only temporary.  They will be removed in future
+     * versions.
+     */
+    data class Print(val expr: Expr, val loc: Loc) : Stmt()
 
-    override fun wrap() = Decl.StmtDecl(this)
+    /**
+     * Wrapper around [Expr] nodes.
+     *
+     * @see Expr
+     */
+    data class OfExpr(val expr: Expr) : Stmt()
+
+    override fun wrap(): Decl.OfStmt {
+        return Decl.OfStmt(this)
+    }
 
     override fun loc() = when (this) {
         is Print -> loc
-        is ExprStmt -> expr.loc()
+        is OfExpr -> expr.loc()
     }
 }

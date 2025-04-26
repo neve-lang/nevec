@@ -13,14 +13,33 @@ data class Loc(
     var len: UInt,
 ) {
     companion object {
-        fun new() = Loc(Module.curr(), 1u, 1u, 0u)
-        fun onLine(number: UInt) = Loc(Module.curr(), 1u, number, 1u)
+        /**
+         * @return a [Loc] on the current [Module], with [col] 1, [line] 1, and [len] 0.
+         *
+         * @see Module
+         */
+        fun new(): Loc {
+            return Loc(Module.curr(), 1u, 1u, 0u)
+        }
+
+        /**
+         * @return a [Loc] on the current [Module], with [col] 1, [line] set to [number], and [len] 0.
+         */
+        fun onLine(number: UInt): Loc {
+            return Loc(Module.curr(), 1u, number, 1u)
+        }
     }
 
+    /**
+     * Increments this [Loc]’s [len].
+     */
     fun advance() {
         len++
     }
 
+    /**
+     * Sets [col] to 0 and increments this [Loc]’s [line].
+     */
     fun newline() {
         col = 0u
         line++
@@ -50,19 +69,49 @@ data class Loc(
         len = 0u
     }
 
-    fun lexeme() = Src.lexeme(at = this)
+    /**
+     * @return the lexeme being represented by this [Loc].
+     */
+    fun lexeme(): String {
+        return Src.lexeme(at = this)
+    }
 
-    fun line() = Src.line(at = this)
+    /**
+     * @return the line being represented by this [Loc].
+     */
+    fun line(): String {
+        return Src.line(at = this)
+    }
 
-    fun end() = col + len
+    /**
+     * @return the column where this [Loc] ends, i.e. `col + len`.
+     */
+    fun end(): UInt {
+        return col + len
+    }
 
-    fun asBuilder() = LocBuilder().col(col).line(line).len(len)
+    /**
+     * @return a [Pair] containing [begin] as its first member, and [end] as its last member.
+     */
+    fun extremes(): Pair<UInt, UInt> {
+        return Pair(begin(), end())
+    }
 
-    fun extremes() = Pair(begin(), end())
+    /**
+     * @return a [LocBuilder] with this [Loc]’s [col], [line], and [len].
+     *
+     * @see LocBuilder
+     */
+    fun asBuilder(): LocBuilder {
+        return LocBuilder().col(col).line(line).len(len)
+    }
 
-    fun copy() = asBuilder().build()
-
-    override fun toString() = "$line:$col"
+    /**
+     * @return an exact copy of this [Loc].
+     */
+    fun copy(): Loc {
+        return asBuilder().build()
+    }
 
     /**
      * Tries to merge two optional [Loc]s if possible.
@@ -94,7 +143,7 @@ data class Loc(
     }
 
     /**
-     * Adds two Locs as a **convex hull**.
+     * Adds two [Locs][Loc] as a **convex hull**.
      *
      * # Example
      *
@@ -123,7 +172,13 @@ data class Loc(
         return LocBuilder.from(this).col(minCol).len(len)
     }
 
-    private fun begin() = col
+    override fun toString(): String {
+        return "$line:$col"
+    }
+
+    private fun begin(): UInt {
+        return col
+    }
 }
 
 /**

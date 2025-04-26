@@ -1,5 +1,8 @@
 package type.rec.field
 
-import type.Type
+import type.kind.TypeKind
 
-data class Field(val name: String, val type: Type, val tags: List<Tag>)
+/**
+ * Denotes a
+ */
+data class Field(val name: String, val type: TypeKind, val tags: List<Tag>)

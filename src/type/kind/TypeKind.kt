@@ -1,0 +1,116 @@
+package type.kind
+
+import type.NamedType
+import type.gen.Free
+import type.gen.Gen
+import type.hinted.Hinted
+import type.poison.Poison
+import type.prim.Prim
+import type.rec.Rec
+
+/**
+ * Represents all kinds of types in the Neve compiler.
+ *
+ * Keep in mind that this sealed class does not completely represent a type; it’s rather a wrapper union of
+ * different kinds of types.
+ *
+ * @see type.Type
+ */
+sealed class TypeKind : NamedType {
+    /**
+     * Represents a **record type**.
+     *
+     * In the Neve compiler, all concrete types, including primitives, are considered `OfRec`.
+     *
+     * The reason that the [OfRec] variant exists is to allow for **simple types**, i.e.
+     * user-defined types that weren’t explicitly type-hinted (unlike [OfHinted]) and
+     * haven’t been given any generic types.
+     *
+     * An example of a simple type could be:
+     *
+     * ```
+     * rec Person
+     *   name Str
+     *   age Whole
+     * end
+     * ```
+     *
+     * [Prim] types are not considered simple types due to their associated [domain representation][domain.Domain].
+     *
+     * @param rec The [Rec] being wrapped by the variant.
+     *
+     * @see OfHinted
+     * @see Rec
+     */
+    data class OfRec(val rec: Rec) : TypeKind()
+
+    /**
+     * Wrapper around a **primitive type**.
+     *
+     * @param prim The [Prim] being wrapped by the variant.
+     *
+     * @see Prim
+     */
+    data class OfPrim(val prim: Prim) : TypeKind()
+
+    /**
+     * Represents a type that was **explicitly hinted by the user**.
+     *
+     * @param hinted The [Hinted] being wrapped by the variant.
+     *
+     * @see Hinted
+     */
+    data class OfHinted(val hinted: Hinted) : TypeKind()
+
+    /**
+     * Wrapper around a type that requires **generic type parameters**.
+     *
+     * @param gen The [Gen] being wrapped by the variant.
+     *
+     * @see Gen
+     */
+    data class OfGen(val gen: Gen) : TypeKind()
+
+    /**
+     * Wrapper around a **free type**.
+     *
+     * @param free The [Free] being wrapped by the variant.
+     *
+     * @see Free
+     */
+    data class OfFree(val free: Free) : TypeKind()
+
+    /**
+     * Wrapper around a **poison type**.
+     *
+     * @param poison The [Poison] being wrapped by the variant.
+     *
+     * @see Poison
+     */
+    data class OfPoison(val poison: Poison) : TypeKind()
+
+    companion object {
+        /**
+         * @return A poisoned type [OfPoison] with [Poison.UNRESOLVED].
+         */
+        fun unresolved(): OfPoison {
+            return OfPoison(Poison.UNRESOLVED)
+        }
+
+        /**
+         * @return A poisoned type [OfPoison] with [Poison.UNKNOWN].
+         */
+        fun unknown(): OfPoison {
+            return OfPoison(Poison.UNKNOWN)
+        }
+    }
+
+    override fun named(): String = when (this) {
+        is OfRec -> rec.named()
+        is OfPrim -> prim.named()
+        is OfHinted -> hinted.named()
+        is OfGen -> gen.named()
+        is OfPoison -> poison.named()
+        is OfFree -> free.named()
+    }
+}

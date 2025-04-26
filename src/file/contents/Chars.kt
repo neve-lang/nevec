@@ -6,12 +6,32 @@ package file.contents
 class Chars(private var string: String) {
     private var at: Int = 0
 
-    fun peek() = string.getOrNull(at)
+    /**
+     * @return the next character **without advancing** if there is one, `null` otherwise.
+     */
+    fun peek(): Char? {
+        return string.getOrNull(at)
+    }
 
-    fun peek(n: Int) = if (n <= remaining()) string.substring(at, at + n)
-    else null
+    /**
+     * @return a [String] of length [n] if there are [n] or more characters remaining in the original string,
+     * `null` otherwise.
+     */
+    fun peek(n: Int): String? {
+        return if (n <= remaining())
+            string.substring(at, at + n)
+        else
+            null
+    }
 
-    fun next() = peek().also { at++ }
+    /**
+     * @return the next character **and advances to the next**, `null` otherwise.
+     */
+    fun next(): Char? {
+        return peek()?.also { at++ }
+    }
 
-    private fun remaining() = string.length - at
+    private fun remaining(): Int {
+        return string.length - at
+    }
 }

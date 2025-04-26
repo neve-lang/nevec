@@ -7,7 +7,7 @@ import util.extension.key
 /**
  * Abstracts away the process of matching [tok.Tok]s based on their lexemes.
  */
-object Toks {
+object Match {
     const val MAX_TOK_LEN = 3
 
     private val KEYWORDS = mapOf(
@@ -80,25 +80,41 @@ object Toks {
         ">>=" to SHR_ASSIGN,
     )
 
-    // something super cool about Neve is that it wouldn't require you to have an 'else' clause in this case!!
-    // here's how that would look like:
-    //
-    // fun find(lexeme TokLexeme)
-    // with TokLexeme = Str where 1 <= self.len <= 3
-    //   match lexeme.len
-    //     | 3 = Self.ThreeCharToks[lexeme]
-    //     | 2 = Self.TwoCharToks[lexeme]
-    //     | 1 = Self.OneCharToks[lexeme.char]
-    //   end
-    // end
+    /**
+     * Tries to match the [lexeme] with a [TokKind].
+     *
+     * Note that this does not apply to keywords — for keywords, see [findKeyword].
+     *
+     * @param lexeme The lexeme in question.
+     *
+     * @return a [TokKind] if one exists, `null` otherwise.
+     */
     fun findTok(lexeme: String) = when (lexeme.length) {
+        // something super cool about Neve is that it wouldn't require you to have an 'else' clause in this case!!
+        // here's how that would look like:
+        //
+        // fun find(lexeme TokLexeme)
+        // with TokLexeme = Str where 1 <= self.len <= 3
+        //   match lexeme.len
+        //     | 3 = Self.ThreeCharToks[lexeme]
+        //     | 2 = Self.TwoCharToks[lexeme]
+        //     | 1 = Self.OneCharToks[lexeme.char]
+        //   end
+        // end
         3 -> THREE_CHAR_TOKS[lexeme]
         2 -> TWO_CHAR_TOKS[lexeme]
         1 -> ONE_CHAR_TOKS[lexeme.first()]
         else -> null
     }
 
-    fun findKeyword(lexeme: String) = KEYWORDS[lexeme]
+    /**
+     * Tries to match a [lexeme] to a keyword [TokKind].
+     *
+     * @return a keyword [TokKind] if one exists, `null` otherwise.
+     */
+    fun findKeyword(lexeme: String): TokKind? {
+        return KEYWORDS[lexeme]
+    }
 
     /**
      * @return the **usually associated lexeme** with the given [kind], or null if there is none.
@@ -109,4 +125,7 @@ object Toks {
     }
 }
 
-fun TokKind.lexeme() = Toks.lexemeOf(this)
+/**
+ * @return the usually expected lexeme for [this].
+ */
+fun TokKind.lexeme() = Match.lexemeOf(this)

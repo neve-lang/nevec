@@ -1,10 +1,10 @@
 package check.infer
 
 import ast.hierarchy.expr.Expr
-import type.Type
+import type.kind.TypeKind
 import visit.Visit
 
-object Infer : Visit<Expr, Type> {
+object Infer : Visit<Expr, TypeKind> {
     override fun visit(what: Expr) = TODO()
         /*
         is Expr.UnOpExpr -> visitUnOp(what.unOp)

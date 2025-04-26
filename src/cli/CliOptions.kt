@@ -7,6 +7,13 @@ package cli
  */
 class CliOptions(private val options: List<Options>) {
     companion object {
+        /**
+         * Takes the array of arguments and builds a [CliOptions].
+         *
+         * @param args The CLI args in question.
+         *
+         * @return A [CliOptions] containing all enabled [Options].
+         */
         fun read(args: Array<String>): CliOptions {
             val flags = args.filter { it.startsWith("-") }
             return from(flags)
@@ -17,5 +24,8 @@ class CliOptions(private val options: List<Options>) {
         }
     }
 
+    /**
+     * @return whether [option] is enabled.
+     */
     fun isEnabled(option: Options) = options.contains(option)
 }

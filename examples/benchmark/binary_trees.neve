@@ -8,67 +8,52 @@ end
 
 idea for Tree
   fun Tree.new(item Int, depth Int)
-    var item = item
-    var depth = depth
-
-    var left Tree? = nil
-    var right Tree? = nil
-
-    if depth > 0
-      let item2 = item + item
-      depth = depth - 1
-
-      left = Tree.new(item2 - 1, depth)
-      right = Tree.new(item2, depth)
-    end
-
     Tree with
-      item = item
-      depth = depth
+      item
+      depth
 
-      left = left
-      right = right
+      left = match depth
+        | 0 : nil
+        | else : Tree.new item + item - 1, depth
+      end
+      right = match depth
+        | 0 : nil
+        | else : Tree.new item + item, depth
+      end
     end
   end
 
   fun check
-    if not self.left?
-      self.item
+    match self.left
+      | nil : self.item
+      | else : self.item + self.left.check - self.right.check
     end
-
-    self.item + self.left.check - self.right.check
   end
 end
 
-fun main
-  let min_depth = 4
-  let max_depth = 14
-  let stretch_depth = max_depth + 1
+const
+  MinDepth = 4
+  MaxDepth = 14
+  StretchDepth = MaxDepth + 1
+end
 
+fun main
   let start = clock
 
   puts "stretch tree of depth: #{stretch_depth}"
-  puts "check: #{Tree.new(0, stretch_depth).check}"
+  puts "check: #{Tree.new 0, stretch_depth |> check}"
 
-  var long_lived_tree = Tree.new 0, max_depth
+  let long_lived_tree = Tree.new 0, max_depth
+  let iterations = 2 ^ MaxDepth
 
-  # iterations = 2 ^ max_depth
-  var iterations = 1
-  var d = 0
-  while d < max_depth
-    iterations = iterations * 2
-    d = d + 1
-  end
+  let depth = MinDepth
 
-  var depth = min_depth
-
-  while depth < stretch_depth
+  while depth < StretchDepth
     var check = 0
     var i = 1
 
-    while i <= iterations
-      check = check + Tree.new(i, depth).check + Tree.new(-i, depth).check
-      i = i + 1
+    iterations.times do
+      check = check + Tree.new i, depth |> check + Tree.new -i, depth |> check
     end
 
     puts "num trees: #{iterations * 2}"

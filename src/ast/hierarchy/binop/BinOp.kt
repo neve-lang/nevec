@@ -1,55 +1,81 @@
 package ast.hierarchy.binop
 
 import ast.hierarchy.Ast
-import ast.hierarchy.Spanned
-import ast.hierarchy.Typed
+import ast.info.Spanned
+import ast.info.Typed
 import ast.hierarchy.Wrap
+import ast.hierarchy.binop.operator.*
 import ast.hierarchy.expr.Expr
-import file.span.Loc
-import type.Type
+import ast.info.Info
 
 /**
  * This sealed class denotes all kinds of binary operations supported in Neve so far.
  * They are separated as such to facilitate later compilation stages.
- * Note that the [Operator] enum is not separated as such.
+ *
+ * Note that [Operator] is not separated as such.
  *
  * @see Operator
  */
 sealed class BinOp : Ast, Wrap<Expr>, Spanned, Typed {
+    /**
+     * A bitwise operation node.
+     *
+     * @see BitwiseOperator
+     */
     data class Bitwise(
-        val left: Expr, val operator: Operator, val right: Expr, val loc: Loc, val type: Type = Type.unresolved()
+        val left: Expr, val operator: BitwiseOperator, val right: Expr, val info: Info
     ) : BinOp()
 
+    /**
+     * An arithmetic operation node.
+     *
+     * @see ArithOperator
+     */
     data class Arith(
-        val left: Expr, val operator: Operator, val right: Expr, val loc: Loc, val type: Type = Type.unresolved()
+        val left: Expr, val operator: ArithOperator, val right: Expr, val info: Info
     ) : BinOp()
 
+    /**
+     * A comparison node.
+     *
+     * @see CompOperator
+     */
     data class Comp(
-        val left: Expr, val operator: Operator, val right: Expr, val loc: Loc, val type: Type = Type.unresolved()
+        val left: Expr, val operator: CompOperator, val right: Expr, val info: Info
     ) : BinOp()
 
-    data class Concat(val loc: Loc, val type: Type = Type.unresolved(), val left: Expr, val right: Expr) : BinOp()
+    /**
+     * A concatenation node.
+     */
+    data class Concat(
+        val left: Expr, val operator: ConcatOperator, val right: Expr, val info: Info
+    ) : BinOp()
 
-    override fun wrap() = Expr.BinOpExpr(this)
-
-    override fun loc() = when (this) {
-        is Bitwise -> loc
-        is Arith -> loc
-        is Comp -> loc
-        is Concat -> loc
-    }
-
-    override fun type() = when (this) {
-        is Bitwise -> type
-        is Arith -> type
-        is Comp -> type
-        is Concat -> type
-    }
-
+    /**
+     * @return a [Pair] of `left` and `right` operands.
+     */
     fun operands() = when (this) {
         is Bitwise -> Pair(left, right)
         is Arith -> Pair(left, right)
         is Comp -> Pair(left, right)
         is Concat -> Pair(left, right)
+    }
+
+    override fun loc() = when (this) {
+        is Bitwise -> info.loc()
+        is Arith -> info.loc()
+        is Comp -> info.loc()
+        is Concat -> info.loc()
+    }
+
+    override fun type() = when (this) {
+        is Bitwise -> info.type()
+        is Arith -> info.type()
+        is Comp -> info.type()
+        is Concat -> info.type()
+    }
+
+    override fun wrap(): Expr {
+        return Expr.OfBinOp(this)
     }
 }
