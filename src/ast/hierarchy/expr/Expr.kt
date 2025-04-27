@@ -29,6 +29,7 @@ sealed class Expr : Ast, Wrap<Stmt>, Spanned, Typed {
      */
     data class Show(val expr: Expr, val info: Info) : Expr()
 
+    /* These nodes will be re-implemented later.
     /**
      * A symbol access node.
      */
@@ -45,6 +46,7 @@ sealed class Expr : Ast, Wrap<Stmt>, Spanned, Typed {
      * @see Access
      */
     data class AccessConst(val name: String, val info: Info) : Expr()
+     */
 
     /**
      * Wrapper around an [UnOp] node.
@@ -101,8 +103,8 @@ sealed class Expr : Ast, Wrap<Stmt>, Spanned, Typed {
     override fun loc() = when (this) {
         is Parens -> info.loc()
         is Show -> info.loc()
-        is Access -> info.loc()
-        is AccessConst -> info.loc()
+        // is Access -> info.loc()
+        // is AccessConst -> info.loc()
         is Empty -> info.loc()
         is OfUnOp -> unOp.loc()
         is OfBinOp -> binOp.loc()
@@ -113,8 +115,8 @@ sealed class Expr : Ast, Wrap<Stmt>, Spanned, Typed {
     override fun type() = when (this) {
         is Parens -> info.type()
         is Show -> info.type()
-        is Access -> info.type()
-        is AccessConst -> info.type()
+        // is Access -> info.type()
+        // is AccessConst -> info.type()
         is Empty -> info.type()
         is OfUnOp -> unOp.type()
         is OfBinOp -> binOp.type()
