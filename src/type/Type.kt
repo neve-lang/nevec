@@ -23,20 +23,20 @@ import type.kind.TypeKind
  * @see type.table.TypeTable
  * @see Domain
  */
-data class Type(val kind: TypeKind, val domain: Domain) : NamedType {
+data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : NamedType {
     companion object {
         /**
          * @return A [Type] with [kind] of `OfPoison(Poison.UNRESOLVED)` and [domain] of [Domain.Undefined].
          */
         fun unresolved(): Type {
-            return Type(TypeKind.unresolved(), Domain.Undefined)
+            return Type(TypeKind.unresolved())
         }
 
         /**
          * @return A [Type] with [kind] of `OfPoison(Poison.UNKNOWN)` and [domain] of [Domain.Undefined].
          */
         fun unknown(): Type {
-            return Type(TypeKind.unknown(), Domain.Undefined)
+            return Type(TypeKind.unknown())
         }
     }
 
