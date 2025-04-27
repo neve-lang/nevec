@@ -1,10 +1,163 @@
 package check.sem
 
+import ast.hierarchy.binop.BinOp
+import ast.hierarchy.decl.Decl
+import ast.hierarchy.expr.Expr
+import ast.hierarchy.interpol.Interpol
+import ast.hierarchy.lit.Lit
 import ast.hierarchy.program.Program
+import ast.hierarchy.stmt.Stmt
+import ast.hierarchy.unop.UnOp
 import visit.Visit
 
-object SemResolver : Visit<Program, Program> {
+/**
+ * The semantic resolving phase.
+ *
+ * This phase takes in a [Program] node, performs type inference using [Infer] and solves syntax ambiguities.
+ *
+ * It then produces a new [Program] node with types inferred and ambiguities solved.
+ */
+class SemResolver : Visit<Program, Program> {
     override fun visit(what: Program): Program {
-        TODO()
+        return Program(what.decls.map { visitDecl(it) })
+    }
+
+    private fun visitDecl(decl: Decl) = when (decl) {
+        is Decl.OfStmt -> visitStmt(decl.stmt).wrap()
+    }
+
+    private fun visitStmt(stmt: Stmt) = when (stmt) {
+        is Stmt.Print -> visitPrint(stmt)
+        is Stmt.OfExpr -> visitExpr(stmt.expr).wrap()
+    }
+
+    private fun visitPrint(print: Stmt.Print): Stmt.Print {
+        return Stmt.Print(visitExpr(print.expr), print.loc)
+    }
+
+    private fun visitExpr(expr: Expr) = when (expr) {
+        is Expr.Show -> visitShow(expr)
+        is Expr.Parens -> visitParens(expr)
+
+        is Expr.OfUnOp -> visitUnOp(expr.unOp).wrap()
+        is Expr.OfBinOp -> visitBinOp(expr.binOp).wrap()
+        is Expr.OfLit -> visitLit(expr.lit).wrap()
+        is Expr.OfInterpol -> visitInterpol(expr.interpol).wrap()
+
+        is Expr.Empty -> expr
+    }
+
+    private fun visitShow(show: Expr.Show): Expr.Show {
+        return Expr.Show(visitExpr(show.expr), show.info)
+    }
+
+    private fun visitParens(parens: Expr.Parens): Expr.Parens {
+        return Expr.Parens(visitExpr(parens.expr), parens.info)
+    }
+
+    private fun visitUnOp(unOp: UnOp) = when (unOp) {
+        is UnOp.Neg -> visitNeg(unOp)
+        is UnOp.Not -> visitNot(unOp)
+    }
+
+    private fun visitNeg(neg: UnOp.Neg): UnOp.Neg {
+        return UnOp.Neg(visitExpr(neg.expr), neg.info)
+    }
+
+    private fun visitNot(not: UnOp.Not): UnOp.Not {
+        return UnOp.Not(visitExpr(not.expr), not.info)
+    }
+
+    private fun visitBinOp(binOp: BinOp) = when (binOp) {
+        is BinOp.Bitwise -> visitBitwise(binOp)
+        is BinOp.Arith -> visitArith(binOp)
+        is BinOp.Comp -> visitComp(binOp)
+
+        is BinOp.Concat -> throw IllegalArgumentException(
+            "A concat node may not appear during the semantic resolving phase."
+        )
+    }
+
+    private fun visitBitwise(bitwise: BinOp.Bitwise): BinOp.Bitwise {
+        return BinOp.Bitwise(
+            visitExpr(bitwise.left),
+            bitwise.operator,
+            visitExpr(bitwise.right),
+            bitwise.info
+        )
+    }
+
+    private fun visitArith(arith: BinOp.Arith): BinOp.Arith {
+        // TODO: once we implement type inference, implement Arith to Concat conversion.
+        return BinOp.Arith(
+            visitExpr(arith.left),
+            arith.operator,
+            visitExpr(arith.right),
+            arith.info
+        )
+    }
+
+    private fun visitComp(comp: BinOp.Comp): BinOp.Comp {
+        return BinOp.Comp(
+            visitExpr(comp.left),
+            comp.operator,
+            visitExpr(comp.right),
+            comp.info
+        )
+    }
+
+    private fun visitLit(lit: Lit) = when (lit) {
+        is Lit.IntLit -> visitInt(lit)
+        is Lit.FloatLit -> visitFloat(lit)
+        is Lit.BoolLit -> visitBool(lit)
+        is Lit.StrLit -> visitStr(lit)
+        is Lit.TableLit -> visitTable(lit)
+        is Lit.NilLit -> visitNil(lit)
+    }
+
+    private fun visitInt(int: Lit.IntLit): Lit.IntLit {
+        return Lit.IntLit(int.value, int.info)
+    }
+
+    private fun visitFloat(float: Lit.FloatLit): Lit.FloatLit {
+        return Lit.FloatLit(float.value, float.info)
+    }
+
+    private fun visitBool(bool: Lit.BoolLit): Lit.BoolLit {
+        return Lit.BoolLit(bool.value, bool.info)
+    }
+
+    private fun visitStr(str: Lit.StrLit): Lit.StrLit {
+        return Lit.StrLit(str.value, str.info)
+    }
+
+    private fun visitTable(table: Lit.TableLit): Lit.TableLit {
+        return Lit.TableLit(
+            table.keys.map(::visitExpr),
+            table.vals.map(::visitExpr),
+            table.info
+        )
+    }
+
+    private fun visitNil(nil: Lit.NilLit): Lit.NilLit {
+        return Lit.NilLit(nil.info)
+    }
+
+    private fun visitInterpol(interpol: Interpol) = when (interpol) {
+        is Interpol.Some -> visitSome(interpol)
+        is Interpol.End -> visitEnd(interpol)
+    }
+
+    private fun visitSome(some: Interpol.Some): Interpol.Some {
+        return Interpol.Some(
+            some.string,
+            visitExpr(some.expr),
+            visitInterpol(some.next),
+            some.info
+        )
+    }
+
+    private fun visitEnd(end: Interpol.End): Interpol.End {
+        return end
     }
 }
