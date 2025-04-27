@@ -35,9 +35,9 @@ object Match {
         "self" to SELF,
         "true" to TRUE,
         "with" to WITH,
-        "band" to BIT_AND,
+        "bitand" to BIT_AND,
         "xor" to BIT_XOR,
-        "bor" to BIT_OR,
+        "bitor" to BIT_OR,
     )
 
     private val ONE_CHAR_TOKS = mapOf(
