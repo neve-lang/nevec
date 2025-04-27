@@ -158,7 +158,7 @@ class Parse(contents: String) {
         TokKind.STR -> strLit().wrap()
         TokKind.INTERPOL -> interpol().wrap()
 
-        TokKind.ID -> consume().let { Expr.Access(it.lexeme, Info.at(it.loc)) }
+        // TokKind.ID -> consume().let { Expr.Access(it.lexeme, Info.at(it.loc)) }
 
         else -> Expr.empty().also { showMsg(ParseErr.expectedExpr(consume())) }
     }
