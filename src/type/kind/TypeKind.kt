@@ -2,7 +2,8 @@ package type.kind
 
 import type.NamedType
 import type.gen.Free
-import type.gen.Gen
+import type.gen.Applied
+import type.gen.Quant
 import type.hinted.Hinted
 import type.poison.Poison
 import type.prim.Prim
@@ -63,13 +64,13 @@ sealed class TypeKind : NamedType {
     data class OfHinted(val hinted: Hinted) : TypeKind()
 
     /**
-     * Wrapper around a type that requires **generic type parameters**.
+     * Wrapper around a type with generic type arguments applied.
      *
-     * @param gen The [Gen] being wrapped by the variant.
+     * @param gen The [Applied] being wrapped by the variant.
      *
-     * @see Gen
+     * @see Applied
      */
-    data class OfGen(val gen: Gen) : TypeKind()
+    data class OfApplied(val gen: Applied) : TypeKind()
 
     /**
      * Wrapper around a **free type**.
@@ -79,6 +80,15 @@ sealed class TypeKind : NamedType {
      * @see Free
      */
     data class OfFree(val free: Free) : TypeKind()
+
+    /**
+     * Wrapper around a **quantified** or **generalized type**.
+     *
+     * @param quant The [Quant] being wrapped by the variant.
+     *
+     * @see Quant
+     */
+    data class OfQuant(val quant: Quant) : TypeKind()
 
     /**
      * Wrapper around a **poison type**.
@@ -109,8 +119,9 @@ sealed class TypeKind : NamedType {
         is OfRec -> rec.named()
         is OfPrim -> prim.named()
         is OfHinted -> hinted.named()
-        is OfGen -> gen.named()
+        is OfApplied -> gen.named()
         is OfPoison -> poison.named()
         is OfFree -> free.named()
+        is OfQuant -> quant.named()
     }
 }
