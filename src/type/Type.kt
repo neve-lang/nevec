@@ -24,7 +24,7 @@ import type.poison.Poison
  * @see type.table.TypeTable
  * @see Domain
  */
-data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : NamedType {
+data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : Unwrappable<Wrappable>, NamedType {
     companion object {
         /**
          * @return A [Type] with [kind] of `OfPoison(Poison.UNRESOLVED)` and [domain] of [Domain.Undefined].
@@ -85,6 +85,32 @@ data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : Nam
      */
     fun isApplied(): Boolean {
         return kind is TypeKind.OfApplied
+    }
+
+    /**
+     * @return whether [kind] is of [TypeKind.OfPrim]
+     */
+    fun isPrim(): Boolean {
+        return kind is TypeKind.OfPrim
+    }
+
+    /**
+     * Tries to “cure” the poisoned type by returning `null` if the [Type] is indeed poisoned.
+     *
+     * @return `this` if the [Type] is not poisoned, `null` otherwise.
+     *
+     * @see isPoisoned
+     * @see Poison
+     */
+    fun cured(): Type? {
+        return if (isPoisoned())
+            null
+        else
+            this
+    }
+
+    override fun itself(): Wrappable {
+        return kind.unwrapped()
     }
 
     override fun named(): String {
