@@ -1,6 +1,8 @@
 package type.poison
 
 import type.NamedType
+import type.Wrappable
+import type.kind.TypeKind
 import util.extension.capitalize
 
 /**
@@ -10,7 +12,7 @@ import util.extension.capitalize
  * It was initially intended to represent invalid types or unknown types (i.e. invalid expressions),
  * but it was eventually extended to be more precise.
  */
-enum class Poison : NamedType {
+enum class Poison : Wrappable, NamedType {
     /**
      * Represents an **unknown** type, i.e. a type that **could not be unified**.
      *
@@ -48,6 +50,10 @@ enum class Poison : NamedType {
      * until the type-checking phase reports them as “unknown symbol” errors.
      */
     UNRESOLVED;
+
+    override fun wrap(): TypeKind {
+        return TypeKind.OfPoison(this)
+    }
 
     override fun named(): String {
         return toString().lowercase().capitalize()
