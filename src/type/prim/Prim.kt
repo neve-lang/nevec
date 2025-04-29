@@ -2,7 +2,7 @@ package type.prim
 
 import type.NamedType
 import type.kind.TypeKind
-import type.WrappedType
+import type.Wrappable
 
 /**
  * Represents a primitive type.
@@ -17,7 +17,7 @@ import type.WrappedType
  * @see PrimKind
  * @see domain.Domain
  */
-data class Prim(val kind: PrimKind, val type: TypeKind) : WrappedType, NamedType {
+data class Prim(val kind: PrimKind, val type: TypeKind) : Wrappable, NamedType {
     override fun wrap(): TypeKind {
         return TypeKind.OfPrim(this)
     }
