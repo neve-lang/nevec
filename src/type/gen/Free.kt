@@ -2,7 +2,7 @@ package type.gen
 
 import type.NamedType
 import type.kind.TypeKind
-import type.WrappedType
+import type.Wrappable
 import util.extension.prefixWith
 
 /**
@@ -11,7 +11,7 @@ import util.extension.prefixWith
  * @property id The free type variable’s id.
  * @property level The free type variable’s level.
  */
-data class Free(val id: Int, val level: Int) : WrappedType, NamedType {
+data class Free(val id: Int, val level: Int) : Wrappable, NamedType {
     override fun wrap(): TypeKind {
         return TypeKind.OfFree(this)
     }

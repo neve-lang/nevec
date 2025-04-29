@@ -1,7 +1,7 @@
 package type.gen
 
 import type.NamedType
-import type.WrappedType
+import type.Wrappable
 import type.kind.TypeKind
 import util.extension.prefixWith
 
@@ -22,7 +22,7 @@ import util.extension.prefixWith
  *
  * @property id The quantified type’s ID in respect to its [Forall] quantifier node.
  */
-data class Quant(val id: Int) : WrappedType, NamedType {
+data class Quant(val id: Int) : Wrappable, NamedType {
     override fun wrap(): TypeKind {
         return TypeKind.OfQuant(this)
     }

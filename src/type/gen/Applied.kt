@@ -3,7 +3,7 @@ package type.gen
 import type.NamedType
 import type.Type
 import type.kind.TypeKind
-import type.WrappedType
+import type.Wrappable
 import type.gen.param.TypeParams
 import type.gen.arg.TypeArgs
 
@@ -15,7 +15,21 @@ import type.gen.arg.TypeArgs
  *
  * @see TypeParams
  */
-data class Applied(val args: List<TypeArgs>, val type: Type) : WrappedType, NamedType {
+data class Applied(val args: TypeArgs, val type: Type) : Wrappable, NamedType {
+    /**
+     * @return the number of items inside [args].
+     */
+    fun argCount(): Int {
+        return args.size()
+    }
+
+    /**
+     * @return the raw list of [args], without the [TypeArgs] wrapper.
+     */
+    fun argsList(): List<Type> {
+        return args.themselves()
+    }
+
     override fun wrap(): TypeKind {
         return TypeKind.OfApplied(this)
     }
