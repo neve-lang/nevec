@@ -2,6 +2,7 @@ package type
 
 import domain.Domain
 import type.kind.TypeKind
+import type.poison.Poison
 
 /**
  * Represents a type in the Neve compiler.
@@ -38,6 +39,52 @@ data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : Nam
         fun unknown(): Type {
             return Type(TypeKind.unknown())
         }
+
+        /**
+         * @param with The poison in question.
+         *
+         * @return a [Type] with [kind] of [TypeKind.OfPoison], with [with] as the poison.
+         */
+        fun poisoned(with: Poison): Type {
+            return Type(TypeKind.OfPoison(with))
+        }
+    }
+
+    /**
+     * @return whether [kind] is a [poisoned type][Poison] with [Poison.UNKNOWN] poison.
+     *
+     * @see Poison
+     */
+    fun isUnknown(): Boolean {
+        return kind is TypeKind.OfPoison && kind.poison == Poison.UNKNOWN
+    }
+
+    /**
+     * @return whether [kind] is of [TypeKind.OfFree].
+     */
+    fun isFree(): Boolean {
+        return kind is TypeKind.OfFree
+    }
+
+    /**
+     * @return whether [kind] is of [TypeKind.OfHinted].
+     */
+    fun isHinted(): Boolean {
+        return kind is TypeKind.OfHinted
+    }
+
+    /**
+     * @return whether [kind] is of [TypeKind.OfPoison].
+     */
+    fun isPoisoned(): Boolean {
+        return kind is TypeKind.OfPoison
+    }
+
+    /**
+     * @return whether [kind] is of [TypeKind.OfApplied].
+     */
+    fun isApplied(): Boolean {
+        return kind is TypeKind.OfApplied
     }
 
     override fun named(): String {
