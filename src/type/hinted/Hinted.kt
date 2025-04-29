@@ -1,7 +1,8 @@
 package type.hinted
 
 import type.NamedType
-import type.WrappedType
+import type.Type
+import type.Wrappable
 import type.kind.TypeKind
 
 /**
@@ -14,13 +15,13 @@ import type.kind.TypeKind
  *
  * @property type The actual type that was hinted by the user.
  */
-data class Hinted(val type: TypeKind) : WrappedType, NamedType {
+data class Hinted(val type: Type) : Wrappable, NamedType {
     /**
      * Accepts the hinted type as valid.
      *
      * @return the [type] that [Hinted] represents.
      */
-    fun accept(): TypeKind {
+    fun accept(): Type {
         return type
     }
 
