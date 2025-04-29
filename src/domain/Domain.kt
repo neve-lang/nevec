@@ -13,7 +13,7 @@ sealed class Domain {
      * An undefined domain.
      *
      * It is **not** the same as an [OfNonPrim] or [OfNil] domain.  [Undefined] domains are used alongside
-     * poisoned types.
+     * [poisoned types][type.poison.Poison] or [free type variables][type.gen.Free].
      *
      * @see type.poison.Poison
      */
