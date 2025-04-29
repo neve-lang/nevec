@@ -1,6 +1,7 @@
 package type.kind
 
 import type.NamedType
+import type.Unwrappable
 import type.gen.Free
 import type.gen.Applied
 import type.gen.Quant
@@ -43,7 +44,11 @@ sealed class TypeKind : NamedType {
      * @see OfHinted
      * @see Rec
      */
-    data class OfRec(val rec: Rec) : TypeKind()
+    data class OfRec(val rec: Rec) : Unwrappable<Rec>, TypeKind() {
+        override fun itself(): Rec {
+            return rec
+        }
+    }
 
     /**
      * Wrapper around a **primitive type**.
@@ -52,7 +57,11 @@ sealed class TypeKind : NamedType {
      *
      * @see Prim
      */
-    data class OfPrim(val prim: Prim) : TypeKind()
+    data class OfPrim(val prim: Prim) : Unwrappable<Prim>, TypeKind() {
+        override fun itself(): Prim {
+            return prim
+        }
+    }
 
     /**
      * Represents a type that was **explicitly hinted by the user**.
@@ -61,16 +70,24 @@ sealed class TypeKind : NamedType {
      *
      * @see Hinted
      */
-    data class OfHinted(val hinted: Hinted) : TypeKind()
+    data class OfHinted(val hinted: Hinted) : Unwrappable<Hinted>, TypeKind() {
+        override fun itself(): Hinted {
+            return hinted
+        }
+    }
 
     /**
      * Wrapper around a type with generic type arguments applied.
      *
-     * @param gen The [Applied] being wrapped by the variant.
+     * @param applied The [Applied] being wrapped by the variant.
      *
      * @see Applied
      */
-    data class OfApplied(val gen: Applied) : TypeKind()
+    data class OfApplied(val applied: Applied) : Unwrappable<Applied>, TypeKind() {
+        override fun itself(): Applied {
+            return applied
+        }
+    }
 
     /**
      * Wrapper around a **free type**.
@@ -79,7 +96,11 @@ sealed class TypeKind : NamedType {
      *
      * @see Free
      */
-    data class OfFree(val free: Free) : TypeKind()
+    data class OfFree(val free: Free) : Unwrappable<Free>, TypeKind() {
+        override fun itself(): Free {
+            return free
+        }
+    }
 
     /**
      * Wrapper around a **quantified** or **generalized type**.
@@ -88,7 +109,11 @@ sealed class TypeKind : NamedType {
      *
      * @see Quant
      */
-    data class OfQuant(val quant: Quant) : TypeKind()
+    data class OfQuant(val quant: Quant) : Unwrappable<Quant>, TypeKind() {
+        override fun itself(): Quant {
+            return quant
+        }
+    }
 
     /**
      * Wrapper around a **poison type**.
@@ -97,7 +122,11 @@ sealed class TypeKind : NamedType {
      *
      * @see Poison
      */
-    data class OfPoison(val poison: Poison) : TypeKind()
+    data class OfPoison(val poison: Poison) : Unwrappable<Poison>, TypeKind() {
+        override fun itself(): Poison {
+            return poison
+        }
+    }
 
     companion object {
         /**
@@ -119,7 +148,7 @@ sealed class TypeKind : NamedType {
         is OfRec -> rec.named()
         is OfPrim -> prim.named()
         is OfHinted -> hinted.named()
-        is OfApplied -> gen.named()
+        is OfApplied -> applied.named()
         is OfPoison -> poison.named()
         is OfFree -> free.named()
         is OfQuant -> quant.named()
