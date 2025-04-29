@@ -2,6 +2,7 @@ package type.kind
 
 import type.NamedType
 import type.Unwrappable
+import type.Wrappable
 import type.gen.Free
 import type.gen.Applied
 import type.gen.Quant
@@ -142,6 +143,23 @@ sealed class TypeKind : NamedType {
         fun unknown(): OfPoison {
             return OfPoison(Poison.UNKNOWN)
         }
+    }
+
+    /**
+     * Unwraps the **original type** wrapped inside the [TypeKind] wrapper as a [Wrappable].
+     *
+     * @return the original type.
+     *
+     * @see Wrappable
+     */
+    fun unwrapped(): Wrappable = when (this) {
+        is OfRec -> itself()
+        is OfPrim -> itself()
+        is OfHinted -> itself()
+        is OfApplied -> itself()
+        is OfPoison -> itself()
+        is OfFree -> itself()
+        is OfQuant -> itself()
     }
 
     override fun named(): String = when (this) {
