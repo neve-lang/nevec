@@ -1,6 +1,7 @@
 package type.prim
 
 import type.NamedType
+import type.Type
 import type.kind.TypeKind
 import type.Wrappable
 
@@ -17,7 +18,7 @@ import type.Wrappable
  * @see PrimKind
  * @see domain.Domain
  */
-data class Prim(val kind: PrimKind, val type: TypeKind) : Wrappable, NamedType {
+data class Prim(val kind: PrimKind, val type: Type) : Wrappable, NamedType {
     override fun wrap(): TypeKind {
         return TypeKind.OfPrim(this)
     }
@@ -34,4 +35,4 @@ data class Prim(val kind: PrimKind, val type: TypeKind) : Wrappable, NamedType {
  *
  * @return A [Prim] with [this] and [kind].
  */
-fun TypeKind.into(kind: PrimKind) = Prim(kind, this).wrap()
+fun Type.into(kind: PrimKind) = Prim(kind, this).wrap()
