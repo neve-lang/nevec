@@ -1,11 +1,15 @@
 package infer.unify
 
+import file.contents.Src
+import file.span.Loc
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import type.Type
 import type.gen.Applied
 import type.gen.Free
 import type.gen.arg.TypeArgs
+import type.hinted.Hinted
+import type.poison.Poison
 import type.prelude.PreludeTypes
 
 class UnifyTest {
@@ -157,6 +161,45 @@ class UnifyTest {
         )
     }
 
+    @Test
+    fun testFifteen() {
+        Src.setup("test.neve", emptyList())
+
+        assertSameName(
+            PreludeTypes.INT,
+            unified(
+                PreludeTypes.INT.hinted(),
+                PreludeTypes.INT
+            )
+        )
+    }
+
+    @Test
+    fun testSixteen() {
+        Src.setup("test.neve", emptyList())
+
+        assertSameName(
+            Type.poisoned(with = Poison.Hint(PreludeTypes.INT, Loc.new())),
+            unified(
+                PreludeTypes.INT.hinted(),
+                PreludeTypes.FLOAT
+            )
+        )
+    }
+
+    @Test
+    fun testSeventeen() {
+        Src.setup("test.neve", emptyList())
+
+        assertSameName(
+            Type.poisoned(with = Poison.Ignorable),
+            unified(
+                Type.unknown(),
+                PreludeTypes.INT
+            )
+        )
+    }
+
     private fun assertDifferentName(a: Type, b: Type) {
         assertNotEquals(a.named(), b.named())
     }
@@ -176,6 +219,10 @@ fun Type.applied(vararg frees: Free): Type {
 
 fun Type.applied(vararg types: Type): Type {
     return Applied(TypeArgs.from(*types), this).covered()
+}
+
+fun Type.hinted(): Type {
+    return Hinted(this, Loc.new()).covered()
 }
 
 fun Type.Companion.free(id: Int): Type {
