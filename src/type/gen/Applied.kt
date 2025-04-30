@@ -35,6 +35,6 @@ data class Applied(val args: TypeArgs, val type: Type) : Wrappable, NamedType {
     }
 
     override fun named(): String {
-        return type.named()
+        return "${type.named()} (${argsList().joinToString(", ", transform = Type::named)})"
     }
 }

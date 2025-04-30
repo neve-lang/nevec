@@ -25,19 +25,6 @@ data class TypeArgs(private val args: List<Type>) {
         }
 
         /**
-         * Builds a [TypeArgs] data class from a list of [Free] types.
-         *
-         * @param frees The list of [Free] type variables.
-         *
-         * @return a [TypeArgs] data class with the [Free] types fully wrapped inside [Type].
-         *
-         * @see Free
-         */
-        fun from(frees: List<Free>): TypeArgs {
-            return from(frees.map(Free::covered))
-        }
-
-        /**
          * Builds a [TypeArgs] data class from multiple [Types][Type].
          *
          * @param types The [Types][Type] in question.
@@ -46,6 +33,19 @@ data class TypeArgs(private val args: List<Type>) {
          */
         fun from(vararg types: Type): TypeArgs {
             return from(types.toList())
+        }
+
+        /**
+         * Builds a [TypeArgs] data class from a list of [Free] types.
+         *
+         * @param frees The list of [Free] type variables.
+         *
+         * @return a [TypeArgs] data class with the [Free] types fully wrapped inside [Type].
+         *
+         * @see Free
+         */
+        fun frees(frees: List<Free>): TypeArgs {
+            return from(frees.map(Free::covered))
         }
     }
 
