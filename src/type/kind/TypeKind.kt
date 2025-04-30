@@ -134,14 +134,14 @@ sealed class TypeKind : NamedType {
          * @return A poisoned type [OfPoison] with [Poison.UNRESOLVED].
          */
         fun unresolved(): OfPoison {
-            return OfPoison(Poison.UNRESOLVED)
+            return OfPoison(Poison.Unresolved)
         }
 
         /**
          * @return A poisoned type [OfPoison] with [Poison.UNKNOWN].
          */
         fun unknown(): OfPoison {
-            return OfPoison(Poison.UNKNOWN)
+            return OfPoison(Poison.Unknown)
         }
     }
 

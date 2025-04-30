@@ -56,7 +56,7 @@ data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : Unw
      * @see Poison
      */
     fun isUnknown(): Boolean {
-        return kind is TypeKind.OfPoison && kind.poison == Poison.UNKNOWN
+        return kind is TypeKind.OfPoison && kind.poison == Poison.Unknown
     }
 
     /**
