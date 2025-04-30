@@ -5,6 +5,7 @@ import infer.comp.BothTypes
 import type.Type
 import type.gen.Applied
 import type.gen.arg.TypeArgs
+import type.hinted.Hinted
 import type.kind.TypeKind
 import type.poison.Poison
 import type.prim.Prim
@@ -31,6 +32,17 @@ class Unify(private val a: Type, private val b: Type) {
             return pair.map(Expr::type).let {
                 (a, b) -> Unify(a, b)
             }
+        }
+
+        /**
+         * Builds a [Unify] class from a [BothTypes] class.
+         *
+         * @param types The [BothTypes] in question.
+         *
+         * @return A [Unify] class with the both members of the [BothTypes].
+         */
+        fun from(types: BothTypes): Unify {
+            return Unify(types.a, types.b)
         }
 
         /**
@@ -111,8 +123,12 @@ class Unify(private val a: Type, private val b: Type) {
             return unifyFree()
         }
 
-        if (both().eitherIsUnknown()) {
-            return unifyUnknown()
+        if (both().eitherIsHinted()) {
+            return unifyHinted()
+        }
+
+        if (both().eitherIsPoisoned()) {
+            return unifyPoison()
         }
 
         return unifySame()
@@ -145,8 +161,14 @@ class Unify(private val a: Type, private val b: Type) {
         return both().pickUnifiable()
     }
 
-    private fun unifyUnknown(): Type {
-        return Type.poisoned(with = Poison.IGNORABLE)
+    private fun unifyHinted(): Type {
+        val hinted = both().pickHinted()
+
+
+        return from(both().unwrapHints()).infer().cured() ?: Type.poisoned(with = Poison.Hint(
+            hinted.type,
+            hinted.loc
+        ))
     }
 
     private fun unifyApplied(a: Applied, b: Applied): Type {
@@ -181,7 +203,7 @@ class Unify(private val a: Type, private val b: Type) {
     }
 
     private fun unifyPoison(): Type {
-        return Type.poisoned(with = Poison.IGNORABLE)
+        return Type.poisoned(with = Poison.Ignorable)
     }
 
     private fun both(): BothTypes {
