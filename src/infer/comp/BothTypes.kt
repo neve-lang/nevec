@@ -3,7 +3,7 @@ package infer.comp
 import type.Type
 import type.gen.Applied
 import type.gen.Free
-import type.kind.TypeKind
+import type.hinted.Hinted
 import type.prim.Prim
 
 /**
@@ -20,14 +20,18 @@ import type.prim.Prim
 data class BothTypes(val a: Type, val b: Type) {
     /**
      * @return whether two types can be unified, i.e. if they same [TypeKind][type.kind.TypeKind], unless one or
-     * both are [free type variables][Free].
+     * both are [free type variables][Free], [hinted types][Hinted], or [poisoned types][Type.isPoisoned].
      *
      * @see type.kind.TypeKind
+     * @see type.poison.Poison
      * @see Free
+     * @see Hinted
      */
     fun canBeUnified(): Boolean {
         return when {
-            a.kind is TypeKind.OfFree || b.kind is TypeKind.OfFree -> true
+            eitherIsFree() -> true
+            eitherIsHinted() -> true
+            eitherIsPoisoned() -> true
             else -> a.kind::class == b.kind::class
         }
     }
@@ -96,14 +100,22 @@ data class BothTypes(val a: Type, val b: Type) {
     }
 
     /**
-     * @return whether either [Type] of [a] or [b] is [an unknown type][Type.unknown].
+     * @return whether either [Type] of [a] or [b] is a [Hinted][type.hinted.Hinted] type.
+     *
+     * @see type.hinted.Hinted
+     */
+    fun eitherIsHinted(): Boolean {
+        return a.isHinted() || b.isHinted()
+    }
+
+    /**
+     * @return whether either [Type] of [a] or [b] is [a poisoned type][Type.isPoisoned].
      *
      * @see type.poison.Poison
      */
-    fun eitherIsUnknown(): Boolean {
-        return a.isUnknown() || b.isUnknown()
+    fun eitherIsPoisoned(): Boolean {
+        return a.isPoisoned() || b.isPoisoned()
     }
-
 
     /**
      * @return from either [a] or [b], the [Type] that is not a [Free] type.
@@ -116,11 +128,48 @@ data class BothTypes(val a: Type, val b: Type) {
             b
     }
 
+    /**
+     * @return from either [a] of [b], the [Type] that is a [Hinted][type.hinted.Hinted] type, as a
+     * [Hinted][type.hinted.Hinted].
+     *
+     * If both types are hinted, [a] is returned.
+     * @throws IllegalArgumentException if [eitherIsHinted] is `false`.
+     */
+    fun pickHinted(): Hinted {
+        require(eitherIsHinted()) {
+            "Cannot perform `pickHinted` on `BothTypes` with no `Hinted` types."
+        }
+
+        return if (a.isHinted())
+            a.itself() as Hinted
+        else
+            b.itself() as Hinted
+    }
+
+    /**
+     * “Unwraps” both types by removing their [Hinted] wrapper, if there is one.
+     *
+     * @return A new [BothTypes] without any [Hinted] wrappers.
+     */
+    fun unwrapHints(): BothTypes {
+        return BothTypes(
+            unwrapHint(from = a),
+            unwrapHint(from = b)
+        )
+    }
+
     private fun areApplied(): Boolean {
         return a.isApplied() && b.isApplied()
     }
 
     private fun arePrim(): Boolean {
         return a.isPrim() && b.isPrim()
+    }
+
+    private fun unwrapHint(from: Type): Type {
+        return if (from.isHinted())
+            (from.itself() as Hinted).type
+        else
+            from
     }
 }
