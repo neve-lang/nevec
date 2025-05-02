@@ -1,6 +1,9 @@
 package type
 
 import domain.Domain
+import type.impl.NamedType
+import type.impl.Unwrappable
+import type.impl.Wrappable
 import type.kind.TypeKind
 import type.poison.Poison
 

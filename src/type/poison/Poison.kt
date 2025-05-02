@@ -1,11 +1,10 @@
 package type.poison
 
 import file.span.Loc
-import type.NamedType
+import type.impl.NamedType
 import type.Type
-import type.Wrappable
+import type.impl.Wrappable
 import type.kind.TypeKind
-import util.extension.capitalize
 import util.extension.suffixWith
 
 /**

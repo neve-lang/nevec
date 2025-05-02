@@ -1,9 +1,9 @@
 package type.gen
 
-import type.NamedType
+import type.impl.NamedType
 import type.Type
 import type.kind.TypeKind
-import type.Wrappable
+import type.impl.Wrappable
 import type.gen.param.TypeParams
 import type.gen.arg.TypeArgs
 

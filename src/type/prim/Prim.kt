@@ -1,9 +1,9 @@
 package type.prim
 
-import type.NamedType
+import type.impl.NamedType
 import type.Type
 import type.kind.TypeKind
-import type.Wrappable
+import type.impl.Wrappable
 
 /**
  * Represents a primitive type.

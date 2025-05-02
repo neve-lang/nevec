@@ -1,9 +1,9 @@
 package type.rec
 
 import file.module.Module
-import type.NamedType
+import type.impl.NamedType
 import type.kind.TypeKind
-import type.Wrappable
+import type.impl.Wrappable
 import type.gen.param.TypeParams
 import type.rec.field.Fields
 

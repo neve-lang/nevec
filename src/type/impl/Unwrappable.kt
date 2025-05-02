@@ -1,4 +1,4 @@
-package type
+package type.impl
 
 /**
  * Provides an [itself] method that returns a type of [To].

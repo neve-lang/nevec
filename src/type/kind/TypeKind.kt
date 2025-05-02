@@ -1,8 +1,8 @@
 package type.kind
 
-import type.NamedType
-import type.Unwrappable
-import type.Wrappable
+import type.impl.NamedType
+import type.impl.Unwrappable
+import type.impl.Wrappable
 import type.gen.Free
 import type.gen.Applied
 import type.gen.Quant

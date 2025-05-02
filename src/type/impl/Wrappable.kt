@@ -1,5 +1,6 @@
-package type
+package type.impl
 
+import type.Type
 import type.kind.TypeKind
 
 /**

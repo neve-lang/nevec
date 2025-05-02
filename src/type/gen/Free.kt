@@ -1,8 +1,8 @@
 package type.gen
 
-import type.NamedType
+import type.impl.NamedType
 import type.kind.TypeKind
-import type.Wrappable
+import type.impl.Wrappable
 import util.extension.prefixWith
 
 /**
