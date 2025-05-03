@@ -4,7 +4,9 @@ import type.Type
 import type.gen.Applied
 import type.gen.Free
 import type.hinted.Hinted
+import type.impl.RecessType
 import type.prim.Prim
+import type.rec.Rec
 
 /**
  * Represents a **relationship between two [Types][Type]**.
@@ -20,74 +22,19 @@ import type.prim.Prim
 data class BothTypes(val a: Type, val b: Type) {
     /**
      * @return whether two types can be unified, i.e. if they same [TypeKind][type.kind.TypeKind], unless one or
-     * both are [free type variables][Free], [hinted types][Hinted], or [poisoned types][Type.isPoisoned].
+     * both are [recessive types][RecessType].
      *
      * @see type.kind.TypeKind
      * @see type.poison.Poison
      * @see Free
      * @see Hinted
+     * @see RecessType
      */
     fun canBeUnified(): Boolean {
         return when {
-            eitherIsFree() -> true
-            eitherIsHinted() -> true
-            eitherIsPoisoned() -> true
+            eitherIsRecess() -> true
             else -> a.kind::class == b.kind::class
         }
-    }
-
-    /**
-     * @return whether both [a] and [b] have the same name.
-     *
-     * NOTE: Name mangling hasn’t been implemented yet, but [haveSameName] will be supposed to compare the
-     * mangled names of both types.  Right now, it just compares the simple name.
-     */
-    fun haveSameName(): Boolean {
-        return a.named() == b.named()
-    }
-
-    /**
-     * @return whether both [a] and [b], as [Applied] types, have the same type argument count.
-     * @throws IllegalArgumentException if [areApplied] is not `true`.
-     *
-     * @see Applied
-     */
-    fun haveSameArity(): Boolean {
-        require(areApplied()) {
-            "Cannot check `haveSameArity` on `BothTypes` that does not exclusively contain `Applied` types."
-        }
-
-        return (
-                (a.itself() as Applied).argCount() ==
-                (b.itself() as Applied).argCount()
-        )
-    }
-
-    /**
-     * @return whether both [a] and [b] have the same [PrimKind][type.prim.PrimKind].
-     * @throws IllegalArgumentException if [arePrim] is not `true`.
-     *
-     * @see type.prim.PrimKind
-     * @see Prim
-     */
-    fun haveSamePrimKind(): Boolean {
-        require(arePrim()) {
-            "Cannot check `haveSamePrimKind` on a `BothTypes` that does not contain `Prim` types."
-        }
-
-        return (
-                 (a.itself() as Prim).kind ==
-                 (b.itself() as Prim).kind
-        )
-    }
-
-    /**
-     * @return whether both [a] and [b] are [unknown types][Type.unknown].
-     *
-     * @see type.poison.Poison
-     */
-    fun areUnknown(): Boolean {
-        return a.isUnknown() || b.isUnknown()
     }
 
     /**
@@ -115,6 +62,60 @@ data class BothTypes(val a: Type, val b: Type) {
      */
     fun eitherIsPoisoned(): Boolean {
         return a.isPoisoned() || b.isPoisoned()
+    }
+
+    /**
+     * @return whether either [Type] of [a] or [b] is [an unresolved type][Type.isUnresolved].
+     *
+     * @see type.poison.Poison
+     */
+    fun eitherIsUnresolved(): Boolean {
+        return a.isUnresolved() || b.isUnresolved()
+    }
+
+    /**
+     * @return whether both [a] and [b] have the same name.
+     *
+     * NOTE: Name mangling hasn’t been implemented yet, but [haveSameName] will be supposed to compare the
+     * mangled names of both types.  Right now, it just compares the simple name.
+     */
+    fun haveSameName(): Boolean {
+        return a.named() == b.named()
+    }
+
+    /**
+     * @return whether both [a] and [b], as [Applied] types, have the same type argument count.
+     * @throws IllegalArgumentException if [areApplied] is not `true`.
+     *
+     * @see Applied
+     */
+    fun haveSameArity(): Boolean {
+        require(areApplied()) {
+            "Cannot check `haveSameArity` on `BothTypes` that does not exclusively contain `Applied` types."
+        }
+
+        return (
+                (a.itself() as Applied).argCount() ==
+                (b.itself() as Applied).argCount()
+                )
+    }
+
+    /**
+     * @return whether both [a] and [b] have the same [PrimKind][type.prim.PrimKind].
+     * @throws IllegalArgumentException if [arePrim] is not `true`.
+     *
+     * @see type.prim.PrimKind
+     * @see Prim
+     */
+    fun haveSamePrimKind(): Boolean {
+        require(arePrim()) {
+            "Cannot check `haveSamePrimKind` on a `BothTypes` that does not contain `Prim` types."
+        }
+
+        return (
+                (a.itself() as Prim).kind ==
+                (b.itself() as Prim).kind
+        )
     }
 
     /**
@@ -156,6 +157,10 @@ data class BothTypes(val a: Type, val b: Type) {
             unwrapHint(from = a),
             unwrapHint(from = b)
         )
+    }
+
+    private fun eitherIsRecess(): Boolean {
+        return a.itself() is RecessType || b.itself() is RecessType
     }
 
     private fun areApplied(): Boolean {
