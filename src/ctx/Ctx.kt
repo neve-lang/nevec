@@ -1,6 +1,6 @@
 package ctx
 
-import cli.Options
+import cli.CliOptions
 
 /**
  * The Neve compiler’s **context object**.
@@ -9,4 +9,4 @@ import cli.Options
  *
  * @property options The CLI options the program was launched with.
  */
-data class Ctx(val options: Options)
+data class Ctx(val options: CliOptions)
