@@ -7,6 +7,7 @@ import lex.interpol.InterpolTooDeepException
 import lex.relex.Relex
 import tok.Tok
 import tok.TokKind
+import util.extension.isInsignificant
 
 /**
  * Lexes the given contents of the file.
@@ -189,7 +190,7 @@ class Lex(contents: String) {
             skipComment()
         }
 
-        takeWhile { it.isInsignificant() }
+        takeWhile(Char::isInsignificant)
         sync()
     }
 
@@ -230,31 +231,55 @@ class Lex(contents: String) {
         return false
     }
 
-    private fun lexeme() = captured.joinToString("")
+    private fun lexeme(): String {
+        return captured.joinToString("")
+    }
 
-    private fun peek() = chars.peek()
+    private fun peek(): Char? {
+        return chars.peek()
+    }
 
-    private fun peek(n: Int) = chars.peek(n)
+    private fun peek(n: Int): String? {
+        return chars.peek(n)
+    }
 
-    private fun peekNext() = chars.peek(2)?.last()
+    private fun peekNext(): Char? {
+        return chars.peek(2)?.last()
+    }
 
-    private fun matchSeq(seq: String) = chars.peek(seq.length) == seq
+    private fun matchSeq(seq: String): Boolean {
+        return peek(seq.length) == seq
+    }
 
-    private fun check(against: Char) = peek() == against || isAtEnd()
+    private fun check(against: Char): Boolean {
+        return peek() == against || isAtEnd()
+    }
 
-    private fun check(predicate: (Char) -> Boolean) = peek()?.let { predicate(it) } ?: false
+    private fun check(predicate: (Char) -> Boolean): Boolean {
+        return peek()?.let { predicate(it) } ?: false
+    }
 
-    private fun isAtEnd() = peek() == null
+    private fun isAtEnd(): Boolean {
+        return peek() == null
+    }
 
-    private fun isOnAlpha() = check(Char::isLetter) || check('_')
+    private fun isOnAlpha(): Boolean {
+        return check(Char::isLetter) || check('_')
+    }
 
-    private fun isOnDigit() = check(Char::isDigit)
+    private fun isOnDigit(): Boolean {
+        return check(Char::isDigit)
+    }
 
-    private fun isOnFloat() = check('.') && peekNext()?.isDigit() ?: false
+    private fun isOnFloat(): Boolean {
+        return check('.') && peekNext()?.isDigit() ?: false
+    }
 
-    private fun newTok(kind: TokKind) = Tok(kind, lexeme(), loc.copy())
+    private fun newTok(kind: TokKind): Tok {
+        return Tok(kind, lexeme(), loc.copy())
+    }
 
-    private fun err(msg: String) = Tok(TokKind.ERR, msg, loc.copy())
+    private fun err(msg: String): Tok {
+        return Tok(TokKind.ERR, msg, loc.copy())
+    }
 }
-
-fun Char.isInsignificant() = this != '\n' && this.isWhitespace()

@@ -6,8 +6,6 @@ import ast.info.Typed
 import ast.hierarchy.Wrap
 import ast.hierarchy.expr.Expr
 import ast.info.Info
-import file.span.Loc
-import type.kind.TypeKind
 
 /**
  * A union-like sealed class to denote the type of each component of a string interpolation expression.

@@ -18,9 +18,9 @@ data class Info(private val loc: Loc, private val type: Type) : Spanned, Typed {
         /**
          * Creates an [Info] based on the [Loc] given.
          *
-         * @param at The [Loc] given.
+         * @param loc The [Loc] given.
          *
-         * @return an [Info] with [at] as [loc] and [Type.unresolved] as [type].
+         * @return an [Info] with [loc] as the [Loc] and [Type.unresolved] as [type].
          */
         fun at(loc: Loc): Info {
             return Info(loc, Type.unresolved())

@@ -131,14 +131,14 @@ sealed class TypeKind : NamedType {
 
     companion object {
         /**
-         * @return A poisoned type [OfPoison] with [Poison.UNRESOLVED].
+         * @return A poisoned type [OfPoison] with [Poison.Unresolved].
          */
         fun unresolved(): OfPoison {
             return OfPoison(Poison.Unresolved)
         }
 
         /**
-         * @return A poisoned type [OfPoison] with [Poison.UNKNOWN].
+         * @return A poisoned type [OfPoison] with [Poison.Unknown].
          */
         fun unknown(): OfPoison {
             return OfPoison(Poison.Unknown)

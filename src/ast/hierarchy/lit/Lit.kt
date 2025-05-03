@@ -6,8 +6,6 @@ import ast.info.Typed
 import ast.hierarchy.Wrap
 import ast.hierarchy.expr.Expr
 import ast.info.Info
-import file.span.Loc
-import type.kind.TypeKind
 
 /**
  * This sealed class denotes all supported expression literals in Neve so far.

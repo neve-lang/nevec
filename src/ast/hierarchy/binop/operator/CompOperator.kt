@@ -21,7 +21,7 @@ enum class CompOperator {
 }
 
 /**
- * @return whether [this] can be mapped to [ArithOperator.entries] if [clamped].
+ * @return whether [this] can be mapped to [ArithOperator.entries] if `clampedFrom(TokKind.NEQ)`.
  */
 fun TokKind.canBeComp(): Boolean {
     return isInBetween(TokKind.NEQ, TokKind.LTE)

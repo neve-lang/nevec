@@ -1,6 +1,5 @@
 package type.prelude
 
-import domain.Domain
 import type.Type
 import type.gen.param.TypeParams
 import type.prim.PrimKind

@@ -213,10 +213,6 @@ class UnifyTest {
     }
 }
 
-fun Type.applied(vararg frees: Free): Type {
-    return Applied(TypeArgs.frees(frees.toList()), this).covered()
-}
-
 fun Type.applied(vararg types: Type): Type {
     return Applied(TypeArgs.from(*types), this).covered()
 }

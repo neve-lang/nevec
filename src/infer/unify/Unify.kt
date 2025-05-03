@@ -5,7 +5,6 @@ import infer.comp.BothTypes
 import type.Type
 import type.gen.Applied
 import type.gen.arg.TypeArgs
-import type.hinted.Hinted
 import type.kind.TypeKind
 import type.poison.Poison
 import type.prim.Prim

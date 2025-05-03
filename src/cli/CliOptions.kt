@@ -27,5 +27,7 @@ class CliOptions(private val options: List<Options>) {
     /**
      * @return whether [option] is enabled.
      */
-    fun isEnabled(option: Options) = options.contains(option)
+    fun isEnabled(option: Options): Boolean {
+        return options.contains(option)
+    }
 }

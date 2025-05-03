@@ -6,7 +6,6 @@ import type.gen.Free
 import type.hinted.Hinted
 import type.impl.RecessType
 import type.prim.Prim
-import type.rec.Rec
 
 /**
  * Represents a **relationship between two [Types][Type]**.
