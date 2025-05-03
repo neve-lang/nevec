@@ -120,7 +120,9 @@ class Unify(private val a: Type, private val b: Type) {
             !both().canBeUnified() -> Type.unknown()
             both().eitherIsFree() -> unifyFree()
             both().eitherIsHinted() -> unifyHinted()
+            both().eitherIsUnresolved() -> unifyFree()
             both().eitherIsPoisoned() -> unifyPoison()
+
             else -> unifySame()
         }
     }
@@ -154,7 +156,6 @@ class Unify(private val a: Type, private val b: Type) {
 
     private fun unifyHinted(): Type {
         val hinted = both().pickHinted()
-
 
         return from(both().unwrapHints()).infer().cured() ?: Type.poisoned(with = Poison.Hint(
             hinted.type,
