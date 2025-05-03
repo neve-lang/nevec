@@ -13,7 +13,7 @@ enum class Options {
     NO_OPT,
 
     /**
-     * Enables the “inline assertions” feature.
+     * Enables the [inline assertions][meta.asserts.InlineAssert] feature.
      *
      * Allows the user to perform metaprogramming assertions, such as:
      *
@@ -24,6 +24,8 @@ enum class Options {
      * The compiler will then check each inline assertion in the AST.
      *
      * Please note that inline assertion errors do not prevent the compiler from proceeding with compilation.
+     *
+     * @see meta.asserts.InlineAssert
      */
     INLINE_ASSERTS,
 
