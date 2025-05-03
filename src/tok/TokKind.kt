@@ -32,6 +32,8 @@ enum class TokKind {
 
     INTERPOL_SEP,
 
+    META_ASSERT,
+
     NEWLINE, ERR, EOF;
 
     /**
