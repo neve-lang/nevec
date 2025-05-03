@@ -97,7 +97,7 @@ data class BothTypes(val a: Type, val b: Type) {
         return (
                 (a.itself() as Applied).argCount() ==
                 (b.itself() as Applied).argCount()
-                )
+        )
     }
 
     /**
