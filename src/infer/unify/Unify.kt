@@ -83,9 +83,11 @@ class Unify(private val a: Type, private val b: Type) {
      * @return [a] if `true`, a [poisoned type][type.poison.Poison] otherwise.
      */
     fun assuming(vararg types: Type): Type {
-        val contained = types.any { BothTypes(it, a).haveSameName() }
+        if (!both().haveSameName()) {
+            return Type.unknown()
+        }
 
-        return if (contained && both().haveSameName())
+        return if (types.any { BothTypes(it, a).haveSameName() })
             a
         else
             Type.unknown()
@@ -115,23 +117,13 @@ class Unify(private val a: Type, private val b: Type) {
      * @see type.poison.Poison
      */
     fun infer(): Type {
-        if (!both().canBeUnified()) {
-            return Type.unknown()
+        return when {
+            !both().canBeUnified() -> Type.unknown()
+            both().eitherIsFree() -> unifyFree()
+            both().eitherIsHinted() -> unifyHinted()
+            both().eitherIsPoisoned() -> unifyPoison()
+            else -> unifySame()
         }
-
-        if (both().eitherIsFree()) {
-            return unifyFree()
-        }
-
-        if (both().eitherIsHinted()) {
-            return unifyHinted()
-        }
-
-        if (both().eitherIsPoisoned()) {
-            return unifyPoison()
-        }
-
-        return unifySame()
     }
 
     private fun unifySame(): Type {
