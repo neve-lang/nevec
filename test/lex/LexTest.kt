@@ -161,6 +161,16 @@ class LexTest {
             ), "let safe_indices = indices.filter |i| (i is\n  not InBoundsOf list\n)".lex()
         )
     }
+
+    @Test
+    fun testMetaAssert() {
+        assertEquals(
+            listOf(
+                STR, META_ASSERT, ID, ASSIGN, ID, RBRACKET
+            ),
+            "\"Hello, world!\" @[type = Str]".lex()
+        )
+    }
 }
 
 fun Lex.all(): List<Tok> {
