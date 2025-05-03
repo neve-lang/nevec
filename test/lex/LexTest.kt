@@ -166,7 +166,7 @@ class LexTest {
     fun testMetaAssert() {
         assertEquals(
             listOf(
-                STR, META_ASSERT, ID, ASSIGN, ID, RBRACKET
+                STR, META_ASSERT, ID, ASSIGN, ID, RBRACKET, EOF
             ),
             "\"Hello, world!\" @[type = Str]".lex()
         )
