@@ -200,6 +200,17 @@ class UnifyTest {
         )
     }
 
+    @Test
+    fun testEighteen() {
+        assertSameName(
+            PreludeTypes.INT,
+            unified(
+                Type.unresolved(),
+                PreludeTypes.INT
+            )
+        )
+    }
+
     private fun assertDifferentName(a: Type, b: Type) {
         assertNotEquals(a.named(), b.named())
     }
