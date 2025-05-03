@@ -14,11 +14,10 @@ import type.Type
  * appear before it.
  *
  * @param T The type of the value that needs to be compared against.
- * @param name The name of the assertion.
  * @param value The value being compared against—the expected value.
  * @param target The type of
  */
-sealed class MetaAssert<T>(val name: String, val value: T, val target: Target) {
+sealed class MetaAssert<T>(val value: T, val target: Target) {
     /**
      * A **type** meta assertion.
      *
@@ -27,7 +26,6 @@ sealed class MetaAssert<T>(val name: String, val value: T, val target: Target) {
      * @see type.Type
      */
     data class TypeAssert(val type: Type) : MetaAssert<Type>(
-        "type",
         type,
         Target.PRIMARY
     )
