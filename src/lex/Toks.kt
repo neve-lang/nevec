@@ -65,10 +65,6 @@ object Match {
         ".." to DOT_DOT,
         "<<" to SHL,
         ">>" to SHR,
-        "+=" to PLUS_ASSIGN,
-        "-=" to MINUS_ASSIGN,
-        "*=" to STAR_ASSIGN,
-        "/=" to SLASH_ASSIGN,
         "!=" to NEQ,
         "==" to EQ,
         ">=" to GTE,
@@ -76,10 +72,7 @@ object Match {
         "@[" to META_ASSERT
     )
 
-    private val THREE_CHAR_TOKS = mapOf(
-        "<<=" to SHL_ASSIGN,
-        ">>=" to SHR_ASSIGN,
-    )
+    private val THREE_CHAR_TOKS = emptyMap<String, TokKind>()
 
     /**
      * Tries to match the [lexeme] with a [TokKind].
