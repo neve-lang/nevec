@@ -10,6 +10,9 @@ import type.Type
  * "Hello" @[type = Str]
  * ```
  *
+ * One peculiarity of meta assertions is that they **always appear after their target**, whereas meta annotations
+ * appear before it.
+ *
  * @param T The type of the value that needs to be compared against.
  * @param name The name of the assertion.
  * @param value The value being compared against—the expected value.
