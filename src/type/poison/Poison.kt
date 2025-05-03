@@ -3,6 +3,7 @@ package type.poison
 import file.span.Loc
 import type.impl.NamedType
 import type.Type
+import type.impl.RecessType
 import type.impl.Wrappable
 import type.kind.TypeKind
 import util.extension.suffixWith
@@ -13,8 +14,10 @@ import util.extension.suffixWith
  *
  * It was initially intended to represent invalid types or unknown types (i.e. invalid expressions),
  * but it was eventually extended to be more precise.
+ *
+ * Poisoned types are defined as [RecessTypes][RecessType] due to their special unification behavior.
  */
-sealed class Poison : Wrappable, NamedType {
+sealed class Poison : Wrappable, NamedType, RecessType {
     /**
      * Represents an **unknown** type, i.e. a type that **could not be unified**.
      *

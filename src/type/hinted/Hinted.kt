@@ -3,6 +3,7 @@ package type.hinted
 import file.span.Loc
 import type.impl.NamedType
 import type.Type
+import type.impl.RecessType
 import type.impl.Wrappable
 import type.kind.TypeKind
 import util.extension.suffixWith
@@ -17,10 +18,12 @@ import util.extension.suffixWith
  *
  * When an [TypeKind.OfHinted] is confirmed to be valid, the type is extracted using [accept].
  *
+ * Hinted types are defined as [RecessTypes][RecessType] due to their special unification behavior.
+ *
  * @property type The actual type that was hinted by the user.
  * @property loc The [Loc] where the type hint was given.
  */
-data class Hinted(val type: Type, val loc: Loc) : Wrappable, NamedType {
+data class Hinted(val type: Type, val loc: Loc) : Wrappable, NamedType, RecessType {
     /**
      * Accepts the hinted type as valid.
      *
