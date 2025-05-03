@@ -73,6 +73,7 @@ object Match {
         "==" to EQ,
         ">=" to GTE,
         "<=" to LTE,
+        "@[" to META_ASSERT
     )
 
     private val THREE_CHAR_TOKS = mapOf(
