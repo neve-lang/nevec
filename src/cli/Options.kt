@@ -13,7 +13,7 @@ enum class Options {
     NO_OPT,
 
     /**
-     * Enables the [inline assertions][meta.asserts.InlineAssert] feature.
+     * Enables the [meta assertions][meta.asserts.MetaAssert] feature.
      *
      * Allows the user to perform metaprogramming assertions, such as:
      *
@@ -21,13 +21,13 @@ enum class Options {
      * ("Hello, " + "10") @[type = Str]
      * ```
      *
-     * The compiler will then check each inline assertion in the AST.
+     * The compiler will then check each meta assertion in the AST.
      *
-     * Please note that inline assertion errors do not prevent the compiler from proceeding with compilation.
+     * Please note that meta assertion errors do not prevent the compiler from proceeding with compilation.
      *
-     * @see meta.asserts.InlineAssert
+     * @see meta.asserts.MetaAssert
      */
-    INLINE_ASSERTS,
+    META_ASSERTS,
 
     /**
      * Prevents the compiler from going further than the type-checking phase, i.e. lowering the AST to the IR
@@ -38,7 +38,7 @@ enum class Options {
     companion object {
         private val MAP = mapOf(
             "--no-opt" to NO_OPT,
-            "--inline-asserts" to INLINE_ASSERTS,
+            "--inline-asserts" to META_ASSERTS,
             "--check-only" to CHECK_ONLY
         )
 
