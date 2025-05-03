@@ -8,6 +8,9 @@ import ast.hierarchy.lit.Lit
 import ast.hierarchy.program.Program
 import ast.hierarchy.stmt.Stmt
 import ast.hierarchy.unop.UnOp
+import infer.info.FromInfo
+import infer.Infer
+import util.extension.map
 import visit.Visit
 
 /**
@@ -18,6 +21,8 @@ import visit.Visit
  * It then produces a new [Program] node with types inferred and ambiguities solved.
  */
 class SemResolver : Visit<Program, Program> {
+    private val infer: Infer = Infer()
+
     override fun visit(what: Program): Program {
         return Program(what.decls.map { visitDecl(it) })
     }
@@ -61,11 +66,23 @@ class SemResolver : Visit<Program, Program> {
     }
 
     private fun visitNeg(neg: UnOp.Neg): UnOp.Neg {
-        return UnOp.Neg(visitExpr(neg.expr), neg.info)
+        val expr = visitExpr(neg.expr)
+        val new = UnOp.Neg(expr, neg.info)
+
+        return UnOp.Neg(
+            new.expr,
+            FromInfo(new.info).infer(from = new.wrap(), with = infer)
+        )
     }
 
     private fun visitNot(not: UnOp.Not): UnOp.Not {
-        return UnOp.Not(visitExpr(not.expr), not.info)
+        val expr = visitExpr(not.expr)
+        val new = UnOp.Not(expr, not.info)
+
+        return UnOp.Not(
+            new.expr,
+            FromInfo(new.info).infer(from = new.wrap(), with = infer)
+        )
     }
 
     private fun visitBinOp(binOp: BinOp) = when (binOp) {
@@ -79,30 +96,39 @@ class SemResolver : Visit<Program, Program> {
     }
 
     private fun visitBitwise(bitwise: BinOp.Bitwise): BinOp.Bitwise {
+        val (left, right) = bitwise.operands().map(::visitExpr)
+        val new = BinOp.Bitwise(left, bitwise.operator, right, bitwise.info)
+
         return BinOp.Bitwise(
-            visitExpr(bitwise.left),
-            bitwise.operator,
-            visitExpr(bitwise.right),
-            bitwise.info
+            new.left,
+            new.operator,
+            new.right,
+            FromInfo(new.info).infer(from = new.wrap(), with = infer)
         )
     }
 
     private fun visitArith(arith: BinOp.Arith): BinOp.Arith {
         // TODO: once we implement type inference, implement Arith to Concat conversion.
+        val (left, right) = arith.operands().map(::visitExpr)
+        val new = BinOp.Arith(left, arith.operator, right, arith.info)
+
         return BinOp.Arith(
-            visitExpr(arith.left),
-            arith.operator,
-            visitExpr(arith.right),
-            arith.info
+            new.left,
+            new.operator,
+            new.right,
+            FromInfo(new.info).infer(from = new.wrap(), with = infer)
         )
     }
 
     private fun visitComp(comp: BinOp.Comp): BinOp.Comp {
+        val (left, right) = comp.operands().map(::visitExpr)
+        val new = BinOp.Comp(left, comp.operator, right, comp.info)
+
         return BinOp.Comp(
-            visitExpr(comp.left),
-            comp.operator,
-            visitExpr(comp.right),
-            comp.info
+            new.left,
+            new.operator,
+            new.right,
+            FromInfo(new.info).infer(from = new.wrap(), with = infer)
         )
     }
 
@@ -116,31 +142,45 @@ class SemResolver : Visit<Program, Program> {
     }
 
     private fun visitInt(int: Lit.IntLit): Lit.IntLit {
-        return Lit.IntLit(int.value, int.info)
+        return Lit.IntLit(
+            int.value,
+            FromInfo(int.info).infer(from = int.wrap(), with = infer)
+        )
     }
 
     private fun visitFloat(float: Lit.FloatLit): Lit.FloatLit {
-        return Lit.FloatLit(float.value, float.info)
+        return Lit.FloatLit(
+            float.value,
+            FromInfo(float.info).infer(from = float.wrap(), with = infer)
+        )
     }
 
     private fun visitBool(bool: Lit.BoolLit): Lit.BoolLit {
-        return Lit.BoolLit(bool.value, bool.info)
+        return Lit.BoolLit(
+            bool.value,
+            FromInfo(bool.info).infer(from = bool.wrap(), with = infer)
+        )
     }
 
     private fun visitStr(str: Lit.StrLit): Lit.StrLit {
-        return Lit.StrLit(str.value, str.info)
+        return Lit.StrLit(
+            str.value,
+            FromInfo(str.info).infer(from = str.wrap(), with = infer)
+        )
     }
 
     private fun visitTable(table: Lit.TableLit): Lit.TableLit {
         return Lit.TableLit(
             table.keys.map(::visitExpr),
             table.vals.map(::visitExpr),
-            table.info
+            FromInfo(table.info).infer(from = table.wrap(), with = infer)
         )
     }
 
     private fun visitNil(nil: Lit.NilLit): Lit.NilLit {
-        return Lit.NilLit(nil.info)
+        return Lit.NilLit(
+            FromInfo(nil.info).infer(from = nil.wrap(), with = infer)
+        )
     }
 
     private fun visitInterpol(interpol: Interpol) = when (interpol) {
@@ -153,11 +193,14 @@ class SemResolver : Visit<Program, Program> {
             some.string,
             visitExpr(some.expr),
             visitInterpol(some.next),
-            some.info
+            FromInfo(some.info).infer(from = some.wrap(), with = infer)
         )
     }
 
     private fun visitEnd(end: Interpol.End): Interpol.End {
-        return end
+        return Interpol.End(
+            end.string,
+            FromInfo(end.info).infer(from = end.wrap(), with = infer)
+        )
     }
 }
