@@ -1,6 +1,7 @@
 package meta.asserts
 
 import file.span.Loc
+import meta.target.AppliesTo
 import meta.target.Target
 import type.Type
 
@@ -14,7 +15,7 @@ import type.Type
  * One peculiarity of meta assertions is that they **always appear after their target**, whereas meta annotations
  * appear before it.
  */
-sealed class MetaAssert {
+sealed class MetaAssert : AppliesTo {
     /**
      * A **type** meta assertion.
      *
@@ -22,5 +23,9 @@ sealed class MetaAssert {
      *
      * @see type.Type
      */
-    data class TypeAssert(val type: Type, val loc: Loc) : MetaAssert()
+    data class TypeAssert(val type: Type, val loc: Loc) : MetaAssert() {
+        override fun appliesTo(target: Target): Boolean {
+            return target == Target.PRIMARY
+        }
+    }
 }
