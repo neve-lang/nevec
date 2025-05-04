@@ -4,6 +4,7 @@ import file.span.Loc
 import lex.Lex
 import tok.Tok
 import tok.TokKind
+import tok.TokStream
 
 /**
  * Works just like a sliding window for the Parser, keeping track of a [curr] and [prev] token that get updated
@@ -34,6 +35,21 @@ class Window(contents: String) {
         }
 
         return prevBeforeNewline
+    }
+
+    /**
+     * Advances for as long as [curr]’s kind is not equal to [kind].
+     *
+     * @return A [TokStream] of the tokens traversed.
+     *
+     * @see TokStream
+     */
+    fun consumeUntil(kind: TokKind, list: List<Tok> = emptyList()): TokStream {
+        return if (match(kind)) {
+            TokStream(list.toMutableList())
+        } else {
+            return consumeUntil(kind, list + listOf(advance()))
+        }
     }
 
     /**
