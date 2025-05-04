@@ -1,5 +1,6 @@
 package meta.asserts
 
+import file.span.Loc
 import meta.target.Target
 import type.Type
 
@@ -12,12 +13,8 @@ import type.Type
  *
  * One peculiarity of meta assertions is that they **always appear after their target**, whereas meta annotations
  * appear before it.
- *
- * @param T The type of the value that needs to be compared against.
- * @param value The value being compared against—the expected value.
- * @param target The type of
  */
-sealed class MetaAssert<T>(val value: T, val target: Target) {
+sealed class MetaAssert {
     /**
      * A **type** meta assertion.
      *
@@ -25,8 +22,5 @@ sealed class MetaAssert<T>(val value: T, val target: Target) {
      *
      * @see type.Type
      */
-    data class TypeAssert(val type: Type) : MetaAssert<Type>(
-        type,
-        Target.PRIMARY
-    )
+    data class TypeAssert(val type: Type, val loc: Loc) : MetaAssert()
 }
