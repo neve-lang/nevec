@@ -1,10 +1,9 @@
 package ast.info
 
 import ast.info.impl.Infoful
-import ast.info.impl.Spanned
-import ast.info.impl.Typed
 import file.span.Loc
 import meta.Meta
+import meta.asserts.MetaAssert
 import type.Type
 
 /**
@@ -33,6 +32,15 @@ data class Info(
         fun at(loc: Loc): Info {
             return Info(loc, Type.unresolved(), Meta.empty())
         }
+    }
+
+    /**
+     * Mutates the current [Info] object and adds a [MetaAssert] to its [Meta] component.
+     *
+     * @param assert The meta assert in question.
+     */
+    fun add(assert: MetaAssert<*>) {
+        meta.add(assert)
     }
 
     override fun loc(): Loc {
