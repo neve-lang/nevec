@@ -10,12 +10,13 @@ import ast.hierarchy.lit.Lit
 import ast.hierarchy.stmt.Stmt
 import ast.hierarchy.unop.UnOp
 import ast.info.Info
+import ast.info.impl.Infoful
 import file.span.Loc
 
 /**
  * This sealed class denotes all kinds of supported Neve expressions so far.
  */
-sealed class Expr : Ast, Wrap<Stmt>, Spanned, Typed {
+sealed class Expr : Ast, Wrap<Stmt>, Infoful {
     /**
      * A parenthesized expression.
      */
@@ -122,5 +123,17 @@ sealed class Expr : Ast, Wrap<Stmt>, Spanned, Typed {
         is OfBinOp -> binOp.type()
         is OfLit -> lit.type()
         is OfInterpol -> interpol.type()
+    }
+
+    override fun meta() = when (this) {
+        is Parens -> info.meta()
+        is Show -> info.meta()
+        // is Access -> info.meta()
+        // is AccessConst -> info.meta()
+        is Empty -> info.meta()
+        is OfUnOp -> unOp.meta()
+        is OfBinOp -> binOp.meta()
+        is OfLit -> lit.meta()
+        is OfInterpol -> interpol.meta()
     }
 }

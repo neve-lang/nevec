@@ -6,11 +6,12 @@ import ast.info.impl.Typed
 import ast.hierarchy.Wrap
 import ast.hierarchy.expr.Expr
 import ast.info.Info
+import ast.info.impl.Infoful
 
 /**
  * This sealed class denotes all kinds of supported Neve unary operations so far.
  */
-sealed class UnOp : Ast, Wrap<Expr>, Spanned, Typed {
+sealed class UnOp : Ast, Wrap<Expr>, Infoful {
     /**
      * A unary negation node.
      */
@@ -33,5 +34,10 @@ sealed class UnOp : Ast, Wrap<Expr>, Spanned, Typed {
     override fun type() = when (this) {
         is Neg -> info.type()
         is Not -> info.type()
+    }
+
+    override fun meta() = when (this) {
+        is Neg -> info.meta()
+        is Not -> info.meta()
     }
 }

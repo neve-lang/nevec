@@ -7,6 +7,8 @@ import ast.hierarchy.Wrap
 import ast.hierarchy.binop.operator.*
 import ast.hierarchy.expr.Expr
 import ast.info.Info
+import ast.info.impl.Infoful
+import meta.Meta
 
 /**
  * This sealed class denotes all kinds of binary operations supported in Neve so far.
@@ -16,7 +18,7 @@ import ast.info.Info
  *
  * @see Operator
  */
-sealed class BinOp : Ast, Wrap<Expr>, Spanned, Typed {
+sealed class BinOp : Ast, Wrap<Expr>, Infoful {
     /**
      * A bitwise operation node.
      *
@@ -73,6 +75,13 @@ sealed class BinOp : Ast, Wrap<Expr>, Spanned, Typed {
         is Arith -> info.type()
         is Comp -> info.type()
         is Concat -> info.type()
+    }
+
+    override fun meta() = when (this) {
+        is Bitwise -> info.meta()
+        is Arith -> info.meta()
+        is Comp -> info.meta()
+        is Concat -> info.meta()
     }
 
     override fun wrap(): Expr {
