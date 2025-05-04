@@ -29,7 +29,8 @@ data class FromInfo(private val info: Info) {
     fun infer(from: Expr, with: Infer): Info {
         return Info(
             info.loc(),
-            Unify(info.type(), with.visit(from)).infer()
+            Unify(info.type(), with.visit(from)).infer(),
+            info.meta()
         )
     }
 }
