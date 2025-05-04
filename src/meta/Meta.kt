@@ -6,7 +6,7 @@ import meta.target.Target
 /**
  * Encapsulates both [meta assertions][MetaAssert] and `meta annotations` into a same data class.
  */
-data class Meta(val asserts: MutableList<MetaAssert<*>>) {
+data class Meta(val asserts: MutableList<MetaAssert>) {
     companion object {
         /**
          * @return A [Meta] data class with empty lists.
@@ -24,9 +24,9 @@ data class Meta(val asserts: MutableList<MetaAssert<*>>) {
      *
      * @throws IllegalArgumentException if [assert]’s target doesn’t match [to].
      */
-    fun add(assert: MetaAssert<*>, to: Target) {
-        require(assert.target == to) {
-            "Expected target and given target do not match."
+    fun add(assert: MetaAssert, to: Target) {
+        require(assert.appliesTo(to)) {
+            "The given assert does not apply to the given target."
         }
 
         asserts.add(assert)

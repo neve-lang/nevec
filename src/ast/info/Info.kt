@@ -7,7 +7,7 @@ import meta.asserts.MetaAssert
 import type.Type
 
 /**
- * Encapsulates both a [Loc] and a [Type] into a single data class, to reduce the number of
+ * Encapsulates both a [Loc] and a [Type] along with other components into a single data class, to reduce the number of
  * properties that AST nodes have to hold onto.
  *
  * Note that, because this data class requires a [Type], it is not used in AST nodes that don’t need
@@ -15,6 +15,11 @@ import type.Type
  *
  * @property loc The AST node’s source code location.
  * @property type The AST node’s type.
+ * @property meta The AST node’s meta components.
+ *
+ * @see Type
+ * @see Loc
+ * @see Meta
  */
 data class Info(
     private val loc: Loc,
@@ -32,15 +37,6 @@ data class Info(
         fun at(loc: Loc): Info {
             return Info(loc, Type.unresolved(), Meta.empty())
         }
-    }
-
-    /**
-     * Mutates the current [Info] object and adds a [MetaAssert] to its [Meta] component.
-     *
-     * @param assert The meta assert in question.
-     */
-    fun add(assert: MetaAssert<*>) {
-        meta.add(assert)
     }
 
     override fun loc(): Loc {
