@@ -1,4 +1,4 @@
-package ast.info
+package ast.info.impl
 
 import type.Type
 

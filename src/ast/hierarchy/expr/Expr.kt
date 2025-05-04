@@ -1,8 +1,8 @@
 package ast.hierarchy.expr
 
 import ast.hierarchy.Ast
-import ast.info.Spanned
-import ast.info.Typed
+import ast.info.impl.Spanned
+import ast.info.impl.Typed
 import ast.hierarchy.Wrap
 import ast.hierarchy.binop.BinOp
 import ast.hierarchy.interpol.Interpol

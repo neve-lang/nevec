@@ -1,6 +1,9 @@
 package ast.info
 
+import ast.info.impl.Spanned
+import ast.info.impl.Typed
 import file.span.Loc
+import meta.Meta
 import type.Type
 
 /**
@@ -13,7 +16,11 @@ import type.Type
  * @property loc The AST node’s source code location.
  * @property type The AST node’s type.
  */
-data class Info(private val loc: Loc, private val type: Type) : Spanned, Typed {
+data class Info(
+    private val loc: Loc,
+    private val type: Type,
+    private val meta: Meta
+) : Spanned, Typed {
     companion object {
         /**
          * Creates an [Info] based on the [Loc] given.
@@ -23,7 +30,7 @@ data class Info(private val loc: Loc, private val type: Type) : Spanned, Typed {
          * @return an [Info] with [loc] as the [Loc] and [Type.unresolved] as [type].
          */
         fun at(loc: Loc): Info {
-            return Info(loc, Type.unresolved())
+            return Info(loc, Type.unresolved(), Meta.empty())
         }
     }
 
