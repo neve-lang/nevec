@@ -32,6 +32,8 @@ enum class TokKind {
 
     META_ASSERT,
 
+    APOSTROPHE,
+
     NEWLINE, ERR, EOF;
 
     /**

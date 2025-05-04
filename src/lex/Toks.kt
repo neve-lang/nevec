@@ -41,6 +41,7 @@ object Match {
     )
 
     private val ONE_CHAR_TOKS = mapOf(
+        '\'' to APOSTROPHE,
         ';' to SEMICOL,
         ':' to COL,
         ',' to COMMA,
