@@ -1,5 +1,6 @@
 package ast.info
 
+import ast.info.impl.Infoful
 import ast.info.impl.Spanned
 import ast.info.impl.Typed
 import file.span.Loc
@@ -20,7 +21,7 @@ data class Info(
     private val loc: Loc,
     private val type: Type,
     private val meta: Meta
-) : Spanned, Typed {
+) : Infoful {
     companion object {
         /**
          * Creates an [Info] based on the [Loc] given.
@@ -40,5 +41,9 @@ data class Info(
 
     override fun type(): Type {
         return type
+    }
+
+    override fun meta(): Meta {
+        return meta
     }
 }
