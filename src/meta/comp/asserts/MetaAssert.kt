@@ -1,4 +1,4 @@
-package meta.asserts
+package meta.comp.asserts
 
 import file.span.Loc
 import meta.target.AppliesTo
