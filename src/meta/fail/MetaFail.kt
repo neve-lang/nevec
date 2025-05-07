@@ -57,11 +57,11 @@ sealed class MetaFail {
     /**
      * Represents a meta failure when a meta component cannot be applied to a certain AST node or parse rule.
      *
-     * @property meta The meta component in question.
+     * @property loc The location of the [MetaComp] where the [MetaFail] occurred.
      *
      * @see meta.target.Target
      */
-    data class Target(val meta: MetaComp) : MetaFail()
+    data class Target(val loc: Loc) : MetaFail()
 
     /**
      * @return A [MetaResult] wrapper around `this`.
