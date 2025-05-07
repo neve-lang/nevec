@@ -3,7 +3,6 @@ package ast.info
 import ast.info.impl.Infoful
 import file.span.Loc
 import meta.Meta
-import meta.asserts.MetaAssert
 import type.Type
 
 /**
