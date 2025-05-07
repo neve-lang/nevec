@@ -3,7 +3,7 @@ package meta.target
 /**
  * Provides an [appliesTo] method that allows meta components to check whether they apply to the given target.
  *
- * @see meta.asserts.MetaAssert
+ * @see meta.comp.asserts.MetaAssert
  */
 interface AppliesTo {
     /**
