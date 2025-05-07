@@ -41,16 +41,10 @@ data class Info(
     }
 
     /**
-     * Attempts to add a [MetaComp] to `this` [Info].
-     *
-     * @return A new [Info] if adding a [MetaComp] is successful, `this` otherwise.
+     * @return an identical [Info] data class with [new] as the new [meta] property.
      */
-    fun add(comp: MetaComp, to: Target, of: Infoful): Info {
-        return Info(
-            loc,
-            type,
-            meta.add(comp, to, of).or(meta)
-        )
+    fun with(new: Meta): Info {
+        return Info(loc, type, new)
     }
 
     override fun loc(): Loc {
