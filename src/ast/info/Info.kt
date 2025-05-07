@@ -3,6 +3,8 @@ package ast.info
 import ast.info.impl.Infoful
 import file.span.Loc
 import meta.Meta
+import meta.comp.MetaComp
+import meta.target.Target
 import type.Type
 
 /**
@@ -36,6 +38,19 @@ data class Info(
         fun at(loc: Loc): Info {
             return Info(loc, Type.unresolved(), Meta.empty())
         }
+    }
+
+    /**
+     * Attempts to add a [MetaComp] to `this` [Info].
+     *
+     * @return A new [Info] if adding a [MetaComp] is successful, `this` otherwise.
+     */
+    fun add(comp: MetaComp, to: Target, of: Infoful): Info {
+        return Info(
+            loc,
+            type,
+            meta.add(comp, to, of).or(meta)
+        )
     }
 
     override fun loc(): Loc {
