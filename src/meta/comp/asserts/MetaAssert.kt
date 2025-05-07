@@ -1,6 +1,7 @@
 package meta.comp.asserts
 
 import file.span.Loc
+import meta.comp.MetaComp
 import meta.target.AppliesTo
 import meta.target.Target
 import type.Type
@@ -15,7 +16,7 @@ import type.Type
  * One peculiarity of meta assertions is that they **always appear after their target**, whereas meta annotations
  * appear before it.
  */
-sealed class MetaAssert : AppliesTo {
+sealed class MetaAssert : MetaComp {
     /**
      * A **type** meta assertion.
      *
