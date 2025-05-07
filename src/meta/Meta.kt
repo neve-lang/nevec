@@ -30,22 +30,10 @@ data class Meta(val comps: List<MetaComp>) {
     }
 
     /**
-     * Tries to add a [meta component][MetaComp] to the current [Meta], producing a [MetaResult].
-     *
-     * @param comp The assert in question.
-     * @param to The node target the [MetaComp] should be applied to.
-     * @param of The node itself.
-     *
-     * @return a [MetaResult] with a [MetaFail] if [to] can’t be applied to [comp], a [MetaResult] containing
-     * the new [Meta] otherwise.
-     *
-     * @see MetaResult
+     * @return A new [Meta] with the lists of both operands concatenated.
      */
-    fun add(comp: MetaComp, to: Target, of: Infoful) : MetaResult {
-        return if (!comp.appliesTo(to))
-            MetaFail.Target(comp, of).wrap()
-        else
-            Meta(comps + listOf(comp)).wrap()
+    operator fun plus(other: Meta): Meta {
+        return Meta(comps + other.comps)
     }
 
     /**
