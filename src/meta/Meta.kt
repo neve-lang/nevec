@@ -20,6 +20,13 @@ data class Meta(val comps: List<MetaComp>) {
         fun empty(): Meta {
             return Meta(listOf())
         }
+
+        /**
+         * @return A [Meta] data class with the list of [comps] given.
+         */
+        fun from(vararg comps: MetaComp): Meta {
+            return Meta(comps.toList())
+        }
     }
 
     /**
