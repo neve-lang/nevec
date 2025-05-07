@@ -137,6 +137,16 @@ sealed class Expr : Ast, Wrap<Stmt>, Infoful {
         is OfInterpol -> interpol.meta()
     }
 
+    override fun info() = when (this) {
+        is Parens -> info
+        is Show -> info
+        is Empty -> info
+        is OfUnOp -> unOp.info()
+        is OfBinOp -> binOp.info()
+        is OfLit -> lit.info()
+        is OfInterpol -> interpol.info()
+    }
+
     override fun update(new: Info): Infoful = when (this) {
         is Parens -> Parens(expr, new)
         is Show -> Show(expr, new)

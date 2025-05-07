@@ -74,6 +74,15 @@ sealed class Lit : Ast, Wrap<Expr>, Infoful {
         is NilLit -> info.meta()
     }
 
+    override fun info() = when (this) {
+        is IntLit -> info
+        is FloatLit -> info
+        is BoolLit -> info
+        is StrLit -> info
+        is TableLit -> info
+        is NilLit -> info
+    }
+
     override fun update(new: Info) = when (this) {
         is IntLit -> IntLit(value, new)
         is FloatLit -> FloatLit(value, new)

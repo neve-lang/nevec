@@ -88,6 +88,13 @@ sealed class BinOp : Ast, Wrap<Expr>, Infoful {
         is Concat -> info.meta()
     }
 
+    override fun info() = when (this) {
+        is Bitwise -> info
+        is Arith -> info
+        is Comp -> info
+        is Concat -> info
+    }
+
     override fun update(new: Info) = when (this) {
         is Bitwise -> Bitwise(left, operator, right, new)
         is Arith -> Arith(left, operator, right, new)
