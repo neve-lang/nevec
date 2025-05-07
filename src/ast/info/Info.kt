@@ -41,10 +41,10 @@ data class Info(
     }
 
     /**
-     * @return an identical [Info] data class with [new] as the new [meta] property.
+     * @return an identical [Info] data class with `this` [Meta] added to [with].
      */
-    fun with(new: Meta): Info {
-        return Info(loc, type, new)
+    operator fun plus(new: Meta): Info {
+        return Info(loc, type, meta + new)
     }
 
     override fun loc(): Loc {
