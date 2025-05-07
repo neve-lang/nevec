@@ -40,4 +40,9 @@ sealed class UnOp : Ast, Wrap<Expr>, Infoful {
         is Neg -> info.meta()
         is Not -> info.meta()
     }
+
+    override fun update(new: Info) = when (this) {
+        is Neg -> Neg(expr, new)
+        is Not -> Not(expr, new)
+    }
 }

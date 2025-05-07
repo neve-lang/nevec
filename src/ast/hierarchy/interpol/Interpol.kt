@@ -68,4 +68,9 @@ sealed class Interpol : Ast, Wrap<Expr>, Infoful {
         is Some -> info.meta()
         is End -> info.meta()
     }
+
+    override fun update(new: Info) = when (this) {
+        is Some -> Some(string, expr, next, new)
+        is End -> End(string, new)
+    }
 }

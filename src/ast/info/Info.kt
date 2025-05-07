@@ -64,4 +64,8 @@ data class Info(
     override fun meta(): Meta {
         return meta
     }
+
+    override fun update(new: Info): Infoful {
+        return new
+    }
 }

@@ -63,6 +63,10 @@ sealed class BinOp : Ast, Wrap<Expr>, Infoful {
         is Concat -> Pair(left, right)
     }
 
+    override fun wrap(): Expr {
+        return Expr.OfBinOp(this)
+    }
+
     override fun loc() = when (this) {
         is Bitwise -> info.loc()
         is Arith -> info.loc()
@@ -84,7 +88,10 @@ sealed class BinOp : Ast, Wrap<Expr>, Infoful {
         is Concat -> info.meta()
     }
 
-    override fun wrap(): Expr {
-        return Expr.OfBinOp(this)
+    override fun update(new: Info) = when (this) {
+        is Bitwise -> Bitwise(left, operator, right, new)
+        is Arith -> Arith(left, operator, right, new)
+        is Comp -> Comp(left, operator, right, new)
+        is Concat -> Concat(left, operator, right, new)
     }
 }
