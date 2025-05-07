@@ -5,6 +5,7 @@ import ast.info.impl.Infoful
 import file.span.Loc
 import meta.Meta
 import meta.comp.MetaComp
+import meta.result.MetaResult
 
 /**
  * Represents the kinds of failures that can happen when dealing with **meta components**, like parsing errors,
@@ -62,4 +63,13 @@ sealed class MetaFail {
      * @see meta.target.Target
      */
     data class Target(val meta: MetaComp, val node: Infoful) : MetaFail()
+
+    /**
+     * @return A [MetaResult] wrapper around `this`.
+     *
+     * @see MetaResult
+     */
+    fun wrap(): MetaResult {
+        return MetaResult.Fail(this)
+    }
 }
