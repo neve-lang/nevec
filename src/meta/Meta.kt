@@ -31,15 +31,22 @@ data class Meta(val comps: List<MetaComp>) {
      *
      * @return a [MetaResult] with a [MetaFail] if [to] can’t be applied to [comp], a [MetaResult] containing
      * the new [Meta] otherwise.
+     *
+     * @see MetaResult
      */
     fun add(comp: MetaComp, to: Target, of: Infoful) : MetaResult {
         return if (!comp.appliesTo(to))
-            MetaResult.Fail(
-                MetaFail.Target(comp, of)
-            )
+            MetaFail.Target(comp, of).wrap()
         else
-            MetaResult.Success(
-                Meta(comps + listOf(comp))
-            )
+            Meta(comps + listOf(comp)).wrap()
+    }
+
+    /**
+     * @return A [MetaResult] wrapped around `this`.
+     *
+     * @see MetaResult
+     */
+    fun wrap(): MetaResult {
+        return MetaResult.Success(this)
     }
 }
