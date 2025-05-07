@@ -24,4 +24,14 @@ sealed class MetaResult {
      * @property reason The kind of [MetaFail] that occurred.
      */
     data class Fail(val reason: MetaFail) : MetaResult()
+
+    /**
+     * @param fallback The fallback [Meta] to be returned when `this` is [Fail].
+     *
+     * Takes in a [fallback] param of type [Meta] that is returned when `this` is [Fail].
+     */
+    fun or(fallback: Meta) = when (this) {
+        is Success -> meta
+        is Fail -> fallback
+    }
 }
