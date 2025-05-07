@@ -14,4 +14,11 @@ enum class Target {
      * This includes parenthesized expressions.
      */
     PRIMARY;
+
+    /**
+     * @return `this` [Target]’s name, in lowercase.
+     */
+    fun lowercase(): String {
+        return name.lowercase()
+    }
 }
