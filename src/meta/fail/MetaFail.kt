@@ -1,9 +1,6 @@
 package meta.fail
 
-import ast.hierarchy.Ast
-import ast.info.impl.Infoful
 import file.span.Loc
-import meta.Meta
 import meta.comp.MetaComp
 import meta.result.MetaResult
 
@@ -62,6 +59,15 @@ sealed class MetaFail {
      * @see meta.target.Target
      */
     data class Target(val loc: Loc) : MetaFail()
+
+    /**
+     * Represents a meta failure that occurs when `--meta-asserts` is not enabled.
+     *
+     * @property loc The location of the [MetaComp].
+     *
+     * @see cli.Options.META_ASSERTS
+     */
+    data class NotEnabled(val loc: Loc) : MetaFail()
 
     /**
      * @return A [MetaResult] wrapper around `this`.
