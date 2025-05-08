@@ -51,6 +51,17 @@ enum class TokKind {
     }
 
     /**
+     * @return whether `this` kind could be a token that starts a type.  It includes:
+     *
+     * - `ID`, for simple identifiers
+     * - `LBRACKET`, for lists and tables
+     * - `APOSTROPHE`, for [free types][type.gen.Free]
+     */
+    fun isTypeStarter(): Boolean {
+        return this == ID || this == LBRACKET || this == APOSTROPHE
+    }
+
+    /**
      * @return whether [ordinal] is between the ordinals of [min] and [max], **inclusive**.
      */
     fun isInBetween(min: TokKind, max: TokKind): Boolean {
