@@ -71,6 +71,14 @@ sealed class Poison : Wrappable, NamedType, RecessType {
      */
     data class Hint(val original: Type, val loc: Loc) : Poison()
 
+    /**
+     * Represents an undefined type, that is, a type that was not registered into the symbol table prior to
+     * its first usage.
+     *
+     * @param name The name of the undefined type, as it was used in the code.
+     */
+    data class Undefined(val name: String) : Poison()
+
     override fun wrap(): TypeKind {
         return TypeKind.OfPoison(this)
     }
@@ -80,5 +88,6 @@ sealed class Poison : Wrappable, NamedType, RecessType {
         is Ignorable -> "Ignorable"
         is Unresolved -> "Unresolved"
         is Hint -> original.named().suffixWith("..!")
+        is Undefined -> "Undefined"
     }
 }
