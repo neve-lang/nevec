@@ -1,1 +1,1 @@
-("Hello, " - "world!") @[type = Unknown]
+("Hello, " - "world!") @[type == Unknown]

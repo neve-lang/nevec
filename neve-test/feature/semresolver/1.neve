@@ -1,5 +1,5 @@
 (
-    1 @[type = Int]
+    1 @[type == Int]
     +
-    2 @[type = Int]
-) @[type = Int]
+    2 @[type == Int]
+) @[type == Int]
