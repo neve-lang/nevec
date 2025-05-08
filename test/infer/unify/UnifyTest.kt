@@ -211,6 +211,17 @@ class UnifyTest {
         )
     }
 
+    @Test
+    fun testNineteen() {
+        assertSameName(
+            Type.poisoned(with = Poison.Ignorable),
+            unified(
+                Type.undefined("?"),
+                PreludeTypes.INT
+            )
+        )
+    }
+
     private fun assertDifferentName(a: Type, b: Type) {
         assertNotEquals(a.named(), b.named())
     }
