@@ -30,14 +30,25 @@ import type.poison.Poison
 data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : Unwrappable<Wrappable>, NamedType {
     companion object {
         /**
-         * @return A [Type] with [kind] of `OfPoison(Poison.UNRESOLVED)` and [domain] of [Domain.Undefined].
+         * @return A [Type] with [kind] of `OfPoison(Poison.Unresolved)` and [domain] of [Domain.Undefined].
          */
         fun unresolved(): Type {
             return Type(TypeKind.unresolved())
         }
 
         /**
-         * @return A [Type] with [kind] of `OfPoison(Poison.UNKNOWN)` and [domain] of [Domain.Undefined].
+         * @param name The name of the type, as it appears in the code.
+         *
+         * @return A [Type] with [kind] of `OfPoison(Poison.Undefined(name))` and [domain] of [Domain.Undefined].
+         *
+         * @see Poison.Undefined
+         */
+        fun undefined(name: String): Type {
+            return Type(TypeKind.undefined(name))
+        }
+
+        /**
+         * @return A [Type] with [kind] of `OfPoison(Poison.Unknown)` and [domain] of [Domain.Undefined].
          */
         fun unknown(): Type {
             return Type(TypeKind.unknown())
