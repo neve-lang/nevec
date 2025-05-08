@@ -9,14 +9,21 @@ import ast.hierarchy.program.Program
 import ast.hierarchy.stmt.Stmt
 import ast.hierarchy.unop.UnOp
 import ast.info.Info
+import ctx.Ctx
 import err.msg.Msg
 import file.span.Loc
+import meta.Meta
+import meta.result.MetaResult
+import meta.target.Target
 import parse.binop.AnyBinOp
 import parse.err.ParseErr
+import parse.ctx.ParseCtx
+import parse.meta.ParseMeta
 import parse.state.ParseState
 import parse.tok.Window
 import tok.Tok
 import tok.TokKind
+import type.table.TypeTable
 import util.extension.until
 
 /**
@@ -26,9 +33,13 @@ import util.extension.until
  *
  * @param contents The contents of the source file.
  */
-class Parse(contents: String) {
+class Parse(contents: String, private val ctx: Ctx) {
     private val window = Window(contents)
     private val state = ParseState()
+
+    // right now, we just assume we have access to the TypeTable.  once we implement a symbol resolution phase,
+    // we will refactor this.
+    private val typeTable = TypeTable()
 
     init {
         consume()
@@ -145,22 +156,26 @@ class Parse(contents: String) {
         return primary()
     }
 
-    private fun primary() = when (kind()) {
-        TokKind.LPAREN -> grouped()
+    private fun primary(): Expr {
+        val node =  when (kind()) {
+            TokKind.LPAREN -> grouped()
 
-        TokKind.TRUE -> Lit.BoolLit(true, consumeHere()).wrap()
-        TokKind.FALSE -> Lit.BoolLit(false, consumeHere()).wrap()
-        TokKind.NIL -> Lit.NilLit(consumeHere()).wrap()
+            TokKind.TRUE -> Lit.BoolLit(true, consumeHere()).wrap()
+            TokKind.FALSE -> Lit.BoolLit(false, consumeHere()).wrap()
+            TokKind.NIL -> Lit.NilLit(consumeHere()).wrap()
 
-        TokKind.INT -> intLit().wrap()
-        TokKind.FLOAT -> floatLit().wrap()
-        TokKind.LBRACKET -> listOrTable().wrap()
-        TokKind.STR -> strLit().wrap()
-        TokKind.INTERPOL -> interpol().wrap()
+            TokKind.INT -> intLit().wrap()
+            TokKind.FLOAT -> floatLit().wrap()
+            TokKind.LBRACKET -> listOrTable().wrap()
+            TokKind.STR -> strLit().wrap()
+            TokKind.INTERPOL -> interpol().wrap()
 
-        // TokKind.ID -> consume().let { Expr.Access(it.lexeme, Info.at(it.loc)) }
+            // TokKind.ID -> consume().let { Expr.Access(it.lexeme, Info.at(it.loc)) }
 
-        else -> Expr.empty().also { showMsg(ParseErr.expectedExpr(consume())) }
+            else -> Expr.empty().also { showMsg(ParseErr.expectedExpr(consume())) }
+        }
+
+        return exprMeta(node, to = Target.PRIMARY)
     }
 
     private fun intLit(): Lit.IntLit {
@@ -238,6 +253,29 @@ class Parse(contents: String) {
         return Lit.TableLit(keys, vals, Info.at(loc))
     }
 
+    private fun exprMeta(node: Expr, to: Target): Expr {
+        return when (val parsed = parseAllMeta(node, to).reduce { a, b -> a + b }) {
+            is MetaResult.Success -> node.update(
+                node.info() + parsed.meta
+            )
+
+            is MetaResult.Fail -> node
+        }
+    }
+
+    private fun parseAllMeta(node: Expr, to: Target): List<MetaResult> {
+        val parsed = ParseMeta(ctx()).parse(to)
+        if (parsed.isEmpty()) {
+            return listOf(parsed)
+        }
+
+        if (parsed is MetaResult.Fail) {
+            showMsg(ParseErr.metaFail(node.loc(), parsed.reason))
+        }
+
+        return listOf(parsed) + parseAllMeta(node, to)
+    }
+
     private fun sync() {
         state.relax()
 
@@ -300,6 +338,10 @@ class Parse(contents: String) {
         return kind().isExprStarter() && !hadNewline()
     }
 
+    private fun ctx(): ParseCtx {
+        return ParseCtx(window, typeTable)
+    }
+
     // in Neve, we would have an additional restriction here:
     // fun string_of(tok StrTok)
     // with StrTok = Tok where self.kind in [TokKind.Str, TokKind.Interpol]
@@ -332,7 +374,7 @@ class Parse(contents: String) {
     }
 
     private fun here(expr: Expr): Info {
-        return Info(window.here(), expr.type())
+        return Info(window.here(), expr.type(), Meta.empty())
     }
 
     private fun here(): Info {
