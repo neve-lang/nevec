@@ -36,10 +36,29 @@ sealed class MetaResult {
     }
 
     /**
+     * @return
+     * - If both are [Fail], the [other] fail,
+     * - If one is [Fail] and another [Success], the [Success],
+     * - A sum of both [Success] otherwise.
+     */
+    operator fun plus(other: MetaResult) = when {
+        this is Fail && other is Fail -> this
+        this is Success && other is Success -> (meta + other.meta).wrap()
+        else -> pickSuccess(this, other)
+    }
+
+    /**
      * @return If this is a [Success], whether the [Meta] itself [is empty][Meta.isEmpty]; `false` otherwise.
      */
     fun isEmpty() = when (this) {
         is Success -> meta.isEmpty()
         is Fail -> false
+    }
+
+    private fun pickSuccess(a: MetaResult, b: MetaResult): MetaResult {
+        return if (b is Success)
+            b
+        else
+            a
     }
 }
