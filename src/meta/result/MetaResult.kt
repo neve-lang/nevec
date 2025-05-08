@@ -34,4 +34,12 @@ sealed class MetaResult {
         is Success -> meta
         is Fail -> fallback
     }
+
+    /**
+     * @return If this is a [Success], whether the [Meta] itself [is empty][Meta.isEmpty]; `false` otherwise.
+     */
+    fun isEmpty() = when (this) {
+        is Success -> meta.isEmpty()
+        is Fail -> false
+    }
 }
