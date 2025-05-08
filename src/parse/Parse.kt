@@ -339,7 +339,7 @@ class Parse(contents: String, private val ctx: Ctx) {
     }
 
     private fun ctx(): ParseCtx {
-        return ParseCtx(window, typeTable)
+        return ParseCtx(window, typeTable, ctx)
     }
 
     // in Neve, we would have an additional restriction here:
