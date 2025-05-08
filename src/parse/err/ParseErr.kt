@@ -104,6 +104,7 @@ object ParseErr {
         is MetaFail.Parse -> metaParseFail(fail)
         is MetaFail.Name -> metaNameFail(fail)
         is MetaFail.Input -> metaInputFail(fail)
+        is MetaFail.NotEnabled -> metaNotEnabledFail(fail)
     }
 
     private fun metaTargetFail(loc: Loc, fail: MetaFail.Target): Msg {
@@ -133,6 +134,14 @@ object ParseErr {
         return Report.err(fail.loc, "malformed meta component input").lines(
             Lines.of(Note.err(fail.loc, "here"))
         ).build()
+    }
+
+    private fun metaNotEnabledFail(fail: MetaFail.NotEnabled): Msg {
+        return Report.err(fail.loc, "meta assertions not enabled")
+            .msg("run `nevec` with `--meta-asserts` to enable them")
+            .lines(
+                Lines.of(Note.err(fail.loc, "not enabled"))
+            ).build()
     }
 }
 
