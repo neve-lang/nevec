@@ -37,6 +37,13 @@ data class Meta(val comps: List<MetaComp>) {
     }
 
     /**
+     * @return Whether [comps] is empty.
+     */
+    fun isEmpty(): Boolean {
+        return comps.isEmpty()
+    }
+
+    /**
      * @return A [MetaResult] wrapped around `this`.
      *
      * @see MetaResult
