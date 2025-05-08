@@ -138,6 +138,15 @@ sealed class TypeKind : NamedType {
         }
 
         /**
+         * @param name The name of the type, as it appears in the code.
+         *
+         * @return A poisoned type [OfPoison] with [Poison.Undefined].
+         */
+        fun undefined(name: String): OfPoison {
+            return OfPoison(Poison.Undefined(name))
+        }
+
+        /**
          * @return A poisoned type [OfPoison] with [Poison.Unknown].
          */
         fun unknown(): OfPoison {
