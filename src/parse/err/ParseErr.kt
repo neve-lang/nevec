@@ -7,6 +7,7 @@ import err.help.Lines
 import err.help.Suggest
 import file.span.Loc
 import lex.lexeme
+import meta.fail.MetaFail
 import tok.Tok
 import tok.TokKind
 
@@ -78,7 +79,7 @@ object ParseErr {
     /**
      * @param tok The token where the expression was expected.
      *
-     * @return an error message for unexpected tokens in places where an expression was expected.
+     * @return An error message for unexpected tokens in places where an expression was expected.
      */
     fun expectedExpr(tok: Tok): Msg {
         val loc = tok.loc
@@ -88,13 +89,61 @@ object ParseErr {
             Lines.of(Note.err(loc, "expected an expression, but found '$lexeme'"))
         ).build()
     }
+
+    /**
+     * @param loc The [Loc] of the node where the meta fail occurred.
+     * @param fail The [MetaFail] in question.
+     *
+     * @return An error message depending on the kind of [MetaFail].
+     *
+     * @see meta.result.MetaResult
+     * @see MetaFail
+     */
+    fun metaFail(loc: Loc, fail: MetaFail) = when (fail) {
+        is MetaFail.Target -> metaTargetFail(loc, fail)
+        is MetaFail.Parse -> metaParseFail(fail)
+        is MetaFail.Name -> metaNameFail(fail)
+        is MetaFail.Input -> metaInputFail(fail)
+    }
+
+    private fun metaTargetFail(loc: Loc, fail: MetaFail.Target): Msg {
+        return Report.err(fail.loc, "meta component target mismatch").lines(
+            Lines.of(
+                Note.info(loc, "this"),
+                Note.err(fail.loc, "does not apply to this"),
+            )
+        ).build()
+    }
+
+    private fun metaParseFail(fail: MetaFail.Parse): Msg {
+        return Report.err(fail.loc, "unexpected meta component syntax").lines(
+            Lines.of(Note.err(fail.loc, "here"))
+        ).build()
+    }
+
+    private fun metaNameFail(fail: MetaFail.Name): Msg {
+        return Report.err(fail.loc, "unexpected meta component name").lines(
+            Lines.of(
+                Note.err(fail.loc, "unknown meta component ‘${fail.name}’")
+            )
+        ).build()
+    }
+
+    private fun metaInputFail(fail: MetaFail.Input): Msg {
+        return Report.err(fail.loc, "malformed meta component input").lines(
+            Lines.of(Note.err(fail.loc, "here"))
+        ).build()
+    }
 }
 
 /**
- * @return
+ * @return The usual lexeme associated with `this` [Tok]’s [TokKind].
  */
 fun Tok.display(): String  {
     return kind.display()
 }
 
+/**
+ * @return The usual lexeme associated with `this` [TokKind], or `"end of file"` if `this` is `null`.
+ */
 fun TokKind?.display() = this?.lexeme() ?: "end of file"
