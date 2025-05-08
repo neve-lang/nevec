@@ -1,5 +1,6 @@
 package parse.meta
 
+import cli.Options
 import file.span.Loc
 import meta.Meta
 import meta.comp.MetaComp
@@ -22,6 +23,7 @@ import tok.TokKind
  */
 class ParseMeta(private val ctx: ParseCtx) {
     private val window = ctx.window
+    private val options = ctx.cliCtx.options
 
     /**
      * Tries to parse a [meta component][MetaComp].
@@ -29,6 +31,10 @@ class ParseMeta(private val ctx: ParseCtx) {
      * @return A [MetaResult.Success] if successful, a [MetaResult.Fail] otherwise.
      */
     fun parse(to: Target): MetaResult {
+        if (!options.isEnabled(Options.META_ASSERTS)) {
+            return MetaFail.NotEnabled(window.here()).wrap()
+        }
+
         return if (!window.check(TokKind.META_ASSERT))
             Meta.empty().wrap()
         else
