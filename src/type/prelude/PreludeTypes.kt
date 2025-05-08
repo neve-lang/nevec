@@ -57,4 +57,16 @@ object PreludeTypes {
     val NIL = Type(
         Rec.builder().prelude("Nil").build().covered().into(PrimKind.NIL),
     )
+
+    /**
+     * The immutable list of all prelude types.
+     */
+    val ALL = listOf(
+        INT,
+        FLOAT,
+        BOOL,
+        STR,
+        TABLE,
+        NIL
+    )
 }
