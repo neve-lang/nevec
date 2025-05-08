@@ -1,6 +1,7 @@
 package check.sem
 
 import ast.hierarchy.program.Program
+import ctx.Ctx
 import file.contents.Src
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -61,7 +62,7 @@ class SemResolverTest {
 fun String.parse(): Program {
     Src.setup("test.neve", lines())
 
-    return Parse(this).parse()
+    return Parse(this, Ctx.test()).parse()
 }
 
 fun Program.resolved(): Program {

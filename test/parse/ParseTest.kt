@@ -1,5 +1,6 @@
 package parse
 
+import ctx.Ctx
 import pretty.Pretty
 import file.contents.Src
 import org.junit.jupiter.api.Assertions.*
@@ -56,7 +57,7 @@ class ParseTest {
 fun String.parse(): String {
     Src.setup("test.neve", lines())
 
-    val parse = Parse(this)
+    val parse = Parse(this, Ctx.test())
     val pretty = Pretty.visit(parse.parse())
     return pretty
 }
