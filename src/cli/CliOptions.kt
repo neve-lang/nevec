@@ -5,7 +5,7 @@ package cli
  *
  * @property options The list of *enabled* options.  Disabled options will not be stored.
  */
-class CliOptions(private val options: List<Options>) {
+data class CliOptions(private val options: List<Options>) {
     companion object {
         /**
          * Takes the array of arguments and builds a [CliOptions].
