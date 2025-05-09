@@ -16,13 +16,13 @@ import type.Type
  * @see hasSameName
  * @see isIdentical
  */
-interface Compare {
+interface Compare<To: Compare<To>> {
     /**
      * @return Whether the implementor type and [other] have the same name.
      *
      * This comparison method—shallow comparison—is often used within [meta assertions][meta.comp.asserts.MetaAssert].
      */
-    fun hasSameName(other: Compare): Boolean
+    fun hasSameName(other: To): Boolean
 
     /**
      * @return Whether the implementor type and [to] have the same [Domain][domain.Domain].
@@ -31,5 +31,5 @@ interface Compare {
      *
      * @see domain.Domain
      */
-    fun isIdentical(other: Compare): Boolean
+    fun isIdentical(to: To): Boolean
 }
