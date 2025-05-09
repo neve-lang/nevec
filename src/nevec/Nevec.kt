@@ -1,0 +1,46 @@
+package nevec
+
+import check.Check
+import cli.CliArgs
+import ctx.Ctx
+import err.report.Report
+import file.contents.Src
+import nevec.result.Aftermath
+import nevec.result.Fail
+import parse.Parse
+import java.io.IOException
+
+/**
+ * Coordinates the process of compiling a Neve program.
+ */
+object Nevec {
+    /**
+     * Initiates the compilation phase.
+     *
+     * @return An [Aftermath] data object or class indicating whether compilation was successful.
+     */
+    fun run(args: Array<String>): Aftermath {
+        val (file, cliOptions) = try {
+            CliArgs.parse(args)
+        } catch (e: IllegalArgumentException) {
+            println(e.message)
+            return Fail.CLI.wrap()
+        }
+
+        val ctx = Ctx(cliOptions)
+
+        val (src, lines) = try {
+            Src.read(file)
+        } catch (e: IOException) {
+            Report.fileErr(file)
+            return Fail.IO.wrap()
+        }
+
+        val parsed = Parse(src, ctx).parse()
+
+        return if (Check.check(parsed, ctx))
+            Aftermath.Success
+        else
+            Fail.COMPILE.wrap()
+    }
+}
