@@ -33,13 +33,26 @@ enum class Options {
      * Prevents the compiler from going further than the type-checking phase, i.e. lowering the AST to the IR
      * representation.
      */
-    CHECK_ONLY;
+    CHECK_ONLY,
+
+    /**
+     * Allows referencing types that are usually not exposed to the user, such as [poisoned types][type.poison.Poison],
+     * [free types][type.gen.Free] and more.
+     *
+     * Each of these “compiler types” is given special syntax, such as:
+     *
+     * ```
+     * ~Unknown -- poisoned type
+     * '0 -- free type
+     */
+    COMPILER_TYPES;
 
     companion object {
         private val MAP = mapOf(
             "--no-opt" to NO_OPT,
-            "--inline-asserts" to META_ASSERTS,
-            "--check-only" to CHECK_ONLY
+            "--meta-asserts" to META_ASSERTS,
+            "--check-only" to CHECK_ONLY,
+            "--compiler-types" to COMPILER_TYPES
         )
 
         /**
