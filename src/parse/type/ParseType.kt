@@ -1,11 +1,13 @@
 package parse.type
 
+import cli.Options
 import parse.ctx.ParseCtx
 import tok.TokKind
 import type.Type
 import type.gen.Applied
 import type.gen.Free
 import type.gen.arg.TypeArgs
+import type.poison.Poison
 
 /**
  * Helper class that takes care of parsing types.
@@ -13,6 +15,7 @@ import type.gen.arg.TypeArgs
 class ParseType(ctx: ParseCtx) {
     private val window = ctx.window
     private val typeTable = ctx.typeTable
+    private val options = ctx.cliCtx.options
 
     fun parse(): Type? {
         return parseType()
@@ -21,10 +24,15 @@ class ParseType(ctx: ParseCtx) {
     private fun parseType() = when (window.kind()) {
         // TODO: add support for alternative table syntax: [K: V]
         TokKind.APOSTROPHE -> parseFree()
+        TokKind.TILDE -> parsePoison()
         else -> parseNamed()
     }
 
     private fun parseFree(): Type? {
+        if (!options.isEnabled(Options.COMPILER_TYPES)) {
+            return null
+        }
+
         window.advance()
         val id = window.take(TokKind.INT) ?: return null
 
@@ -32,6 +40,17 @@ class ParseType(ctx: ParseCtx) {
             id.lexeme.toInt(),
             0
         ).covered()
+    }
+
+    private fun parsePoison(): Type? {
+        if (!options.isEnabled(Options.COMPILER_TYPES)) {
+            return null
+        }
+
+        window.advance()
+        val id = window.take(TokKind.ID) ?: return null
+
+        return Poison.fromName(id.lexeme)?.covered()
     }
 
     private fun parseNamed(): Type? {
