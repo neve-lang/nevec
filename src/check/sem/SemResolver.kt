@@ -170,10 +170,14 @@ class SemResolver : Visit<Program, Program> {
     }
 
     private fun visitTable(table: Lit.TableLit): Lit.TableLit {
+        val keys = table.keys.map(::visitExpr)
+        val vals = table.vals.map(::visitExpr)
+        val new = Lit.TableLit(keys, vals, table.info)
+
         return Lit.TableLit(
-            table.keys.map(::visitExpr),
-            table.vals.map(::visitExpr),
-            FromInfo(table.info).infer(from = table.wrap(), with = infer)
+            new.keys,
+            new.vals,
+            FromInfo(new.info).infer(from = new.wrap(), with = infer)
         )
     }
 
