@@ -16,7 +16,7 @@ import type.Type
  * One peculiarity of meta assertions is that they **always appear after their target**, whereas meta annotations
  * appear before it.
  */
-sealed class MetaAssert : MetaComp {
+sealed class MetaAssert<T> : MetaComp, CheckAssert<T> {
     /**
      * A **type** meta assertion.
      *
@@ -24,9 +24,13 @@ sealed class MetaAssert : MetaComp {
      *
      * @see type.Type
      */
-    data class TypeAssert(val type: Type, val loc: Loc) : MetaAssert() {
+    data class TypeAssert(val type: Type, val loc: Loc) : MetaAssert<Type>() {
         override fun appliesTo(target: Target): Boolean {
             return target == Target.PRIMARY
+        }
+
+        override fun checkFor(some: Type): Boolean {
+            return type.isSame(some)
         }
     }
 }
