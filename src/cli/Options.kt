@@ -13,19 +13,19 @@ enum class Options {
     NO_OPT,
 
     /**
-     * Enables the [meta assertions][meta.asserts.MetaAssert] feature.
+     * Enables the [meta assertions][meta.comp.asserts.MetaAssert] feature.
      *
      * Allows the user to perform metaprogramming assertions, such as:
      *
      * ```
-     * ("Hello, " + "10") @[type = Str]
+     * ("Hello, " + "10") @[type == Str]
      * ```
      *
      * The compiler will then check each meta assertion in the AST.
      *
      * Please note that meta assertion errors do not prevent the compiler from proceeding with compilation.
      *
-     * @see meta.asserts.MetaAssert
+     * @see meta.comp.asserts.MetaAssert
      */
     META_ASSERTS,
 
