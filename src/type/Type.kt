@@ -1,6 +1,7 @@
 package type
 
 import domain.Domain
+import type.impl.Compare
 import type.impl.NamedType
 import type.impl.Unwrappable
 import type.impl.Wrappable
@@ -27,7 +28,8 @@ import type.poison.Poison
  * @see type.table.TypeTable
  * @see Domain
  */
-data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : Unwrappable<Wrappable>, NamedType {
+data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : Unwrappable<Wrappable>, NamedType,
+    Compare<Type> {
     companion object {
         /**
          * @return A [Type] with [kind] of `OfPoison(Poison.Unresolved)` and [domain] of [Domain.Undefined].
@@ -123,11 +125,35 @@ data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : Unw
             this
     }
 
+    /**
+     * @return Whether the implementor type and [to] have the same [Domain][domain.Domain], and
+     * [have the same name][hasSameName].
+     *
+     * The reason why we provide another comparison method, is that there are **two kinds of type comparisons in Neve**:
+     *
+     * - Comparing whether the name is the same, sometimes referred to as **shallow comparison**.  This is because Neve
+     *   mainly uses nominal typing.  [hasSameName] accomplishes this.
+     * - Comparing whether the **domain** is the same.  If we define two types, `A` and `B`, both as
+     *   `Int where self == 10`,
+     *   then both types should be considered to have the same domain, but not the same identity.
+     *
+     * This comparison method is the most used one.
+     *
+     * @see domain.Domain
+     */
+    fun isIdentical(to: Type): Boolean {
+        return hasSameName(to) && domain == to.domain
+    }
+
     override fun itself(): Wrappable {
         return kind.unwrapped()
     }
 
     override fun named(): String {
         return kind.named()
+    }
+
+    override fun hasSameName(other: Type): Boolean {
+        return itself().hasSameName(other.itself())
     }
 }
