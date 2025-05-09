@@ -5,6 +5,10 @@ import meta.comp.MetaComp
 import meta.target.Target
 import type.Type
 import ast.info.Info
+import err.help.Lines
+import err.msg.Msg
+import err.note.Note
+import err.report.Report
 
 /**
  * Represents a **meta assertion**, i.e.:
@@ -32,5 +36,21 @@ sealed class MetaAssert : MetaComp, CheckAssert {
         override fun checkFor(info: Info): Boolean {
             return type.isSame(info.type())
         }
+
+        override fun failMsg(info: Info): Msg {
+            return Report.err(loc, "meta type assertion failed").lines(
+                Lines.of(
+                    Note.err(info.loc(), info.type().named()),
+                    Note.info(loc, "expected ${type.named()}")
+                )
+            ).build()
+        }
+    }
+
+    /**
+     * @return The [Loc] of the meta assertion.
+     */
+    fun loc() = when (this) {
+        is TypeAssert -> loc
     }
 }
