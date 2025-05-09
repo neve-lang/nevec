@@ -127,12 +127,12 @@ data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : Unw
 
     /**
      * @return Whether the implementor type and [to] have the same [Domain][domain.Domain], and
-     * [have the same name][hasSameName].
+     * [have the same name][isSame].
      *
      * The reason why we provide another comparison method, is that there are **two kinds of type comparisons in Neve**:
      *
      * - Comparing whether the name is the same, sometimes referred to as **shallow comparison**.  This is because Neve
-     *   mainly uses nominal typing.  [hasSameName] accomplishes this.
+     *   mainly uses nominal typing.  [isSame] accomplishes this.
      * - Comparing whether the **domain** is the same.  If we define two types, `A` and `B`, both as
      *   `Int where self == 10`,
      *   then both types should be considered to have the same domain, but not the same identity.
@@ -142,7 +142,7 @@ data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : Unw
      * @see domain.Domain
      */
     fun isIdentical(to: Type): Boolean {
-        return hasSameName(to) && domain == to.domain
+        return isSame(to) && domain == to.domain
     }
 
     override fun itself(): Wrappable {
@@ -153,7 +153,7 @@ data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : Unw
         return kind.named()
     }
 
-    override fun hasSameName(other: Type): Boolean {
+    override fun isSame(other: Type): Boolean {
         return itself().hasSameName(other.itself())
     }
 }
