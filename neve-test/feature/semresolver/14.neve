@@ -1,1 +1,1 @@
-["Hello, ": 1 + 2.0, "world!": 2] @[type == Table (Str, Unknown)]
+["Hello, ": 1 + 2.0, "world!": 2] @[type == Table (Str, ~Unknown)]
