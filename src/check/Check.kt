@@ -1,6 +1,10 @@
 package check
 
 import ast.hierarchy.program.Program
+import check.meta.MetaAssertCheck
+import check.sem.SemResolver
+import cli.Options
+import ctx.Ctx
 
 /**
  * Helper object to simplify the process of checking the source AST.
@@ -11,8 +15,12 @@ object Check {
      *
      * @return whether [what] is a valid Neve program or not.
      */
-    fun check(what: Program): Boolean {
-        // TODO: not yet implemented
-        return true
+    fun check(what: Program, ctx: Ctx): Boolean {
+        val resolved = SemResolver().visit(what)
+
+        return if (ctx.options.isEnabled(Options.META_ASSERTS))
+            MetaAssertCheck().visit(resolved)
+        else
+            true
     }
 }
