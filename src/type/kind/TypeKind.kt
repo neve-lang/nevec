@@ -7,6 +7,7 @@ import type.gen.Free
 import type.gen.Applied
 import type.gen.Quant
 import type.hinted.Hinted
+import type.impl.Compare
 import type.poison.Poison
 import type.prim.Prim
 import type.rec.Rec
@@ -19,7 +20,7 @@ import type.rec.Rec
  *
  * @see type.Type
  */
-sealed class TypeKind : NamedType {
+sealed class TypeKind : NamedType, Compare<TypeKind> {
     /**
      * Represents a **record type**.
      *
@@ -33,8 +34,8 @@ sealed class TypeKind : NamedType {
      *
      * ```
      * rec Person
-     *   name Str
-     *   age Whole
+     *   name: Str
+     *   age: Whole
      * end
      * ```
      *
@@ -179,5 +180,21 @@ sealed class TypeKind : NamedType {
         is OfPoison -> poison.named()
         is OfFree -> free.named()
         is OfQuant -> quant.named()
+    }
+
+    override fun isSame(other: TypeKind): Boolean {
+        if (this::class != other::class) {
+            return false
+        }
+
+        return when (this) {
+            is OfRec -> rec.isSame(other.unwrapped() as Rec)
+            is OfPrim -> prim.isSame(other.unwrapped() as Prim)
+            is OfHinted -> hinted.isSame(other.unwrapped() as Hinted)
+            is OfApplied -> applied.isSame(other.unwrapped() as Applied)
+            is OfPoison -> poison.isSame(other.unwrapped() as Poison)
+            is OfFree -> free.isSame(other.unwrapped() as Free)
+            is OfQuant -> quant.isSame(other.unwrapped() as Quant)
+        }
     }
 }

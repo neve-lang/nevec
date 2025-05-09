@@ -3,6 +3,7 @@ package type.hinted
 import file.span.Loc
 import type.impl.NamedType
 import type.Type
+import type.impl.Compare
 import type.impl.RecessType
 import type.impl.Wrappable
 import type.kind.TypeKind
@@ -23,7 +24,7 @@ import util.extension.suffixWith
  * @property type The actual type that was hinted by the user.
  * @property loc The [Loc] where the type hint was given.
  */
-data class Hinted(val type: Type, val loc: Loc) : Wrappable, NamedType, RecessType {
+data class Hinted(val type: Type, val loc: Loc) : Wrappable, NamedType, RecessType, Compare<Hinted> {
     /**
      * Accepts the hinted type as valid.
      *
@@ -43,5 +44,9 @@ data class Hinted(val type: Type, val loc: Loc) : Wrappable, NamedType, RecessTy
 
     override fun named(): String {
         return type.named().suffixWith("..?")
+    }
+
+    override fun isSame(other: Hinted): Boolean {
+        return type.isSame(other.type)
     }
 }

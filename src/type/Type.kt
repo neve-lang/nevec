@@ -154,6 +154,6 @@ data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : Unw
     }
 
     override fun isSame(other: Type): Boolean {
-        return itself().hasSameName(other.itself())
+        return kind.isSame(other.kind)
     }
 }

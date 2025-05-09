@@ -3,6 +3,7 @@ package type.poison
 import file.span.Loc
 import type.impl.NamedType
 import type.Type
+import type.impl.Compare
 import type.impl.RecessType
 import type.impl.Wrappable
 import type.kind.TypeKind
@@ -17,7 +18,7 @@ import util.extension.suffixWith
  *
  * Poisoned types are defined as [RecessTypes][RecessType] due to their special unification behavior.
  */
-sealed class Poison : Wrappable, NamedType, RecessType {
+sealed class Poison : Wrappable, NamedType, RecessType, Compare<Poison> {
     /**
      * Represents an **unknown** type, i.e. a type that **could not be unified**.
      *
@@ -87,7 +88,14 @@ sealed class Poison : Wrappable, NamedType, RecessType {
         is Unknown -> "Unknown"
         is Ignorable -> "Ignorable"
         is Unresolved -> "Unresolved"
+        is Undefined -> "Undefined ‘${name}’"
         is Hint -> original.named().suffixWith("..!")
-        is Undefined -> "Undefined"
+    }
+
+    override fun isSame(other: Poison) = when (this) {
+        is Unknown -> other is Unknown
+        is Ignorable -> other is Ignorable
+        is Unresolved -> other is Unresolved
+        else -> named() == other.named()
     }
 }
