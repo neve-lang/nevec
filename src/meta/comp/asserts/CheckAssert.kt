@@ -1,8 +1,10 @@
 package meta.comp.asserts
 
+import ast.info.Info
+
 /**
  * Provides a [checkFor] method that is [meta assertion][MetaAssert]-specific.
  */
-interface CheckAssert<T> {
-    fun checkFor(some: T): Boolean
+interface CheckAssert {
+    fun checkFor(info: Info): Boolean
 }
