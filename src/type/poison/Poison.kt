@@ -19,6 +19,28 @@ import util.extension.suffixWith
  * Poisoned types are defined as [RecessTypes][RecessType] due to their special unification behavior.
  */
 sealed class Poison : Wrappable, NamedType, RecessType, Compare<Poison> {
+    companion object {
+        private val NAMES = mapOf(
+            "Unknown" to Unknown,
+            "Ignorable" to Ignorable,
+            "Unresolved" to Unresolved
+        )
+
+        /**
+         * @return A [Poison] type from a string name, if it is one of the valid candidates.  Otherwise, it returns
+         * `null`.
+         *
+         * Valid candidates include:
+         *
+         * - `"Unknown"`
+         * - `"Ignorable"`
+         * - `"Unresolved"`
+         */
+        fun fromName(name: String): Poison? {
+            return NAMES[name]
+        }
+    }
+
     /**
      * Represents an **unknown** type, i.e. a type that **could not be unified**.
      *
