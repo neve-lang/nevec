@@ -41,6 +41,15 @@ data class Info(
     }
 
     /**
+     * @return an identical [Info] data class, with its [type] property replaced with [of].
+     *
+     * @param of The [Type] in question.
+     */
+    fun withType(of: Type): Info {
+        return Info(loc, of, meta)
+    }
+
+    /**
      * @return an identical [Info] data class with `this` [Meta] added to [with].
      */
     operator fun plus(new: Meta): Info {
