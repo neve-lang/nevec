@@ -57,7 +57,13 @@ class SemResolver : Visit<Program, Program> {
     }
 
     private fun visitParens(parens: Expr.Parens): Expr.Parens {
-        return Expr.Parens(visitExpr(parens.expr), parens.info)
+        val expr = visitExpr(parens.expr)
+        val new = Expr.Parens(expr, parens.info)
+
+        return Expr.Parens(
+            new.expr,
+            new.info().withType(of = expr.type())
+        )
     }
 
     private fun visitUnOp(unOp: UnOp) = when (unOp) {
