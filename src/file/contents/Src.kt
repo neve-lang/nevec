@@ -30,7 +30,7 @@ object Src {
             throw e
         }
 
-        val contents = lines.joinToString("")
+        val contents = lines.joinToString("\n")
         setup(filename, lines)
 
         return Pair(contents, lines)
