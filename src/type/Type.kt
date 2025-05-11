@@ -67,12 +67,21 @@ data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : Unw
     }
 
     /**
-     * @return whether [kind] is a [poisoned type][Poison] with [Poison.Unresolved] poison.
+     * @return whether [kind] is an [unresolved type][type.unresolved.Unresolved].
      *
-     * @see Poison
+     * @see type.unresolved.Unresolved
      */
     fun isUnresolved(): Boolean {
         return kind is TypeKind.OfUnresolved
+    }
+
+    /**
+     * @return whether [kind] is a [poisoned type][Poison] with [Poison.Unknown] poison.
+     *
+     * @see Poison.Unknown
+     */
+    fun isUnknown(): Boolean {
+        return kind is TypeKind.OfPoison && kind.poison is Poison.Unknown
     }
 
     /**
