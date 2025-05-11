@@ -23,7 +23,6 @@ sealed class Poison : Wrappable, NamedType, RecessType, Compare<Poison> {
         private val NAMES = mapOf(
             "Unknown" to Unknown,
             "Ignorable" to Ignorable,
-            "Unresolved" to Unresolved
         )
 
         /**
@@ -69,17 +68,6 @@ sealed class Poison : Wrappable, NamedType, RecessType, Compare<Poison> {
     data object Ignorable : Poison()
 
     /**
-     * Represents an **unresolved type**.
-     *
-     * By default, all symbol references in a program are given [Unresolved], until their type becomes resolved during
-     * the [semantic resolving][check.sem.SemResolver] phase.
-     *
-     * If the type cannot be resolved, it stays that way,
-     * until the type-checking phase reports them as “unknown symbol” errors.
-     */
-    data object Unresolved : Poison()
-
-    /**
      * Represents a hinted type that does not conform with the inferred type.
      *
      * During the type inference phase, a [Hinted][type.hinted.Hinted] type may be unified with the actual inferred
@@ -109,15 +97,11 @@ sealed class Poison : Wrappable, NamedType, RecessType, Compare<Poison> {
     override fun named() = when (this) {
         is Unknown -> "Unknown"
         is Ignorable -> "Ignorable"
-        is Unresolved -> "Unresolved"
         is Undefined -> "Undefined ‘${name}’"
         is Hint -> original.named().suffixWith("..!")
     }
 
-    override fun isSame(other: Poison) = when (this) {
-        is Unknown -> other is Unknown
-        is Ignorable -> other is Ignorable
-        is Unresolved -> other is Unresolved
-        else -> named() == other.named()
+    override fun isSame(other: Poison): Boolean {
+        return named() == other.named()
     }
 }
