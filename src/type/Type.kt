@@ -72,7 +72,7 @@ data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : Unw
      * @see Poison
      */
     fun isUnresolved(): Boolean {
-        return kind is TypeKind.OfPoison && kind.poison == Poison.Unresolved
+        return kind is TypeKind.OfUnresolved
     }
 
     /**
