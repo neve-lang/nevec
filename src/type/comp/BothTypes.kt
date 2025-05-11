@@ -21,7 +21,17 @@ import type.prim.Prim
  */
 data class BothTypes(val a: Type, val b: Type) {
     /**
-     * @return whether two types can be unified, i.e. if they same [TypeKind][type.kind.TypeKind], unless one or
+     * @return Whether both types [a] and [b] are the same [type]—in other words, `a = b = type`.
+     *
+     * This does **not** compare the type domains of the types—instead, it only compares them using
+     * [isSame][type.impl.Compare.isSame].
+     */
+    fun are(type: Type): Boolean {
+        return areSame() && a.isSame(type)
+    }
+
+    /**
+     * @return whether two types can be unified, i.e. if they have the same [TypeKind][type.kind.TypeKind], unless one or
      * both are [recessive types][RecessType].
      *
      * @see type.kind.TypeKind
