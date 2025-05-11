@@ -1,4 +1,4 @@
-package infer.comp
+package type.comp
 
 import type.Type
 import type.gen.Applied

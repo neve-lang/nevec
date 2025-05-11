@@ -1,7 +1,7 @@
 package infer.unify
 
 import ast.hierarchy.expr.Expr
-import infer.comp.BothTypes
+import type.comp.BothTypes
 import type.Type
 import type.gen.Applied
 import type.gen.arg.TypeArgs
