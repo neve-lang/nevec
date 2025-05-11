@@ -73,13 +73,13 @@ data class BothTypes(val a: Type, val b: Type) {
     }
 
     /**
-     * @return whether both [a] and [b] have the same name.
+     * @return whether both [a] and [b] are the same, according to [Compare][type.impl.Compare]’s
+     * [isSame][type.impl.Compare.isSame] method.
      *
-     * NOTE: Name mangling hasn’t been implemented yet, but [haveSameName] will be supposed to compare the
-     * mangled names of both types.  Right now, it just compares the simple name.
+     * @see type.impl.Compare.isSame
      */
-    fun haveSameName(): Boolean {
-        return a.named() == b.named()
+    fun areSame(): Boolean {
+        return a.isSame(b)
     }
 
     /**
@@ -123,6 +123,17 @@ data class BothTypes(val a: Type, val b: Type) {
      */
     fun pickUnifiable(): Type {
         return if (b.isFree())
+            a
+        else
+            b
+    }
+
+    /**
+     * @return from either [a] or [b], the [Type] that is not an [unresolved type][Type.isUnresolved].
+     * If both types are [unresolved][type.poison.Poison.Unresolved], [a] is returned.
+     */
+    fun pickResolved(): Type {
+        return if (b.isUnresolved())
             a
         else
             b
