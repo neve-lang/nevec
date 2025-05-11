@@ -63,6 +63,12 @@ sealed class Poison : Wrappable, NamedType, RecessType, Compare<Poison> {
      * [Unknown] types trigger a compiler error message, whereas [Ignorable] tells the type-checker to
      * ignore these types, as they are a direct result of another [Unknown] type.
      *
+     * The only exception to this rule are [Parens][ast.hierarchy.expr.Expr.Parens] nodes, as it allows the full
+     * parenthesized expression—including the parentheses—to be highlighted in type errors.
+     *
+     * This behavior is monitored by the [SemResolver][check.sem.SemResolver] at its `visitParens` method, and special
+     * error reporting is implemented by the type checker when it comes to parenthesized expressions.
+     *
      * @see Unknown
      */
     data object Ignorable : Poison()
