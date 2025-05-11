@@ -5,6 +5,7 @@ import type.gen.Applied
 import type.gen.Free
 import type.hinted.Hinted
 import type.impl.RecessType
+import type.poison.Poison
 import type.prim.Prim
 
 /**
@@ -158,6 +159,26 @@ data class BothTypes(val a: Type, val b: Type) {
     }
 
     /**
+     * Picks the “appropriate poison” for two **different types**, where **none is a
+     * [recessive type][type.impl.RecessType].
+     *
+     * Unifying two different non-recessive types always results in a poisoned type, but we need to be careful—if
+     * either of those types is an [Unknown][eitherIsUnknown], we need to return an
+     * [Ignorable][type.poison.Poison.Ignorable] type.
+     *
+     * @return An [Ignorable][type.poison.Poison.Ignorable] type if [eitherIsUnknown], an
+     * [Unknown][type.poison.Poison.Unknown] type otherwise.
+     *
+     * @see type.poison.Poison.Ignorable
+     */
+    fun pickPoison(): Type {
+        return if (eitherIsUnknown())
+            Type.poisoned(with = Poison.Ignorable)
+        else
+            Type.unknown()
+    }
+
+    /**
      * “Unwraps” both types by removing their [Hinted] wrapper, if there is one.
      *
      * @return A new [BothTypes] without any [Hinted] wrappers.
@@ -171,6 +192,10 @@ data class BothTypes(val a: Type, val b: Type) {
 
     private fun eitherIsRecess(): Boolean {
         return a.itself() is RecessType || b.itself() is RecessType
+    }
+
+    private fun eitherIsUnknown(): Boolean {
+        return a.isUnknown() || b.isUnknown()
     }
 
     private fun areApplied(): Boolean {
