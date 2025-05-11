@@ -17,7 +17,7 @@ import infer.unify.Unify
  * @see type.poison.Poison
  * @see type.hinted.Hinted
  */
-data class FromInfo(private val info: Info) {
+data class FromInfo(private val original: Info) {
     /**
      * Infers the type of [from] using [with].
      *
@@ -28,9 +28,9 @@ data class FromInfo(private val info: Info) {
      */
     fun infer(from: Expr, with: Infer): Info {
         return Info(
-            info.loc(),
-            Unify(info.type(), with.visit(from)).infer(),
-            info.meta()
+            original.loc(),
+            Unify(original.type(), with.visit(from)).infer(),
+            original.meta()
         )
     }
 }
