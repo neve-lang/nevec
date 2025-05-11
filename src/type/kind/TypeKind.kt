@@ -11,6 +11,7 @@ import type.impl.Compare
 import type.poison.Poison
 import type.prim.Prim
 import type.rec.Rec
+import type.unresolved.Unresolved
 
 /**
  * Represents all kinds of types in the Neve compiler.
@@ -130,12 +131,28 @@ sealed class TypeKind : NamedType, Compare<TypeKind> {
         }
     }
 
+    /**
+     * Wrapper around an **unresolved type**.
+     *
+     * @param unresolved The [Unresolved] type being wrapped by the variant.
+     *
+     * Keeping an [unresolved] object here is redundant, but for consistency with other [TypeKind] variants *and*
+     * because of [Unwrappable], we still store an [Unresolved] object.
+     *
+     * @see Unresolved
+     */
+    data class OfUnresolved(val unresolved: Unresolved) : Unwrappable<Unresolved>, TypeKind() {
+        override fun itself(): Unresolved {
+            return unresolved
+        }
+    }
+
     companion object {
         /**
-         * @return A poisoned type [OfPoison] with [Poison.Unresolved].
+         * @return An [Unresolved] type.
          */
-        fun unresolved(): OfPoison {
-            return OfPoison(Poison.Unresolved)
+        fun unresolved(): OfUnresolved {
+            return OfUnresolved(Unresolved)
         }
 
         /**
@@ -170,6 +187,7 @@ sealed class TypeKind : NamedType, Compare<TypeKind> {
         is OfPoison -> itself()
         is OfFree -> itself()
         is OfQuant -> itself()
+        is OfUnresolved -> itself()
     }
 
     override fun named(): String = when (this) {
@@ -180,6 +198,7 @@ sealed class TypeKind : NamedType, Compare<TypeKind> {
         is OfPoison -> poison.named()
         is OfFree -> free.named()
         is OfQuant -> quant.named()
+        is OfUnresolved -> unresolved.named()
     }
 
     override fun isSame(other: TypeKind): Boolean {
@@ -195,6 +214,7 @@ sealed class TypeKind : NamedType, Compare<TypeKind> {
             is OfPoison -> poison.isSame(other.unwrapped() as Poison)
             is OfFree -> free.isSame(other.unwrapped() as Free)
             is OfQuant -> quant.isSame(other.unwrapped() as Quant)
+            is OfUnresolved -> unresolved.isSame(other.unwrapped() as Unresolved)
         }
     }
 }
