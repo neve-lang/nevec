@@ -1,1 +1,1 @@
-(true and false) @[type == Bool]
+true @[type == Bool]
