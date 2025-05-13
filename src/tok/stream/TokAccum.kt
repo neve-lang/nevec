@@ -17,9 +17,9 @@ class TokAccum(private val accum: MutableList<Tok> = mutableListOf()) {
     /**
      * Builds the [TokAccum] into a [TokStream].
      *
-     * @return An immutable [TokStream] with the tokens accumulated.
+     * @return A [TokStream] with the tokens accumulated.
      */
     fun build(): TokStream {
-        return TokStream(accum.toList())
+        return TokStream(accum)
     }
 }
