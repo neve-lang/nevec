@@ -6,7 +6,7 @@ import tok.Tok
  * Similar to a [TokStream] builder—it uses a [MutableList] to accumulate each token, before [building][build] it into
  * a [TokStream].
  */
-class TokAccum(private val accum: MutableList<Tok>) {
+class TokAccum(private val accum: MutableList<Tok> = mutableListOf()) {
     /**
      * Adds a new [Tok] to the accumulator, mutating the internal mutable list.
      */
