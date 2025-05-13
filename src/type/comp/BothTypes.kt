@@ -20,6 +20,17 @@ import type.prim.Prim
  * @see infer.unify.Unify
  */
 data class BothTypes(val a: Type, val b: Type) {
+    companion object {
+        /**
+         * @return A [BothTypes] data class whose members are both members of the [pair] given.
+         */
+        fun from(pair: Pair<Type, Type>): BothTypes {
+            return pair.let {
+                (a, b) -> BothTypes(a, b)
+            }
+        }
+    }
+
     /**
      * @return Whether both types [a] and [b] are the same [type]—in other words, `a = b = type`.
      *
