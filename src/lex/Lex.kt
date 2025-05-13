@@ -7,6 +7,8 @@ import lex.interpol.InterpolTooDeepException
 import lex.relex.Relex
 import tok.Tok
 import tok.TokKind
+import tok.stream.TokAccum
+import tok.stream.TokStream
 import util.extension.isInsignificant
 
 /**
@@ -23,7 +25,24 @@ class Lex(contents: String) {
     private val state = InterpolState()
     private val relex = Relex()
 
-    fun next(): Tok {
+    /**
+     * @return A full [TokStream] of the entire file contents being parsed.
+     */
+    fun toks(): TokStream {
+        return accumToks().build()
+    }
+
+    private fun accumToks(accum: TokAccum = TokAccum()): TokAccum {
+        val next = next()
+        accum.add(next)
+
+        return if (next.isEof())
+            accum
+        else
+            accumToks(accum)
+    }
+
+    private fun next(): Tok {
         return relex.consume(::lexNext)
     }
 
