@@ -45,9 +45,9 @@ data class ParseCtx(
      *
      * When the previous token’s kind does not match any of the token kinds given, a [ParseErr] is reported.
      */
-    fun consume(vararg expected: TokKind): Tok? {
-        if (!check(*expected)) {
-            expect(*expected)
+    fun consume(expected: TokKind): Tok? {
+        if (!check(expected)) {
+            expect(expected)
             return null
         }
 
