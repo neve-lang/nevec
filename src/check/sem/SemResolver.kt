@@ -8,6 +8,7 @@ import ast.hierarchy.lit.Lit
 import ast.hierarchy.program.Program
 import ast.hierarchy.stmt.Stmt
 import ast.hierarchy.unop.UnOp
+import ast.sugar.Desugar
 import infer.info.FromInfo
 import infer.Infer
 import util.extension.map
@@ -113,17 +114,23 @@ class SemResolver : Visit<Program, Program> {
         )
     }
 
-    private fun visitArith(arith: BinOp.Arith): BinOp.Arith {
+    private fun visitArith(arith: BinOp.Arith): BinOp {
         // TODO: once we implement type inference, implement Arith to Concat conversion.
         val (left, right) = arith.operands().map(::visitExpr)
         val new = BinOp.Arith(left, arith.operator, right, arith.info)
 
-        return BinOp.Arith(
+        val candidate = BinOp.Arith(
             new.left,
             new.operator,
             new.right,
             FromInfo(new.info).infer(from = new.wrap(), with = infer)
         )
+
+        val desugared = Desugar.arith(candidate)
+        return if (desugared != null)
+            visitConcat(desugared)
+        else
+            candidate
     }
 
     private fun visitComp(comp: BinOp.Comp): BinOp.Comp {
@@ -135,6 +142,17 @@ class SemResolver : Visit<Program, Program> {
             new.operator,
             new.right,
             FromInfo(new.info).infer(from = new.wrap(), with = infer)
+        )
+    }
+
+    private fun visitConcat(concat: BinOp.Concat): BinOp.Concat {
+        println(FromInfo(concat.info).infer(from = concat.wrap(), with = infer))
+
+        return BinOp.Concat(
+            concat.left,
+            concat.operator,
+            concat.right,
+            FromInfo(concat.info).infer(from = concat.wrap(), with = infer)
         )
     }
 
