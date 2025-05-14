@@ -1,8 +1,8 @@
 package ast.hierarchy.expr
 
 import ast.hierarchy.Ast
-import ast.info.Spanned
-import ast.info.Typed
+import ast.info.impl.Spanned
+import ast.info.impl.Typed
 import ast.hierarchy.Wrap
 import ast.hierarchy.binop.BinOp
 import ast.hierarchy.interpol.Interpol
@@ -10,12 +10,13 @@ import ast.hierarchy.lit.Lit
 import ast.hierarchy.stmt.Stmt
 import ast.hierarchy.unop.UnOp
 import ast.info.Info
+import ast.info.impl.Infoful
 import file.span.Loc
 
 /**
  * This sealed class denotes all kinds of supported Neve expressions so far.
  */
-sealed class Expr : Ast, Wrap<Stmt>, Spanned, Typed {
+sealed class Expr : Ast, Wrap<Stmt>, Infoful {
     /**
      * A parenthesized expression.
      */
@@ -122,5 +123,37 @@ sealed class Expr : Ast, Wrap<Stmt>, Spanned, Typed {
         is OfBinOp -> binOp.type()
         is OfLit -> lit.type()
         is OfInterpol -> interpol.type()
+    }
+
+    override fun meta() = when (this) {
+        is Parens -> info.meta()
+        is Show -> info.meta()
+        // is Access -> info.meta()
+        // is AccessConst -> info.meta()
+        is Empty -> info.meta()
+        is OfUnOp -> unOp.meta()
+        is OfBinOp -> binOp.meta()
+        is OfLit -> lit.meta()
+        is OfInterpol -> interpol.meta()
+    }
+
+    override fun info() = when (this) {
+        is Parens -> info
+        is Show -> info
+        is Empty -> info
+        is OfUnOp -> unOp.info()
+        is OfBinOp -> binOp.info()
+        is OfLit -> lit.info()
+        is OfInterpol -> interpol.info()
+    }
+
+    override fun update(new: Info): Expr = when (this) {
+        is Parens -> Parens(expr, new)
+        is Show -> Show(expr, new)
+        is Empty -> Empty(new)
+        is OfUnOp -> unOp.update(new).wrap()
+        is OfBinOp -> binOp.update(new).wrap()
+        is OfLit -> lit.update(new).wrap()
+        is OfInterpol -> interpol.update(new).wrap()
     }
 }

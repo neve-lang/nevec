@@ -1,6 +1,7 @@
 package type
 
 import domain.Domain
+import type.impl.Compare
 import type.impl.NamedType
 import type.impl.Unwrappable
 import type.impl.Wrappable
@@ -27,17 +28,29 @@ import type.poison.Poison
  * @see type.table.TypeTable
  * @see Domain
  */
-data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : Unwrappable<Wrappable>, NamedType {
+data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : Unwrappable<Wrappable>, NamedType,
+    Compare<Type> {
     companion object {
         /**
-         * @return A [Type] with [kind] of `OfPoison(Poison.UNRESOLVED)` and [domain] of [Domain.Undefined].
+         * @return A [Type] with [kind] of `OfPoison(Poison.Unresolved)` and [domain] of [Domain.Undefined].
          */
         fun unresolved(): Type {
             return Type(TypeKind.unresolved())
         }
 
         /**
-         * @return A [Type] with [kind] of `OfPoison(Poison.UNKNOWN)` and [domain] of [Domain.Undefined].
+         * @param name The name of the type, as it appears in the code.
+         *
+         * @return A [Type] with [kind] of `OfPoison(Poison.Undefined(name))` and [domain] of [Domain.Undefined].
+         *
+         * @see Poison.Undefined
+         */
+        fun undefined(name: String): Type {
+            return Type(TypeKind.undefined(name))
+        }
+
+        /**
+         * @return A [Type] with [kind] of `OfPoison(Poison.Unknown)` and [domain] of [Domain.Undefined].
          */
         fun unknown(): Type {
             return Type(TypeKind.unknown())
@@ -54,12 +67,21 @@ data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : Unw
     }
 
     /**
-     * @return whether [kind] is a [poisoned type][Poison] with [Poison.Unresolved] poison.
+     * @return whether [kind] is an [unresolved type][type.unresolved.Unresolved].
      *
-     * @see Poison
+     * @see type.unresolved.Unresolved
      */
     fun isUnresolved(): Boolean {
-        return kind is TypeKind.OfPoison && kind.poison == Poison.Unresolved
+        return kind is TypeKind.OfUnresolved
+    }
+
+    /**
+     * @return whether [kind] is a [poisoned type][Poison] with [Poison.Unknown] poison.
+     *
+     * @see Poison.Unknown
+     */
+    fun isUnknown(): Boolean {
+        return kind is TypeKind.OfPoison && kind.poison is Poison.Unknown
     }
 
     /**
@@ -112,11 +134,39 @@ data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : Unw
             this
     }
 
+    /**
+     * @return Whether the implementor type and [to] have the same [Domain][domain.Domain], and
+     * [have the same name][isSame].
+     *
+     * The reason why we provide another comparison method, is that there are **two kinds of type comparisons in Neve**:
+     *
+     * - Comparing whether the name is the same, sometimes referred to as **shallow comparison**.  This is because Neve
+     *   mainly uses nominal typing.  [isSame] accomplishes this.
+     * - Comparing whether the **domain** is the same.  If we define two types, `A` and `B`, both as
+     *   `Int where self == 10`,
+     *   then both types should be considered to have the same domain, but not the same identity.
+     *
+     * This comparison method is the most used one.
+     *
+     * @see domain.Domain
+     */
+    fun isIdentical(to: Type): Boolean {
+        return isSame(to) && domain == to.domain
+    }
+
     override fun itself(): Wrappable {
         return kind.unwrapped()
     }
 
     override fun named(): String {
         return kind.named()
+    }
+
+    override fun isSame(other: Type): Boolean {
+        return kind.isSame(other.kind)
+    }
+
+    override fun toString(): String {
+        return "${kind.named()} ∈ $domain"
     }
 }

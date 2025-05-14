@@ -9,12 +9,15 @@ import ast.hierarchy.program.Program
 import ast.hierarchy.stmt.Stmt
 import ast.hierarchy.unop.UnOp
 import ast.info.Info
+import ctx.Ctx
 import err.msg.Msg
 import file.span.Loc
+import meta.target.Target
 import parse.binop.AnyBinOp
 import parse.err.ParseErr
-import parse.state.ParseState
-import parse.tok.Window
+import parse.ctx.ParseCtx
+import parse.err.ParseResult
+import parse.meta.ParseMeta
 import tok.Tok
 import tok.TokKind
 import util.extension.until
@@ -22,13 +25,12 @@ import util.extension.until
 /**
  * Takes the source code and parses it.
  *
- * No prior lexical analysis is required — the Lexer works alongside the Parser.
+ * No prior lexical analysis is required—the Lexer works alongside the Parser.
  *
  * @param contents The contents of the source file.
  */
-class Parse(contents: String) {
-    private val window = Window(contents)
-    private val state = ParseState()
+class Parse(contents: String, cliCtx: Ctx) {
+    private var ctx = ParseCtx.from(contents, cliCtx)
 
     init {
         consume()
@@ -145,22 +147,26 @@ class Parse(contents: String) {
         return primary()
     }
 
-    private fun primary() = when (kind()) {
-        TokKind.LPAREN -> grouped()
+    private fun primary(): Expr {
+        val node =  when (kind()) {
+            TokKind.LPAREN -> grouped()
 
-        TokKind.TRUE -> Lit.BoolLit(true, consumeHere()).wrap()
-        TokKind.FALSE -> Lit.BoolLit(false, consumeHere()).wrap()
-        TokKind.NIL -> Lit.NilLit(consumeHere()).wrap()
+            TokKind.TRUE -> Lit.BoolLit(true, consumeHere()).wrap()
+            TokKind.FALSE -> Lit.BoolLit(false, consumeHere()).wrap()
+            TokKind.NIL -> Lit.NilLit(consumeHere()).wrap()
 
-        TokKind.INT -> intLit().wrap()
-        TokKind.FLOAT -> floatLit().wrap()
-        TokKind.LBRACKET -> listOrTable().wrap()
-        TokKind.STR -> strLit().wrap()
-        TokKind.INTERPOL -> interpol().wrap()
+            TokKind.INT -> intLit().wrap()
+            TokKind.FLOAT -> floatLit().wrap()
+            TokKind.LBRACKET -> listOrTable().wrap()
+            TokKind.STR -> strLit().wrap()
+            TokKind.INTERPOL -> interpol().wrap()
 
-        // TokKind.ID -> consume().let { Expr.Access(it.lexeme, Info.at(it.loc)) }
+            // TokKind.ID -> consume().let { Expr.Access(it.lexeme, Info.at(it.loc)) }
 
-        else -> Expr.empty().also { showMsg(ParseErr.expectedExpr(consume())) }
+            else -> Expr.empty().also { showMsg(ParseErr.expectedExpr(consume())) }
+        }
+
+        return exprMeta(node, target = Target.PRIMARY)
     }
 
     private fun intLit(): Lit.IntLit {
@@ -238,8 +244,22 @@ class Parse(contents: String) {
         return Lit.TableLit(keys, vals, Info.at(loc))
     }
 
+    private fun exprMeta(node: Expr, target: Target): Expr {
+        val parsed = ParseMeta.parse(ctx.new(), node to target)
+        val meta = parsed.success()!!
+        ctx = parsed.newCtx()
+
+        if (parsed is ParseResult.SemiFail) {
+            sync()
+        }
+
+        return node.update(
+            node.info() + meta
+        )
+    }
+
     private fun sync() {
-        state.relax()
+        ctx.state().relax()
 
         while (!isAtEnd()) {
             if (hadNewline() || kind().isStmtStarter()) {
@@ -250,96 +270,59 @@ class Parse(contents: String) {
         }
     }
 
-    private fun expect(kind: TokKind) {
-        if (check(kind)) {
-            consume()
-            return
-        }
-
-        if (check(TokKind.EOF, TokKind.NEWLINE)) {
-            showMsg(ParseErr.expectedTok(here().loc(), kind))
-            return
-        }
-
-        showMsg(ParseErr.unexpectedTok(curr(), kind))
-    }
-
     private fun showMsg(msg: Msg) {
-        if (state.isPanicking) {
-            return
-        }
-
-        state.markErr()
-        msg.print()
+        ctx.showMsg(msg)
     }
 
     private fun hadErr(): Boolean {
-        return state.hadErr
+        return ctx.state().hadErr
     }
 
     private fun consume(kind: TokKind): Tok? {
-        if (!check(kind)) {
-            expect(kind)
-            return null
-        }
-
-        return consume()
+        return ctx.consume(kind)
     }
 
     private fun consume(): Tok {
-        val tok = window.advance()
-
-        if (tok.isErr()) {
-            showMsg(ParseErr.unexpectedChar(tok))
-        }
-
-        return tok
+        return ctx.consume()
     }
 
     private fun funCallWithoutParens(): Boolean {
         return kind().isExprStarter() && !hadNewline()
     }
 
-    // in Neve, we would have an additional restriction here:
-    // fun string_of(tok StrTok)
-    // with StrTok = Tok where self.kind in [TokKind.Str, TokKind.Interpol]
     private fun stringOf(tok: Tok): String {
         return tok.lexeme
     }
 
     private fun check(vararg kinds: TokKind): Boolean {
-        return window.check(*kinds)
+        return ctx.check(*kinds)
     }
 
     private fun match(vararg kinds: TokKind): Boolean {
-        return window.match(*kinds)
+        return ctx.match(*kinds)
     }
 
     private fun consumeHere(): Info {
-        return here().also { consume() }
+        return Info.at(ctx.consumeHere())
     }
 
     private fun hadNewline(): Boolean {
-        return window.hadNewline()
+        return ctx.hadNewline()
     }
 
     private fun isAtEnd(): Boolean {
-        return window.isAtEnd()
+        return ctx.isAtEnd()
     }
 
     private fun curr(): Tok {
-        return window.curr
-    }
-
-    private fun here(expr: Expr): Info {
-        return Info(window.here(), expr.type())
+        return ctx.curr()
     }
 
     private fun here(): Info {
-        return Info.at(window.here())
+        return Info.at(ctx.here())
     }
 
     private fun kind(): TokKind {
-        return window.kind()
+        return ctx.kind()
     }
 }

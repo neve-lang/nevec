@@ -15,7 +15,7 @@ data class GenOrder(val n: Int, val state: GenTracker) {
      * @return a list of [n] fresh [Free] types.
      */
     fun frees(): List<Free> {
-        return (0..n).map {
+        return (0..<n).map {
             state.newFree()
         }
     }

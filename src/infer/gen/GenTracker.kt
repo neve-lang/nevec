@@ -22,7 +22,6 @@ class GenTracker {
     fun newFree(): Free {
         return Free(nextFree, freeLevel).also {
             nextFree++
-            freeLevel++
         }
     }
 }

@@ -1,7 +1,7 @@
 package ast.hierarchy.stmt
 
 import ast.hierarchy.Ast
-import ast.info.Spanned
+import ast.info.impl.Spanned
 import ast.hierarchy.Wrap
 import ast.hierarchy.decl.Decl
 import ast.hierarchy.expr.Expr

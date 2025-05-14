@@ -1,7 +1,7 @@
 package infer.unify
 
 import ast.hierarchy.expr.Expr
-import infer.comp.BothTypes
+import type.comp.BothTypes
 import type.Type
 import type.gen.Applied
 import type.gen.arg.TypeArgs
@@ -52,8 +52,8 @@ class Unify(private val a: Type, private val b: Type) {
          * @return the unified type if unification was successful, a [poisoned type][type.poison.Poison] otherwise.
          */
         fun all(types: List<Type>): Type {
-            return if (types.size == 2)
-                Unify(types[0], types[1]).infer()
+            return if (types.size == 1)
+                types.first()
             else
                 Unify(all(types.dropLast(1)), types.last()).infer()
         }
@@ -82,11 +82,11 @@ class Unify(private val a: Type, private val b: Type) {
      * @return [a] if `true`, a [poisoned type][type.poison.Poison] otherwise.
      */
     fun assuming(vararg types: Type): Type {
-        if (!both().haveSameName()) {
-            return Type.unknown()
+        if (!both().areSame()) {
+            return both().pickPoison()
         }
 
-        return if (types.any { BothTypes(it, a).haveSameName() })
+        return if (types.any { BothTypes(it, a).areSame() })
             a
         else
             Type.unknown()
@@ -102,7 +102,7 @@ class Unify(private val a: Type, private val b: Type) {
      * @return [what] if [a] and [b] are equal, a [poisoned type][type.poison.Poison] otherwise.
      */
     fun into(what: Type): Type {
-        return if (both().haveSameName())
+        return if (both().areSame())
             what
         else
             Type.unknown()
@@ -120,7 +120,7 @@ class Unify(private val a: Type, private val b: Type) {
             !both().canBeUnified() -> Type.unknown()
             both().eitherIsFree() -> unifyFree()
             both().eitherIsHinted() -> unifyHinted()
-            both().eitherIsUnresolved() -> unifyFree()
+            both().eitherIsUnresolved() -> unifyUnresolved()
             both().eitherIsPoisoned() -> unifyPoison()
 
             else -> unifySame()
@@ -163,6 +163,10 @@ class Unify(private val a: Type, private val b: Type) {
         ))
     }
 
+    private fun unifyUnresolved(): Type {
+        return both().pickResolved()
+    }
+
     private fun unifyApplied(a: Applied, b: Applied): Type {
         if (!both().haveSameArity()) {
             return Type.unknown()
@@ -188,7 +192,7 @@ class Unify(private val a: Type, private val b: Type) {
     }
 
     private fun unifyRec(): Type {
-        return if (both().haveSameName())
+        return if (both().areSame())
             a
         else
             Type.unknown()

@@ -7,9 +7,11 @@ import type.gen.Free
 import type.gen.Applied
 import type.gen.Quant
 import type.hinted.Hinted
+import type.impl.Compare
 import type.poison.Poison
 import type.prim.Prim
 import type.rec.Rec
+import type.unresolved.Unresolved
 
 /**
  * Represents all kinds of types in the Neve compiler.
@@ -19,7 +21,7 @@ import type.rec.Rec
  *
  * @see type.Type
  */
-sealed class TypeKind : NamedType {
+sealed class TypeKind : NamedType, Compare<TypeKind> {
     /**
      * Represents a **record type**.
      *
@@ -33,8 +35,8 @@ sealed class TypeKind : NamedType {
      *
      * ```
      * rec Person
-     *   name Str
-     *   age Whole
+     *   name: Str
+     *   age: Whole
      * end
      * ```
      *
@@ -129,12 +131,37 @@ sealed class TypeKind : NamedType {
         }
     }
 
+    /**
+     * Wrapper around an **unresolved type**.
+     *
+     * @param unresolved The [Unresolved] type being wrapped by the variant.
+     *
+     * Keeping an [unresolved] object here is redundant, but for consistency with other [TypeKind] variants *and*
+     * because of [Unwrappable], we still store an [Unresolved] object.
+     *
+     * @see Unresolved
+     */
+    data class OfUnresolved(val unresolved: Unresolved) : Unwrappable<Unresolved>, TypeKind() {
+        override fun itself(): Unresolved {
+            return unresolved
+        }
+    }
+
     companion object {
         /**
-         * @return A poisoned type [OfPoison] with [Poison.Unresolved].
+         * @return An [Unresolved] type.
          */
-        fun unresolved(): OfPoison {
-            return OfPoison(Poison.Unresolved)
+        fun unresolved(): OfUnresolved {
+            return OfUnresolved(Unresolved)
+        }
+
+        /**
+         * @param name The name of the type, as it appears in the code.
+         *
+         * @return A poisoned type [OfPoison] with [Poison.Undefined].
+         */
+        fun undefined(name: String): OfPoison {
+            return OfPoison(Poison.Undefined(name))
         }
 
         /**
@@ -160,6 +187,7 @@ sealed class TypeKind : NamedType {
         is OfPoison -> itself()
         is OfFree -> itself()
         is OfQuant -> itself()
+        is OfUnresolved -> itself()
     }
 
     override fun named(): String = when (this) {
@@ -170,5 +198,23 @@ sealed class TypeKind : NamedType {
         is OfPoison -> poison.named()
         is OfFree -> free.named()
         is OfQuant -> quant.named()
+        is OfUnresolved -> unresolved.named()
+    }
+
+    override fun isSame(other: TypeKind): Boolean {
+        if (this::class != other::class) {
+            return false
+        }
+
+        return when (this) {
+            is OfRec -> rec.isSame(other.unwrapped() as Rec)
+            is OfPrim -> prim.isSame(other.unwrapped() as Prim)
+            is OfHinted -> hinted.isSame(other.unwrapped() as Hinted)
+            is OfApplied -> applied.isSame(other.unwrapped() as Applied)
+            is OfPoison -> poison.isSame(other.unwrapped() as Poison)
+            is OfFree -> free.isSame(other.unwrapped() as Free)
+            is OfQuant -> quant.isSame(other.unwrapped() as Quant)
+            is OfUnresolved -> unresolved.isSame(other.unwrapped() as Unresolved)
+        }
     }
 }
