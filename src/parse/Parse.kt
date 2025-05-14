@@ -12,34 +12,25 @@ import ast.info.Info
 import ctx.Ctx
 import err.msg.Msg
 import file.span.Loc
-import meta.Meta
-import meta.result.MetaResult
 import meta.target.Target
 import parse.binop.AnyBinOp
 import parse.err.ParseErr
 import parse.ctx.ParseCtx
+import parse.err.ParseResult
 import parse.meta.ParseMeta
-import parse.state.ParseState
-import parse.tok.Window
 import tok.Tok
 import tok.TokKind
-import type.table.TypeTable
 import util.extension.until
 
 /**
  * Takes the source code and parses it.
  *
- * No prior lexical analysis is required — the Lexer works alongside the Parser.
+ * No prior lexical analysis is required—the Lexer works alongside the Parser.
  *
  * @param contents The contents of the source file.
  */
-class Parse(contents: String, private val ctx: Ctx) {
-    private val window = Window(contents)
-    private val state = ParseState()
-
-    // right now, we just assume we have access to the TypeTable.  once we implement a symbol resolution phase,
-    // we will refactor this.
-    private val typeTable = TypeTable()
+class Parse(contents: String, cliCtx: Ctx) {
+    private var ctx = ParseCtx.from(contents, cliCtx)
 
     init {
         consume()
@@ -175,7 +166,7 @@ class Parse(contents: String, private val ctx: Ctx) {
             else -> Expr.empty().also { showMsg(ParseErr.expectedExpr(consume())) }
         }
 
-        return exprMeta(node, to = Target.PRIMARY)
+        return exprMeta(node, target = Target.PRIMARY)
     }
 
     private fun intLit(): Lit.IntLit {
@@ -253,31 +244,22 @@ class Parse(contents: String, private val ctx: Ctx) {
         return Lit.TableLit(keys, vals, Info.at(loc))
     }
 
-    private fun exprMeta(node: Expr, to: Target): Expr {
-        return when (val parsed = parseAllMeta(node, to).reduce { a, b -> a + b }) {
-            is MetaResult.Success -> node.update(
-                node.info() + parsed.meta
-            )
+    private fun exprMeta(node: Expr, target: Target): Expr {
+        val parsed = ParseMeta.parse(ctx.new(), node to target)
+        val meta = parsed.success()!!
+        ctx = parsed.newCtx()
 
-            is MetaResult.Fail -> node
-        }
-    }
-
-    private fun parseAllMeta(node: Expr, to: Target): List<MetaResult> {
-        val parsed = ParseMeta(ctx()).parse(to)
-        if (parsed.isEmpty()) {
-            return listOf(parsed)
+        if (parsed is ParseResult.SemiFail) {
+            sync()
         }
 
-        if (parsed is MetaResult.Fail) {
-            showMsg(ParseErr.metaFail(node.loc(), parsed.reason))
-        }
-
-        return listOf(parsed) + parseAllMeta(node, to)
+        return node.update(
+            node.info() + meta
+        )
     }
 
     private fun sync() {
-        state.relax()
+        ctx.state().relax()
 
         while (!isAtEnd()) {
             if (hadNewline() || kind().isStmtStarter()) {
@@ -288,100 +270,59 @@ class Parse(contents: String, private val ctx: Ctx) {
         }
     }
 
-    private fun expect(kind: TokKind) {
-        if (check(kind)) {
-            consume()
-            return
-        }
-
-        if (check(TokKind.EOF, TokKind.NEWLINE)) {
-            showMsg(ParseErr.expectedTok(here().loc(), kind))
-            return
-        }
-
-        showMsg(ParseErr.unexpectedTok(curr(), kind))
-    }
-
     private fun showMsg(msg: Msg) {
-        if (state.isPanicking) {
-            return
-        }
-
-        state.markErr()
-        msg.print()
+        ctx.showMsg(msg)
     }
 
     private fun hadErr(): Boolean {
-        return state.hadErr
+        return ctx.state().hadErr
     }
 
     private fun consume(kind: TokKind): Tok? {
-        if (!check(kind)) {
-            expect(kind)
-            return null
-        }
-
-        return consume()
+        return ctx.consume(kind)
     }
 
     private fun consume(): Tok {
-        val tok = window.advance()
-
-        if (tok.isErr()) {
-            showMsg(ParseErr.unexpectedChar(tok))
-        }
-
-        return tok
+        return ctx.consume()
     }
 
     private fun funCallWithoutParens(): Boolean {
         return kind().isExprStarter() && !hadNewline()
     }
 
-    private fun ctx(): ParseCtx {
-        return ParseCtx(window, typeTable, ctx)
-    }
-
-    // in Neve, we would have an additional restriction here:
-    // fun string_of(tok StrTok)
-    // with StrTok = Tok where self.kind in [TokKind.Str, TokKind.Interpol]
     private fun stringOf(tok: Tok): String {
         return tok.lexeme
     }
 
     private fun check(vararg kinds: TokKind): Boolean {
-        return window.check(*kinds)
+        return ctx.check(*kinds)
     }
 
     private fun match(vararg kinds: TokKind): Boolean {
-        return window.match(*kinds)
+        return ctx.match(*kinds)
     }
 
     private fun consumeHere(): Info {
-        return here().also { consume() }
+        return Info.at(ctx.consumeHere())
     }
 
     private fun hadNewline(): Boolean {
-        return window.hadNewline()
+        return ctx.hadNewline()
     }
 
     private fun isAtEnd(): Boolean {
-        return window.isAtEnd()
+        return ctx.isAtEnd()
     }
 
     private fun curr(): Tok {
-        return window.curr
-    }
-
-    private fun here(expr: Expr): Info {
-        return Info(window.here(), expr.type(), Meta.empty())
+        return ctx.curr()
     }
 
     private fun here(): Info {
-        return Info.at(window.here())
+        return Info.at(ctx.here())
     }
 
     private fun kind(): TokKind {
-        return window.kind()
+        return ctx.kind()
     }
 }
