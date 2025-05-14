@@ -12,13 +12,32 @@ import type.table.TypeTable
 
 /**
  * Tiny data class intended to be shipped around Parse helpers.
+ *
+ * @property window The sliding window used to keep track of tokens.
+ * @property states A stack of [ParseState], intended to have a new [ParseState] pushed to the top whenever
+ * [ParseCtx] is shipped to some other parse module.
+ * @property cliCtx The compiler context, including CLI options and more.
  */
 data class ParseCtx(
     val window: Window,
     val typeTable: TypeTable,
-    val state: ParseState,
+    val states: Stack<ParseState>,
     val cliCtx: Ctx,
 ) {
+    companion object {
+        /**
+         * @return A new [ParseCtx] from [contents] and a given [Ctx].
+         */
+        fun from(contents: String, ctx: Ctx): ParseCtx {
+            return ParseCtx(
+                Window.from(contents),
+                TypeTable(),
+                Stack<ParseState>().apply { add(ParseState()) },
+                ctx
+            )
+        }
+    }
+
     /**
      * Calling this method **advances** the [Window] position.
      *
@@ -70,11 +89,11 @@ data class ParseCtx(
         }
 
         if (check(TokKind.EOF, TokKind.NEWLINE)) {
-            state.showMsg(ParseErr.expectedTok(here(), kind))
+            state().showMsg(ParseErr.expectedTok(here(), kind))
             return
         }
 
-        state.showMsg(ParseErr.unexpectedTok(curr(), kind))
+        state().showMsg(ParseErr.unexpectedTok(curr(), kind))
     }
 
     /**
@@ -129,9 +148,40 @@ data class ParseCtx(
     }
 
     /**
+     * @return The top of the [states] stack.
+     */
+    fun state(): ParseState {
+        return states.first()
+    }
+
+    /**
+     * @return A new [ParseCtx] with a fresh [ParseState] at the top of the [states] stack.
+     */
+    fun new(): ParseCtx {
+        return ParseCtx(
+            window,
+            typeTable,
+            states.apply { add(ParseState()) },
+            cliCtx
+        )
+    }
+
+    /**
+     * @return The current [ParseCtx] with the last element popped out of it.
+     */
+    fun popped(): ParseCtx {
+        return ParseCtx(
+            window,
+            typeTable,
+            states.apply { pop() },
+            cliCtx
+        )
+    }
+
+    /**
      * @see ParseState.showMsg
      */
     fun showMsg(msg: Msg) {
-        state.showMsg(msg)
+        state().showMsg(msg)
     }
 }
