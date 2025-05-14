@@ -78,6 +78,10 @@ object Pretty : Visit<Program, String> {
     }
 
     private fun visitTableLit(table: Lit.TableLit): String {
+        if (table.keys.isEmpty()) {
+            return "[:]"
+        }
+
         val keys = table.keys.map { visitExpr(it) }
         val vals = table.vals.map { visitExpr(it) }
 
