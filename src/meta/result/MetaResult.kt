@@ -55,6 +55,16 @@ sealed class MetaResult {
         is Fail -> false
     }
 
+    /**
+     * @return If this is a [Fail], whether `this` is a [MetaFail.Dummy].
+     *
+     * @see MetaFail.Dummy
+     */
+    fun isDummy() = when (this) {
+        is Success -> false
+        is Fail -> reason is MetaFail.Dummy
+    }
+
     private fun pickSuccess(a: MetaResult, b: MetaResult): MetaResult {
         return if (b is Success)
             b
