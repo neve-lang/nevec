@@ -2,6 +2,7 @@ package parse.type
 
 import cli.Options
 import err.help.SimpleMsg
+import parse.Parse
 import parse.ctx.ParseCtx
 import parse.err.ParseErr
 import parse.err.ParseResult
@@ -12,6 +13,8 @@ import type.gen.Applied
 import type.gen.Free
 import type.gen.arg.TypeArgs
 import type.poison.Poison
+import type.prelude.PreludeTypes
+import util.extension.any
 
 /**
  * Helper class that takes care of parsing types.
@@ -22,9 +25,9 @@ object ParseType : TinyParse<Unit, Type> {
     }
 
     private fun parseType(ctx: ParseCtx) = when (ctx.kind()) {
-        // TODO: add support for alternative table syntax: [K: V]
         TokKind.APOSTROPHE -> parseFree(ctx)
         TokKind.TILDE -> parsePoison(ctx)
+        TokKind.LBRACKET -> parseListOrTable(ctx)
         else -> parseNamed(ctx)
     }
 
@@ -72,6 +75,34 @@ object ParseType : TinyParse<Unit, Type> {
         }
 
         return ParseResult.Success(poison.covered(), ctx)
+    }
+
+    private fun parseListOrTable(ctx: ParseCtx): ParseResult<Type> {
+        ctx.consume()
+        val type = parseType(ctx)
+
+        if (ctx.match(TokKind.COL)) {
+            return parseTable(ctx, type)
+        }
+
+        // no support for lists yet
+        return ParseResult.Fail(ctx)
+    }
+
+    private fun parseTable(ctx: ParseCtx, keyType: ParseResult<Type>): ParseResult<Type> {
+        val valType = parseType(ctx)
+        ctx.consume(TokKind.RBRACKET)
+
+        return if ((keyType to valType).any { it is ParseResult.Fail })
+            ParseResult.Fail(ctx)
+        else
+            ParseResult.Success(
+                Applied(
+                    TypeArgs.from(keyType.success()!!, valType.success()!!),
+                    PreludeTypes.TABLE
+                ).covered(),
+                ctx
+            )
     }
 
     private fun parseNamed(ctx: ParseCtx): ParseResult<Type> {
