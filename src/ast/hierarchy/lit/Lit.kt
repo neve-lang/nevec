@@ -1,18 +1,18 @@
 package ast.hierarchy.lit
 
 import ast.hierarchy.Ast
-import ast.info.Spanned
-import ast.info.Typed
+import ast.info.impl.Spanned
+import ast.info.impl.Typed
 import ast.hierarchy.Wrap
 import ast.hierarchy.expr.Expr
 import ast.info.Info
-import file.span.Loc
-import type.kind.TypeKind
+import ast.info.impl.Infoful
+import meta.Meta
 
 /**
  * This sealed class denotes all supported expression literals in Neve so far.
  */
-sealed class Lit : Ast, Wrap<Expr>, Spanned, Typed {
+sealed class Lit : Ast, Wrap<Expr>, Infoful {
     /**
      * An integer literal.
      */
@@ -63,5 +63,32 @@ sealed class Lit : Ast, Wrap<Expr>, Spanned, Typed {
         is StrLit -> info.type()
         is TableLit -> info.type()
         is NilLit -> info.type()
+    }
+
+    override fun meta() = when (this) {
+        is IntLit -> info.meta()
+        is FloatLit -> info.meta()
+        is BoolLit -> info.meta()
+        is StrLit -> info.meta()
+        is TableLit -> info.meta()
+        is NilLit -> info.meta()
+    }
+
+    override fun info() = when (this) {
+        is IntLit -> info
+        is FloatLit -> info
+        is BoolLit -> info
+        is StrLit -> info
+        is TableLit -> info
+        is NilLit -> info
+    }
+
+    override fun update(new: Info) = when (this) {
+        is IntLit -> IntLit(value, new)
+        is FloatLit -> FloatLit(value, new)
+        is BoolLit -> BoolLit(value, new)
+        is StrLit -> StrLit(value, new)
+        is TableLit -> TableLit(keys, vals, new)
+        is NilLit -> NilLit(new)
     }
 }

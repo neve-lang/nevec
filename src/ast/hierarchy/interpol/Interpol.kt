@@ -1,13 +1,13 @@
 package ast.hierarchy.interpol
 
 import ast.hierarchy.Ast
-import ast.info.Spanned
-import ast.info.Typed
+import ast.info.impl.Spanned
+import ast.info.impl.Typed
 import ast.hierarchy.Wrap
 import ast.hierarchy.expr.Expr
 import ast.info.Info
-import file.span.Loc
-import type.kind.TypeKind
+import ast.info.impl.Infoful
+import meta.Meta
 
 /**
  * A union-like sealed class to denote the type of each component of a string interpolation expression.
@@ -28,7 +28,7 @@ import type.kind.TypeKind
  * ```
  *
  */
-sealed class Interpol : Ast, Wrap<Expr>, Spanned, Typed {
+sealed class Interpol : Ast, Wrap<Expr>, Infoful {
     /**
      * A "part" of a string interpolation that contains an [expr] and a [next] component, working similarly to
      * the node of a linked-list.
@@ -62,5 +62,20 @@ sealed class Interpol : Ast, Wrap<Expr>, Spanned, Typed {
     override fun type() = when (this) {
         is Some -> info.type()
         is End -> info.type()
+    }
+
+    override fun meta() = when (this) {
+        is Some -> info.meta()
+        is End -> info.meta()
+    }
+
+    override fun info() = when (this) {
+        is Some -> info
+        is End -> info
+    }
+
+    override fun update(new: Info) = when (this) {
+        is Some -> Some(string, expr, next, new)
+        is End -> End(string, new)
     }
 }

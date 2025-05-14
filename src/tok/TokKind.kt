@@ -16,8 +16,6 @@ enum class TokKind {
 
     ASSIGN,
 
-    PLUS_ASSIGN, MINUS_ASSIGN, STAR_ASSIGN, SLASH_ASSIGN, SHL_ASSIGN, SHR_ASSIGN,
-
     EXCLAM, QUESTION,
 
     AND, CONST, DO, ELSE, END, FOR, FUN, IF, IN, IS, LET, MATCH, OR, PRINT, RETURN, UNION, VAR, WHILE, NOT_IN, IS_NOT,
@@ -31,6 +29,10 @@ enum class TokKind {
     FALSE, NIL, NOT, SELF, TRUE, WITH,
 
     INTERPOL_SEP,
+
+    META_ASSERT,
+
+    APOSTROPHE, TILDE,
 
     NEWLINE, ERR, EOF;
 
@@ -46,6 +48,18 @@ enum class TokKind {
      */
     fun isExprStarter(): Boolean {
         return isInBetween(LPAREN, WITH)
+    }
+
+    /**
+     * @return whether `this` kind could be a token that starts a type.  It includes:
+     *
+     * - `ID`, for simple identifiers
+     * - `LBRACKET`, for lists and tables
+     * - `APOSTROPHE`, for [free types][type.gen.Free]
+     * - `TILDE`, for [poisoned types][type.poison.Poison]
+     */
+    fun isTypeStarter(): Boolean {
+        return this == ID || this == LBRACKET || isInBetween(APOSTROPHE, TILDE)
     }
 
     /**

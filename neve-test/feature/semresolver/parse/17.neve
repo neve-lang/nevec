@@ -1,0 +1,4 @@
+[
+    ["Hello, ": 1]: [1: "Hello,"],
+    ["world!": 2]: [2: "Mars!"]
+] @[type == Table (Table (Str, Int), Table (Int, Str))]

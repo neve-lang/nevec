@@ -1,6 +1,6 @@
 package type.gen.param
 
-import type.NamedType
+import type.impl.NamedType
 
 /**
  * Represents a single generic type parameter.

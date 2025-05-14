@@ -23,7 +23,7 @@ enum class ArithOperator {
 }
 
 /**
- * @return whether [this] can be mapped to [ArithOperator.entries] if [clamped].
+ * @return whether [this] can be mapped to [ArithOperator.entries] if `clampedFrom(TokKind.PLUS)`.
  */
 fun TokKind.canBeArith(): Boolean {
     return isInBetween(TokKind.PLUS, TokKind.SLASH)

@@ -1,12 +1,17 @@
 package type.kind
 
-import type.NamedType
+import type.impl.NamedType
+import type.impl.Unwrappable
+import type.impl.Wrappable
 import type.gen.Free
-import type.gen.Gen
+import type.gen.Applied
+import type.gen.Quant
 import type.hinted.Hinted
+import type.impl.Compare
 import type.poison.Poison
 import type.prim.Prim
 import type.rec.Rec
+import type.unresolved.Unresolved
 
 /**
  * Represents all kinds of types in the Neve compiler.
@@ -16,7 +21,7 @@ import type.rec.Rec
  *
  * @see type.Type
  */
-sealed class TypeKind : NamedType {
+sealed class TypeKind : NamedType, Compare<TypeKind> {
     /**
      * Represents a **record type**.
      *
@@ -30,8 +35,8 @@ sealed class TypeKind : NamedType {
      *
      * ```
      * rec Person
-     *   name Str
-     *   age Whole
+     *   name: Str
+     *   age: Whole
      * end
      * ```
      *
@@ -42,7 +47,11 @@ sealed class TypeKind : NamedType {
      * @see OfHinted
      * @see Rec
      */
-    data class OfRec(val rec: Rec) : TypeKind()
+    data class OfRec(val rec: Rec) : Unwrappable<Rec>, TypeKind() {
+        override fun itself(): Rec {
+            return rec
+        }
+    }
 
     /**
      * Wrapper around a **primitive type**.
@@ -51,7 +60,11 @@ sealed class TypeKind : NamedType {
      *
      * @see Prim
      */
-    data class OfPrim(val prim: Prim) : TypeKind()
+    data class OfPrim(val prim: Prim) : Unwrappable<Prim>, TypeKind() {
+        override fun itself(): Prim {
+            return prim
+        }
+    }
 
     /**
      * Represents a type that was **explicitly hinted by the user**.
@@ -60,16 +73,24 @@ sealed class TypeKind : NamedType {
      *
      * @see Hinted
      */
-    data class OfHinted(val hinted: Hinted) : TypeKind()
+    data class OfHinted(val hinted: Hinted) : Unwrappable<Hinted>, TypeKind() {
+        override fun itself(): Hinted {
+            return hinted
+        }
+    }
 
     /**
-     * Wrapper around a type that requires **generic type parameters**.
+     * Wrapper around a type with generic type arguments applied.
      *
-     * @param gen The [Gen] being wrapped by the variant.
+     * @param applied The [Applied] being wrapped by the variant.
      *
-     * @see Gen
+     * @see Applied
      */
-    data class OfGen(val gen: Gen) : TypeKind()
+    data class OfApplied(val applied: Applied) : Unwrappable<Applied>, TypeKind() {
+        override fun itself(): Applied {
+            return applied
+        }
+    }
 
     /**
      * Wrapper around a **free type**.
@@ -78,7 +99,24 @@ sealed class TypeKind : NamedType {
      *
      * @see Free
      */
-    data class OfFree(val free: Free) : TypeKind()
+    data class OfFree(val free: Free) : Unwrappable<Free>, TypeKind() {
+        override fun itself(): Free {
+            return free
+        }
+    }
+
+    /**
+     * Wrapper around a **quantified** or **generalized type**.
+     *
+     * @param quant The [Quant] being wrapped by the variant.
+     *
+     * @see Quant
+     */
+    data class OfQuant(val quant: Quant) : Unwrappable<Quant>, TypeKind() {
+        override fun itself(): Quant {
+            return quant
+        }
+    }
 
     /**
      * Wrapper around a **poison type**.
@@ -87,30 +125,96 @@ sealed class TypeKind : NamedType {
      *
      * @see Poison
      */
-    data class OfPoison(val poison: Poison) : TypeKind()
+    data class OfPoison(val poison: Poison) : Unwrappable<Poison>, TypeKind() {
+        override fun itself(): Poison {
+            return poison
+        }
+    }
+
+    /**
+     * Wrapper around an **unresolved type**.
+     *
+     * @param unresolved The [Unresolved] type being wrapped by the variant.
+     *
+     * Keeping an [unresolved] object here is redundant, but for consistency with other [TypeKind] variants *and*
+     * because of [Unwrappable], we still store an [Unresolved] object.
+     *
+     * @see Unresolved
+     */
+    data class OfUnresolved(val unresolved: Unresolved) : Unwrappable<Unresolved>, TypeKind() {
+        override fun itself(): Unresolved {
+            return unresolved
+        }
+    }
 
     companion object {
         /**
-         * @return A poisoned type [OfPoison] with [Poison.UNRESOLVED].
+         * @return An [Unresolved] type.
          */
-        fun unresolved(): OfPoison {
-            return OfPoison(Poison.UNRESOLVED)
+        fun unresolved(): OfUnresolved {
+            return OfUnresolved(Unresolved)
         }
 
         /**
-         * @return A poisoned type [OfPoison] with [Poison.UNKNOWN].
+         * @param name The name of the type, as it appears in the code.
+         *
+         * @return A poisoned type [OfPoison] with [Poison.Undefined].
+         */
+        fun undefined(name: String): OfPoison {
+            return OfPoison(Poison.Undefined(name))
+        }
+
+        /**
+         * @return A poisoned type [OfPoison] with [Poison.Unknown].
          */
         fun unknown(): OfPoison {
-            return OfPoison(Poison.UNKNOWN)
+            return OfPoison(Poison.Unknown)
         }
+    }
+
+    /**
+     * Unwraps the **original type** wrapped inside the [TypeKind] wrapper as a [Wrappable].
+     *
+     * @return the original type.
+     *
+     * @see Wrappable
+     */
+    fun unwrapped(): Wrappable = when (this) {
+        is OfRec -> itself()
+        is OfPrim -> itself()
+        is OfHinted -> itself()
+        is OfApplied -> itself()
+        is OfPoison -> itself()
+        is OfFree -> itself()
+        is OfQuant -> itself()
+        is OfUnresolved -> itself()
     }
 
     override fun named(): String = when (this) {
         is OfRec -> rec.named()
         is OfPrim -> prim.named()
         is OfHinted -> hinted.named()
-        is OfGen -> gen.named()
+        is OfApplied -> applied.named()
         is OfPoison -> poison.named()
         is OfFree -> free.named()
+        is OfQuant -> quant.named()
+        is OfUnresolved -> unresolved.named()
+    }
+
+    override fun isSame(other: TypeKind): Boolean {
+        if (this::class != other::class) {
+            return false
+        }
+
+        return when (this) {
+            is OfRec -> rec.isSame(other.unwrapped() as Rec)
+            is OfPrim -> prim.isSame(other.unwrapped() as Prim)
+            is OfHinted -> hinted.isSame(other.unwrapped() as Hinted)
+            is OfApplied -> applied.isSame(other.unwrapped() as Applied)
+            is OfPoison -> poison.isSame(other.unwrapped() as Poison)
+            is OfFree -> free.isSame(other.unwrapped() as Free)
+            is OfQuant -> quant.isSame(other.unwrapped() as Quant)
+            is OfUnresolved -> unresolved.isSame(other.unwrapped() as Unresolved)
+        }
     }
 }

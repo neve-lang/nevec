@@ -5,7 +5,7 @@ package cli
  *
  * @property options The list of *enabled* options.  Disabled options will not be stored.
  */
-class CliOptions(private val options: List<Options>) {
+data class CliOptions(private val options: List<Options>) {
     companion object {
         /**
          * Takes the array of arguments and builds a [CliOptions].
@@ -19,6 +19,16 @@ class CliOptions(private val options: List<Options>) {
             return from(flags)
         }
 
+        /**
+         * @return A [CliOptions] object containing usual options that are enabled during a compiler test.
+         */
+        fun test(): CliOptions {
+            return CliOptions(listOf(
+                Options.META_ASSERTS,
+                Options.COMPILER_TYPES
+            ))
+        }
+
         private fun from(flags: List<String>): CliOptions {
             return CliOptions(flags.mapNotNull(Options::from))
         }
@@ -27,5 +37,7 @@ class CliOptions(private val options: List<Options>) {
     /**
      * @return whether [option] is enabled.
      */
-    fun isEnabled(option: Options) = options.contains(option)
+    fun isEnabled(option: Options): Boolean {
+        return option in options
+    }
 }

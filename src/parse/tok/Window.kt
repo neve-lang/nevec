@@ -4,23 +4,28 @@ import file.span.Loc
 import lex.Lex
 import tok.Tok
 import tok.TokKind
+import tok.stream.TokStream
 
 /**
  * Works just like a sliding window for the Parser, keeping track of a [curr] and [prev] token that get updated
- * every [advance] call, using [Lex].
+ * every [advance] call.
  *
  * @see Lex
  */
-class Window(contents: String) {
-    private val lex = Lex(contents)
+class Window(private val stream: TokStream) {
+    companion object {
+        /**
+         * @return A new [Window] based on the source code, building a [TokStream] using [Lex].
+         */
+        fun from(contents: String): Window {
+            return Lex(contents).toks().let(::Window)
+        }
+    }
 
     /**
      * The current [Tok].
      */
     var curr = Tok.eof()
-
-    private var prev = Tok.eof()
-    private var prevBeforeNewline = Tok.eof()
 
     /**
      * Updates the current [Tok] and returns the previous one.  It skips [TokKind.NEWLINE] tokens
@@ -34,6 +39,18 @@ class Window(contents: String) {
         }
 
         return prevBeforeNewline
+    }
+
+    /**
+     * **Advances** if [curr]’s kind matches one of [kinds].
+     *
+     * @return [curr] if [curr]’s kind matches one of [kinds].
+     */
+    fun take(vararg kinds: TokKind): Tok? {
+        return if (match(*kinds))
+            prevBeforeNewline
+        else
+            null
     }
 
     /**
@@ -79,10 +96,15 @@ class Window(contents: String) {
     }
 
     /**
-     * @return [curr]’s [TokKind]. */
+     * @return [curr]’s [TokKind].
+     */
     fun kind(): TokKind {
         return curr.kind
     }
+
+    private var prev = Tok.eof()
+    private var prevBeforeNewline = Tok.eof()
+
 
     private fun update() {
         prev = curr
@@ -91,6 +113,6 @@ class Window(contents: String) {
             prevBeforeNewline = prev
         }
 
-        curr = lex.next()
+        curr = stream.next()
     }
 }

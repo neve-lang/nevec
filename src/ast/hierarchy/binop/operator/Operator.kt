@@ -76,7 +76,7 @@ sealed class Operator {
          *
          * @param tok The [Tok] in question.
          *
-         * @return An [Operator] if [tok]’s kind [isOpKind], `null` otherwise.
+         * @return An [Operator] if [tok]’s kind can be converted to an operator, `null` otherwise.
          */
         fun from(tok: Tok): Operator? {
             return from(tok.kind)

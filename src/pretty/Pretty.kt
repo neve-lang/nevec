@@ -34,8 +34,8 @@ object Pretty : Visit<Program, String> {
         is Expr.OfLit -> visitLit(expr.lit)
         is Expr.OfInterpol -> visitInterpol(expr.interpol)
         is Expr.Parens -> visitParens(expr)
-        is Expr.Access -> visitAccess(expr)
-        is Expr.AccessConst -> visitAccessConst(expr)
+        // is Expr.Access -> visitAccess(expr)
+        // is Expr.AccessConst -> visitAccessConst(expr)
         is Expr.Empty -> visitEmpty()
         is Expr.Show -> visitShow(expr)
     }
@@ -78,6 +78,10 @@ object Pretty : Visit<Program, String> {
     }
 
     private fun visitTableLit(table: Lit.TableLit): String {
+        if (table.keys.isEmpty()) {
+            return "[:]"
+        }
+
         val keys = table.keys.map { visitExpr(it) }
         val vals = table.vals.map { visitExpr(it) }
 
@@ -102,6 +106,7 @@ object Pretty : Visit<Program, String> {
         return visitExpr(parens.expr).parenthesized()
     }
 
+    /*
     private fun visitAccess(access: Expr.Access): String {
         return access.name
     }
@@ -109,6 +114,7 @@ object Pretty : Visit<Program, String> {
     private fun visitAccessConst(access: Expr.AccessConst): String {
         return access.name
     }
+     */
 
     private fun visitEmpty(): String {
         return "(empty)"

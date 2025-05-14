@@ -10,10 +10,24 @@ package domain
  */
 sealed class Domain {
     /**
+     * The domain of `nil` values.
+     *
+     * The domain of `nil` values is defined to be always the same.  We represent it as an empty data object.
+      */
+    data object OfNil : Domain()
+
+    /**
+     * A non-primitive domain.
+     *
+     * This domain is used alongside user-defined records.  Their fields, however, may have a domain representation.
+     */
+    data object OfNonPrim : Domain()
+
+    /**
      * An undefined domain.
      *
      * It is **not** the same as an [OfNonPrim] or [OfNil] domain.  [Undefined] domains are used alongside
-     * poisoned types.
+     * [poisoned types][type.poison.Poison] or [free type variables][type.gen.Free].
      *
      * @see type.poison.Poison
      */

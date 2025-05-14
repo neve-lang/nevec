@@ -1,5 +1,6 @@
 package parse
 
+import ctx.Ctx
 import pretty.Pretty
 import file.contents.Src
 import org.junit.jupiter.api.Assertions.*
@@ -18,12 +19,12 @@ class ParseTest {
 
     @Test
     fun testThree() {
-        assertOkay("1 bor 2 xor 3849348 / 23 * 9 + nil / true band false")
+        assertOkay("1 bitor 2 xor 3849348 / 23 * 9 + nil / true bitand false")
     }
 
     @Test
     fun testFour() {
-        assertOkay("1 bor \"Hello, world!\" + -34.5 / 92 xor \"()\"")
+        assertOkay("1 bitor \"Hello, world!\" + -34.5 / 92 xor \"()\"")
     }
 
     @Test
@@ -38,6 +39,16 @@ class ParseTest {
         )
     }
 
+    @Test
+    fun testSeven() {
+        assertOkay(
+            "print 10 + 2\n" +
+            "print (10 + 2 == 2)\n" +
+            "print (10 + 2 == 2)\n" +
+            "print [\"My\": 10, \"Table\": 20, \"Is\": 30, \"Awesome\": 40]"
+        )
+    }
+
     private fun assertOkay(input: String) {
         assertEquals(input, input.parse())
     }
@@ -46,7 +57,7 @@ class ParseTest {
 fun String.parse(): String {
     Src.setup("test.neve", lines())
 
-    val parse = Parse(this)
+    val parse = Parse(this, Ctx.test())
     val pretty = Pretty.visit(parse.parse())
     return pretty
 }

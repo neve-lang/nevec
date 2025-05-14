@@ -1,5 +1,6 @@
 package err.note
 
+import err.write.Color
 import err.write.Out
 import file.span.Loc
 
@@ -16,21 +17,57 @@ class Note(private val kind: NoteKind, val loc: Loc, val msg: String) {
     val end = begin + len
 
     companion object {
-        fun info(loc: Loc, msg: String) = Note(NoteKind.INFO, loc, msg)
+        /**
+         * @return A [Note] whose [NoteKind] is [NoteKind.INFO].
+         */
+        fun info(loc: Loc, msg: String): Note {
+            return Note(NoteKind.INFO, loc, msg)
+        }
 
-        fun err(loc: Loc, msg: String) = Note(NoteKind.ERR, loc, msg)
+        /**
+         * @return A [Note] whose [NoteKind] is [NoteKind.ERR].
+         */
+        fun err(loc: Loc, msg: String): Note {
+            return Note(NoteKind.ERR, loc, msg)
+        }
 
-        fun fix(loc: Loc, msg: String) = Note(NoteKind.FIX, loc, msg)
+        /**
+         * @return A [Note] whose [NoteKind] is [NoteKind.FIX].
+         */
+        fun fix(loc: Loc, msg: String): Note {
+            return Note(NoteKind.FIX, loc, msg)
+        }
     }
 
+    /**
+     * Writes the underline for `this` [Note].
+     */
     fun underline(from: UInt, out: Out) {
         out.color(color())
         (from..len).forEach { out.write(next(it)) }
         out.reset()
     }
 
-    fun color() = kind.color
-    fun until() = len + 1u
+    /**
+     * @return This [Note]’s appropriate color.
+     */
+    fun color(): Color {
+        return kind.color
+    }
+
+    /**
+     * @return This [Note]’s line.
+     */
+    fun line(): UInt {
+        return loc.line
+    }
+
+    /**
+     * @return This [Note]’s [len] plus one.
+     */
+    fun until(): UInt {
+        return len + 1u
+    }
 
     private fun next(col: UInt): String {
         return when (col) {

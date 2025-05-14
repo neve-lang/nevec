@@ -1,4 +1,4 @@
-package type
+package type.impl
 
 /**
  * Provides a [named] method for type data classes.

@@ -1,10 +1,11 @@
 package type.rec
 
 import file.module.Module
-import type.NamedType
+import type.impl.NamedType
 import type.kind.TypeKind
-import type.WrappedType
+import type.impl.Wrappable
 import type.gen.param.TypeParams
+import type.impl.Compare
 import type.rec.field.Fields
 
 /**
@@ -26,7 +27,7 @@ import type.rec.field.Fields
  */
 data class Rec(
     val module: Module, val name: String, val fields: Fields, val params: TypeParams
-) : WrappedType, NamedType {
+) : Wrappable, NamedType, Compare<Rec> {
     companion object {
         fun builder(): RecBuilder {
             return RecBuilder()
@@ -39,5 +40,14 @@ data class Rec(
 
     override fun named(): String {
         return name
+    }
+
+    override fun isSame(other: Rec): Boolean {
+        // NOTE: name mangling hasn’t been implemented yet.
+        return named() == other.named()
+    }
+
+    override fun toString(): String {
+        return named()
     }
 }

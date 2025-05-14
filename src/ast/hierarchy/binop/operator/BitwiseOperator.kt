@@ -21,7 +21,7 @@ enum class BitwiseOperator {
 }
 
 /**
- * @return whether [this] can be mapped to [ArithOperator.entries] if [clamped].
+ * @return whether [this] can be mapped to [ArithOperator.entries] if `clampedFrom(TokKind.SHL)`.
  */
 fun TokKind.canBeBitwise(): Boolean {
     return isInBetween(TokKind.SHL, TokKind.BIT_OR)
