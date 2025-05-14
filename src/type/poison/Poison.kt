@@ -110,4 +110,8 @@ sealed class Poison : Wrappable, NamedType, RecessType, Compare<Poison> {
     override fun isSame(other: Poison): Boolean {
         return named() == other.named()
     }
+
+    override fun toString(): String {
+        return "~${named()}"
+    }
 }

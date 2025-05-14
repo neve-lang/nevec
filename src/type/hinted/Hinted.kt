@@ -49,4 +49,8 @@ data class Hinted(val type: Type, val loc: Loc) : Wrappable, NamedType, RecessTy
     override fun isSame(other: Hinted): Boolean {
         return type.isSame(other.type)
     }
+
+    override fun toString(): String {
+        return named()
+    }
 }

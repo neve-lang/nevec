@@ -27,4 +27,8 @@ data object Unresolved : Wrappable, NamedType, RecessType, Compare<Unresolved> {
     override fun isSame(other: Unresolved): Boolean {
         return true
     }
+
+    override fun toString(): String {
+        return "(Unresolved)"
+    }
 }

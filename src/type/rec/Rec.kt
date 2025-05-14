@@ -46,4 +46,8 @@ data class Rec(
         // NOTE: name mangling hasn’t been implemented yet.
         return named() == other.named()
     }
+
+    override fun toString(): String {
+        return named()
+    }
 }

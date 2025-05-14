@@ -26,4 +26,8 @@ data class Free(val id: Int, val level: Int) : Wrappable, NamedType, RecessType,
     override fun isSame(other: Free): Boolean {
         return id == other.id && level == other.level
     }
+
+    override fun toString(): String {
+        return named()
+    }
 }

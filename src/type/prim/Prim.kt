@@ -31,6 +31,10 @@ data class Prim(val kind: PrimKind, val type: Type) : Wrappable, NamedType, Comp
     override fun isSame(other: Prim): Boolean {
         return kind == other.kind && type.isSame(other.type)
     }
+
+    override fun toString(): String {
+        return "prim $type"
+    }
 }
 
 /**

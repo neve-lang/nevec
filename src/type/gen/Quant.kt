@@ -41,4 +41,8 @@ data class Quant(val id: Int) : Wrappable, NamedType, Compare<Quant> {
     override fun isSame(other: Quant): Boolean {
         return id == other.id
     }
+
+    override fun toString(): String {
+        return named()
+    }
 }
