@@ -146,8 +146,6 @@ class SemResolver : Visit<Program, Program> {
     }
 
     private fun visitConcat(concat: BinOp.Concat): BinOp.Concat {
-        println(FromInfo(concat.info).infer(from = concat.wrap(), with = infer))
-
         return BinOp.Concat(
             concat.left,
             concat.operator,
