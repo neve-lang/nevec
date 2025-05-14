@@ -66,9 +66,9 @@ sealed class MetaResult {
     }
 
     private fun pickSuccess(a: MetaResult, b: MetaResult): MetaResult {
-        return if (b is Success)
-            b
-        else
+        return if (a is Success)
             a
+        else
+            b
     }
 }
