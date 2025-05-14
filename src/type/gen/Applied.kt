@@ -36,7 +36,7 @@ data class Applied(val args: TypeArgs, val type: Type) : Wrappable, NamedType, C
     }
 
     override fun named(): String {
-        return "${type.named()} (${argsList().joinToString(",\n", transform = Type::named)})"
+        return "${type.named()} (${argsList().joinToString(", ", transform = Type::named)})"
     }
 
     override fun isSame(other: Applied): Boolean {
