@@ -156,7 +156,7 @@ class MetaAssertCheck : Visit<Program, Boolean> {
         }
 
         val checks = info.meta().asserts().map {
-            Pair(it.checkFor(info), it)
+            it.checkFor(info) to it
         }
 
         checks.forEach {
