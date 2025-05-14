@@ -1,10 +1,8 @@
 package meta
 
-import ast.info.impl.Infoful
 import meta.comp.MetaComp
-import meta.fail.MetaFail
+import meta.comp.asserts.MetaAssert
 import meta.result.MetaResult
-import meta.target.Target
 
 /**
  * Encapsulates both [meta assertions][meta.comp.asserts.MetaAssert] and `meta annotations` into a same data class,
@@ -34,6 +32,13 @@ data class Meta(val comps: List<MetaComp>) {
      */
     operator fun plus(other: Meta): Meta {
         return Meta(comps + other.comps)
+    }
+
+    /**
+     * @return The list of [meta assertions][MetaAssert] contained in [comps].
+     */
+    fun asserts(): List<MetaAssert> {
+        return comps.filterIsInstance<MetaAssert>()
     }
 
     /**

@@ -44,7 +44,12 @@ object ParseErr {
         val valid = expected.lexeme()
         val got = tok.lexeme
 
-        val displayed: String = expected.display()
+        val displayed = expected.lexeme()
+
+        val msg = if (displayed != null)
+            "expected $expected, but found $got"
+        else
+            "here"
 
         val suggestion = if (valid != null)
             listOf(Suggest.replacing(at = loc, with = valid))
@@ -52,7 +57,7 @@ object ParseErr {
             emptyList()
 
         return Report.err(loc, "unexpected token").lines(
-            Lines.of(Note.err(loc, "expected $displayed, but found $got")) + suggestion
+            Lines.of(Note.err(loc, msg)) + suggestion
         ).build()
     }
 
@@ -83,7 +88,7 @@ object ParseErr {
      */
     fun expectedExpr(tok: Tok): Msg {
         val loc = tok.loc
-        val lexeme = tok.display()
+        val lexeme = tok.lexeme
 
         return Report.err(loc, "expected an expression").lines(
             Lines.of(Note.err(loc, "expected an expression, but found '$lexeme'"))
@@ -91,10 +96,29 @@ object ParseErr {
     }
 
     /**
+     * @return An error message for a situation where the user tries to use a feature that was not enabled by some
+     * CLI option.
+     *
+     * @param feature The full name of the feature, i.e. `"meta assertions"`.
+     * @param arg The command line argument associated with it.  For [meta assertions][meta.comp.asserts.MetaAssert],
+     * this would be `--meta-asserts`.
+     * @param loc The [Loc] of the error.
+     */
+    fun notEnabled(feature: String, arg: String, loc: Loc): Msg {
+        return Report.err(loc, "$feature not enabled").lines(
+            Lines.single(
+                Note.err(loc, "not enabled"),
+                header = "run `nevec` with `$arg` to enable them"
+            )
+        ).build()
+    }
+
+    /**
      * @param loc The [Loc] of the node where the meta fail occurred.
      * @param fail The [MetaFail] in question.
      *
-     * @return An error message depending on the kind of [MetaFail].
+     * @return An error message depending on the kind of [MetaFail], or `null` if it is an [Input][MetaFail.Input] fail,
+     * as we want to avoid reporting the same error twice, or a [Dummy][MetaFail.Dummy] fail.
      *
      * @see meta.result.MetaResult
      * @see MetaFail
@@ -103,8 +127,9 @@ object ParseErr {
         is MetaFail.Target -> metaTargetFail(loc, fail)
         is MetaFail.Parse -> metaParseFail(fail)
         is MetaFail.Name -> metaNameFail(fail)
-        is MetaFail.Input -> metaInputFail(fail)
         is MetaFail.NotEnabled -> metaNotEnabledFail(fail)
+        is MetaFail.Input -> null
+        is MetaFail.Dummy -> null
     }
 
     private fun metaTargetFail(loc: Loc, fail: MetaFail.Target): Msg {
@@ -130,29 +155,7 @@ object ParseErr {
         ).build()
     }
 
-    private fun metaInputFail(fail: MetaFail.Input): Msg {
-        return Report.err(fail.loc, "malformed meta component input").lines(
-            Lines.of(Note.err(fail.loc, "here"))
-        ).build()
-    }
-
     private fun metaNotEnabledFail(fail: MetaFail.NotEnabled): Msg {
-        return Report.err(fail.loc, "meta assertions not enabled")
-            .msg("run `nevec` with `--meta-asserts` to enable them")
-            .lines(
-                Lines.of(Note.err(fail.loc, "not enabled"))
-            ).build()
+        return notEnabled(feature = "meta assertions", arg = "--meta-assert", fail.loc)
     }
 }
-
-/**
- * @return The usual lexeme associated with `this` [Tok]’s [TokKind].
- */
-fun Tok.display(): String  {
-    return kind.display()
-}
-
-/**
- * @return The usual lexeme associated with `this` [TokKind], or `"end of file"` if `this` is `null`.
- */
-fun TokKind?.display() = this?.lexeme() ?: "end of file"

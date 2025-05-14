@@ -70,6 +70,15 @@ sealed class MetaFail {
     data class NotEnabled(val loc: Loc) : MetaFail()
 
     /**
+     * Represents a **dummy meta failure** that is returned when no [Meta] could be parsed.
+     *
+     * This allows us to avoid receiving back a [Success][MetaResult.Success] when an error was produced,
+     * because adding two [MetaResult] selects the only [Success][MetaResult.Success] that is in the list,
+     * thereby removing our initial [MetaFail].
+     */
+    data object Dummy : MetaFail()
+
+    /**
      * @return A [MetaResult] wrapper around `this`.
      *
      * @see MetaResult

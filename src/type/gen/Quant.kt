@@ -1,5 +1,6 @@
 package type.gen
 
+import type.impl.Compare
 import type.impl.NamedType
 import type.impl.Wrappable
 import type.kind.TypeKind
@@ -24,7 +25,7 @@ import util.extension.prefixWith
  *
  * @see type.gen.forall.Forall
  */
-data class Quant(val id: Int) : Wrappable, NamedType {
+data class Quant(val id: Int) : Wrappable, NamedType, Compare<Quant> {
     override fun wrap(): TypeKind {
         return TypeKind.OfQuant(this)
     }
@@ -35,5 +36,13 @@ data class Quant(val id: Int) : Wrappable, NamedType {
      */
     override fun named(): String {
         return id.toString().prefixWith("'")
+    }
+
+    override fun isSame(other: Quant): Boolean {
+        return id == other.id
+    }
+
+    override fun toString(): String {
+        return named()
     }
 }

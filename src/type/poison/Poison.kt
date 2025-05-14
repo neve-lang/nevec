@@ -3,6 +3,7 @@ package type.poison
 import file.span.Loc
 import type.impl.NamedType
 import type.Type
+import type.impl.Compare
 import type.impl.RecessType
 import type.impl.Wrappable
 import type.kind.TypeKind
@@ -17,7 +18,28 @@ import util.extension.suffixWith
  *
  * Poisoned types are defined as [RecessTypes][RecessType] due to their special unification behavior.
  */
-sealed class Poison : Wrappable, NamedType, RecessType {
+sealed class Poison : Wrappable, NamedType, RecessType, Compare<Poison> {
+    companion object {
+        private val NAMES = mapOf(
+            "Unknown" to Unknown,
+            "Ignorable" to Ignorable,
+        )
+
+        /**
+         * @return A [Poison] type from a string name, if it is one of the valid candidates.  Otherwise, it returns
+         * `null`.
+         *
+         * Valid candidates include:
+         *
+         * - `"Unknown"`
+         * - `"Ignorable"`
+         * - `"Unresolved"`
+         */
+        fun fromName(name: String): Poison? {
+            return NAMES[name]
+        }
+    }
+
     /**
      * Represents an **unknown** type, i.e. a type that **could not be unified**.
      *
@@ -41,20 +63,15 @@ sealed class Poison : Wrappable, NamedType, RecessType {
      * [Unknown] types trigger a compiler error message, whereas [Ignorable] tells the type-checker to
      * ignore these types, as they are a direct result of another [Unknown] type.
      *
+     * The only exception to this rule are [Parens][ast.hierarchy.expr.Expr.Parens] nodes, as it allows the full
+     * parenthesized expression—including the parentheses—to be highlighted in type errors.
+     *
+     * This behavior is monitored by the [SemResolver][check.sem.SemResolver] at its `visitParens` method, and special
+     * error reporting is implemented by the type checker when it comes to parenthesized expressions.
+     *
      * @see Unknown
      */
     data object Ignorable : Poison()
-
-    /**
-     * Represents an **unresolved type**.
-     *
-     * By default, all symbol references in a program are given [Unresolved], until their type becomes resolved during
-     * the [semantic resolving][check.sem.SemResolver] phase.
-     *
-     * If the type cannot be resolved, it stays that way,
-     * until the type-checking phase reports them as “unknown symbol” errors.
-     */
-    data object Unresolved : Poison()
 
     /**
      * Represents a hinted type that does not conform with the inferred type.
@@ -86,8 +103,15 @@ sealed class Poison : Wrappable, NamedType, RecessType {
     override fun named() = when (this) {
         is Unknown -> "Unknown"
         is Ignorable -> "Ignorable"
-        is Unresolved -> "Unresolved"
+        is Undefined -> "Undefined ‘${name}’"
         is Hint -> original.named().suffixWith("..!")
-        is Undefined -> "Undefined"
+    }
+
+    override fun isSame(other: Poison): Boolean {
+        return named() == other.named()
+    }
+
+    override fun toString(): String {
+        return "~${named()}"
     }
 }

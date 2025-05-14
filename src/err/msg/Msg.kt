@@ -35,7 +35,5 @@ class Msg(
             .then().newline().print(out)
 
         lines.forEach { it.emit(out) }
-
-        Write.paintedIn(Color.BLUE).saying(" ╰─ ").offset().then().print(out)
     }
 }

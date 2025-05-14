@@ -42,6 +42,7 @@ object Match {
 
     private val ONE_CHAR_TOKS = mapOf(
         '\'' to APOSTROPHE,
+        '~' to TILDE,
         ';' to SEMICOL,
         ':' to COL,
         ',' to COMMA,
@@ -123,4 +124,6 @@ object Match {
 /**
  * @return the usually expected lexeme for [this].
  */
-fun TokKind.lexeme() = Match.lexemeOf(this)
+fun TokKind.lexeme(): String? {
+    return Match.lexemeOf(this)
+}

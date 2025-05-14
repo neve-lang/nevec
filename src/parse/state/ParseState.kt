@@ -1,5 +1,7 @@
 package parse.state
 
+import err.msg.Msg
+
 /**
  * Coordinates the current [Parse][parse.Parse] state.
  *
@@ -16,6 +18,13 @@ class ParseState {
      * to avoid cascading ones.
      */
     var isPanicking = false
+
+    /**
+     * Shows a compiler [error message][Msg] and marks that an error was reported.
+     */
+    fun showMsg(msg: Msg) {
+       return msg.print().also { markErr() }
+    }
 
     /**
      * Sets [isPanicking] to false.

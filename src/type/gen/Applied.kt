@@ -6,6 +6,7 @@ import type.kind.TypeKind
 import type.impl.Wrappable
 import type.gen.param.TypeParams
 import type.gen.arg.TypeArgs
+import type.impl.Compare
 
 /**
  * Represents a type with a list of generic type arguments applied to it.
@@ -15,7 +16,7 @@ import type.gen.arg.TypeArgs
  *
  * @see TypeParams
  */
-data class Applied(val args: TypeArgs, val type: Type) : Wrappable, NamedType {
+data class Applied(val args: TypeArgs, val type: Type) : Wrappable, NamedType, Compare<Applied> {
     /**
      * @return the number of items inside [args].
      */
@@ -36,5 +37,13 @@ data class Applied(val args: TypeArgs, val type: Type) : Wrappable, NamedType {
 
     override fun named(): String {
         return "${type.named()} (${argsList().joinToString(", ", transform = Type::named)})"
+    }
+
+    override fun isSame(other: Applied): Boolean {
+        return type.isSame(other.type) && args.isSame(other.args)
+    }
+
+    override fun toString(): String {
+        return named()
     }
 }

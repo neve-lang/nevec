@@ -32,7 +32,7 @@ enum class TokKind {
 
     META_ASSERT,
 
-    APOSTROPHE,
+    APOSTROPHE, TILDE,
 
     NEWLINE, ERR, EOF;
 
@@ -56,9 +56,10 @@ enum class TokKind {
      * - `ID`, for simple identifiers
      * - `LBRACKET`, for lists and tables
      * - `APOSTROPHE`, for [free types][type.gen.Free]
+     * - `TILDE`, for [poisoned types][type.poison.Poison]
      */
     fun isTypeStarter(): Boolean {
-        return this == ID || this == LBRACKET || this == APOSTROPHE
+        return this == ID || this == LBRACKET || isInBetween(APOSTROPHE, TILDE)
     }
 
     /**

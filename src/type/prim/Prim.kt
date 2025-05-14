@@ -2,6 +2,7 @@ package type.prim
 
 import type.impl.NamedType
 import type.Type
+import type.impl.Compare
 import type.kind.TypeKind
 import type.impl.Wrappable
 
@@ -18,13 +19,21 @@ import type.impl.Wrappable
  * @see PrimKind
  * @see domain.Domain
  */
-data class Prim(val kind: PrimKind, val type: Type) : Wrappable, NamedType {
+data class Prim(val kind: PrimKind, val type: Type) : Wrappable, NamedType, Compare<Prim> {
     override fun wrap(): TypeKind {
         return TypeKind.OfPrim(this)
     }
 
     override fun named(): String {
         return type.named()
+    }
+
+    override fun isSame(other: Prim): Boolean {
+        return kind == other.kind && type.isSame(other.type)
+    }
+
+    override fun toString(): String {
+        return "prim $type"
     }
 }
 

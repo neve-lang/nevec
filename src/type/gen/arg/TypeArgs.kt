@@ -2,6 +2,7 @@ package type.gen.arg
 
 import type.Type
 import type.gen.Free
+import type.impl.Compare
 
 /**
  * Groups together a list of a **generic type argument**, i.e. types applied to types parameters of a generic type.
@@ -11,7 +12,7 @@ import type.gen.Free
  * @see type.gen.Applied
  * @see type.gen.param.TypeParams
  */
-data class TypeArgs(private val args: List<Type>) {
+data class TypeArgs(private val args: List<Type>) : Compare<TypeArgs> {
     companion object {
         /**
          * Builds a [TypeArgs] data class from a list of [Types][Type].
@@ -61,5 +62,9 @@ data class TypeArgs(private val args: List<Type>) {
      */
     fun themselves(): List<Type> {
         return args
+    }
+
+    override fun isSame(other: TypeArgs): Boolean {
+        return args.zip(other.themselves()).map { (a, b) -> a.isSame(b) }.all { it }
     }
 }

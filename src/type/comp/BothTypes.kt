@@ -1,10 +1,11 @@
-package infer.comp
+package type.comp
 
 import type.Type
 import type.gen.Applied
 import type.gen.Free
 import type.hinted.Hinted
 import type.impl.RecessType
+import type.poison.Poison
 import type.prim.Prim
 
 /**
@@ -19,8 +20,29 @@ import type.prim.Prim
  * @see infer.unify.Unify
  */
 data class BothTypes(val a: Type, val b: Type) {
+    companion object {
+        /**
+         * @return A [BothTypes] data class whose members are both members of the [pair] given.
+         */
+        fun from(pair: Pair<Type, Type>): BothTypes {
+            return pair.let {
+                (a, b) -> BothTypes(a, b)
+            }
+        }
+    }
+
     /**
-     * @return whether two types can be unified, i.e. if they same [TypeKind][type.kind.TypeKind], unless one or
+     * @return Whether both types [a] and [b] are the same [type]—in other words, `a = b = type`.
+     *
+     * This does **not** compare the type domains of the types—instead, it only compares them using
+     * [isSame][type.impl.Compare.isSame].
+     */
+    fun are(type: Type): Boolean {
+        return areSame() && a.isSame(type)
+    }
+
+    /**
+     * @return whether two types can be unified, i.e. if they have the same [TypeKind][type.kind.TypeKind], unless one or
      * both are [recessive types][RecessType].
      *
      * @see type.kind.TypeKind
@@ -73,13 +95,13 @@ data class BothTypes(val a: Type, val b: Type) {
     }
 
     /**
-     * @return whether both [a] and [b] have the same name.
+     * @return whether both [a] and [b] are the same, according to [Compare][type.impl.Compare]’s
+     * [isSame][type.impl.Compare.isSame] method.
      *
-     * NOTE: Name mangling hasn’t been implemented yet, but [haveSameName] will be supposed to compare the
-     * mangled names of both types.  Right now, it just compares the simple name.
+     * @see type.impl.Compare.isSame
      */
-    fun haveSameName(): Boolean {
-        return a.named() == b.named()
+    fun areSame(): Boolean {
+        return a.isSame(b)
     }
 
     /**
@@ -129,6 +151,17 @@ data class BothTypes(val a: Type, val b: Type) {
     }
 
     /**
+     * @return from either [a] or [b], the [Type] that is not an [unresolved type][Type.isUnresolved].
+     * If both types are [unresolved][type.poison.Poison.Unresolved], [a] is returned.
+     */
+    fun pickResolved(): Type {
+        return if (b.isUnresolved())
+            a
+        else
+            b
+    }
+
+    /**
      * @return from either [a] of [b], the [Type] that is a [Hinted][type.hinted.Hinted] type, as a
      * [Hinted][type.hinted.Hinted].
      *
@@ -147,6 +180,26 @@ data class BothTypes(val a: Type, val b: Type) {
     }
 
     /**
+     * Picks the “appropriate poison” for two **different types**, where **none is a
+     * [recessive type][type.impl.RecessType].
+     *
+     * Unifying two different non-recessive types always results in a poisoned type, but we need to be careful—if
+     * either of those types is an [Unknown][eitherIsUnknown], we need to return an
+     * [Ignorable][type.poison.Poison.Ignorable] type.
+     *
+     * @return An [Ignorable][type.poison.Poison.Ignorable] type if [eitherIsUnknown], an
+     * [Unknown][type.poison.Poison.Unknown] type otherwise.
+     *
+     * @see type.poison.Poison.Ignorable
+     */
+    fun pickPoison(): Type {
+        return if (eitherIsUnknown())
+            Type.poisoned(with = Poison.Ignorable)
+        else
+            Type.unknown()
+    }
+
+    /**
      * “Unwraps” both types by removing their [Hinted] wrapper, if there is one.
      *
      * @return A new [BothTypes] without any [Hinted] wrappers.
@@ -160,6 +213,10 @@ data class BothTypes(val a: Type, val b: Type) {
 
     private fun eitherIsRecess(): Boolean {
         return a.itself() is RecessType || b.itself() is RecessType
+    }
+
+    private fun eitherIsUnknown(): Boolean {
+        return a.isUnknown() || b.isUnknown()
     }
 
     private fun areApplied(): Boolean {

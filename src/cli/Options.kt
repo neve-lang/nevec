@@ -13,19 +13,19 @@ enum class Options {
     NO_OPT,
 
     /**
-     * Enables the [meta assertions][meta.asserts.MetaAssert] feature.
+     * Enables the [meta assertions][meta.comp.asserts.MetaAssert] feature.
      *
      * Allows the user to perform metaprogramming assertions, such as:
      *
      * ```
-     * ("Hello, " + "10") @[type = Str]
+     * ("Hello, " + "10") @[type == Str]
      * ```
      *
      * The compiler will then check each meta assertion in the AST.
      *
      * Please note that meta assertion errors do not prevent the compiler from proceeding with compilation.
      *
-     * @see meta.asserts.MetaAssert
+     * @see meta.comp.asserts.MetaAssert
      */
     META_ASSERTS,
 
@@ -33,13 +33,26 @@ enum class Options {
      * Prevents the compiler from going further than the type-checking phase, i.e. lowering the AST to the IR
      * representation.
      */
-    CHECK_ONLY;
+    CHECK_ONLY,
+
+    /**
+     * Allows referencing types that are usually not exposed to the user, such as [poisoned types][type.poison.Poison],
+     * [free types][type.gen.Free] and more.
+     *
+     * Each of these “compiler types” is given special syntax, such as:
+     *
+     * ```
+     * ~Unknown -- poisoned type
+     * '0 -- free type
+     */
+    COMPILER_TYPES;
 
     companion object {
         private val MAP = mapOf(
             "--no-opt" to NO_OPT,
-            "--inline-asserts" to META_ASSERTS,
-            "--check-only" to CHECK_ONLY
+            "--meta-asserts" to META_ASSERTS,
+            "--check-only" to CHECK_ONLY,
+            "--compiler-types" to COMPILER_TYPES
         )
 
         /**
