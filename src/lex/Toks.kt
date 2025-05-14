@@ -124,4 +124,6 @@ object Match {
 /**
  * @return the usually expected lexeme for [this].
  */
-fun TokKind.lexeme() = Match.lexemeOf(this)
+fun TokKind.lexeme(): String? {
+    return Match.lexemeOf(this)
+}
