@@ -32,7 +32,7 @@ object Nevec {
         val (src, lines) = try {
             Src.read(file)
         } catch (e: IOException) {
-            Report.fileErr(file)
+            Report.cliFileErr(file)
             return Fail.IO.wrap()
         }
 
