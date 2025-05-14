@@ -166,8 +166,9 @@ class Lex(contents: String) {
 
     private fun simpleTok(len: Int = Match.MAX_TOK_LEN): Tok {
         if (len == 0) {
+            val err = err("invalid character")
             advance()
-            return err("invalid character")
+            return err
         }
 
         val peephole = peek(len) ?: return simpleTok(len - 1)
