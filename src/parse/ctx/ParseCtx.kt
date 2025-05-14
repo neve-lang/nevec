@@ -9,6 +9,7 @@ import parse.tok.Window
 import tok.Tok
 import tok.TokKind
 import type.table.TypeTable
+import java.util.Stack
 
 /**
  * Tiny data class intended to be shipped around Parse helpers.
@@ -60,7 +61,7 @@ data class ParseCtx(
     /**
      * Calling this method **advances** the [Window] position.
      *
-     * @returns the previous [Tok] if its [kind][TokKind] matches one of the given [expected] kinds, `null` otherwise.
+     * @return the previous [Tok] if its [kind][TokKind] matches one of the given [expected] kinds, `null` otherwise.
      *
      * When the previous token’s kind does not match any of the token kinds given, a [ParseErr] is reported.
      */
@@ -71,6 +72,15 @@ data class ParseCtx(
         }
 
         return consume()
+    }
+
+    /**
+     * This method call **advances** the [Window] position.
+     *
+     * @return The previous [Tok]’s (after advancing) position.
+     */
+    fun consumeHere(): Loc {
+        return here().also { window.advance() }
     }
 
     /**
