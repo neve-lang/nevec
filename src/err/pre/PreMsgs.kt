@@ -24,4 +24,18 @@ object PreMsgs {
             Lines.of(Note.err(loc, "expected some input here"))
         ).build()
     }
+
+    /**
+     * @return A common error message when a [meta component][meta.comp.MetaComp] requires no input, but some was
+     * given.
+     *
+     * @param loc The location of the meta component.
+     *
+     * @see meta.comp.MetaComp
+     */
+    fun unexpectedMetaInput(loc: Loc): Msg {
+        return Report.err(loc, "unexpected meta component input").lines(
+            Lines.of(Note.err(loc, "this meta component takes in no input"))
+        ).build()
+    }
 }
