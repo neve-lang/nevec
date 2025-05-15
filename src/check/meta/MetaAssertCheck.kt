@@ -9,6 +9,7 @@ import ast.hierarchy.program.Program
 import ast.hierarchy.stmt.Stmt
 import ast.hierarchy.unop.UnOp
 import ast.info.Info
+import err.msg.Msg
 import meta.comp.asserts.MetaAssert
 import visit.Visit
 
@@ -155,16 +156,11 @@ class MetaAssertCheck : Visit<Program, Boolean> {
             return okay()
         }
 
-        val checks = info.meta().asserts().map {
-            it.checkFor(info) to it
+        val msgs = info.meta().asserts().mapNotNull {
+            it.pickMsg(info)?.let(Msg::print)
         }
 
-        checks.forEach {
-            (succeeded, assert) -> if (!succeeded)
-                assert.failMsg(info).print()
-        }
-
-        return checks.all { (succeeded, _) -> succeeded }
+        return msgs.isEmpty()
     }
 
     private fun okay(): Boolean {
