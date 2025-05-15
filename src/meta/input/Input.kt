@@ -26,4 +26,12 @@ sealed class Input<T> {
      * An absent input—input that was *not* given by the user—for a meta component.
      */
     class Absent<T> : Input<T>()
+
+    /**
+     * @return A value of type [T] if `this` is [Present], `null` otherwise.
+     */
+    fun presence() = when (this) {
+        is Present -> itself
+        is Absent -> null
+    }
 }
