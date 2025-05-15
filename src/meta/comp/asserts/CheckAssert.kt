@@ -28,6 +28,7 @@ interface CheckAssert : Spanned {
      */
     fun pickMsg(info: Info) = when (checkFor(info)) {
         AssertOutcome.MISSING_INPUT -> PreMsgs.missingMetaInput(loc())
+        AssertOutcome.UNEXPECTED_INPUT -> PreMsgs.unexpectedMetaInput(loc())
         AssertOutcome.FAIL -> failMsg(info)
         AssertOutcome.SUCCESS -> null
     }
