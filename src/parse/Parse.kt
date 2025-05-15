@@ -37,6 +37,13 @@ class Parse(contents: String, cliCtx: Ctx) {
     }
 
     /**
+     * @return Whether parsing had at least one error.
+     */
+    fun hadErr(): Boolean {
+        return ctx.state().hadErr
+    }
+
+    /**
      * Parses the source contents given.
      *
      * @return A regular [Program] node if no errors occurred, an empty [Program] node otherwise.
@@ -272,10 +279,6 @@ class Parse(contents: String, cliCtx: Ctx) {
 
     private fun showMsg(msg: Msg) {
         ctx.showMsg(msg)
-    }
-
-    private fun hadErr(): Boolean {
-        return ctx.state().hadErr
     }
 
     private fun consume(kind: TokKind): Tok? {
