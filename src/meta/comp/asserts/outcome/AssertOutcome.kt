@@ -47,4 +47,10 @@ enum class AssertOutcome {
         }
     }
 
+    /**
+     * @return Whether `this` is [SUCCESS].
+     */
+    fun succeeded(): Boolean {
+        return this == SUCCESS
+    }
 }
