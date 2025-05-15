@@ -9,6 +9,7 @@ import parse.err.ParseResult
 import parse.help.TinyParse
 import tok.TokKind
 import type.Type
+import type.culprit.Culprit
 import type.gen.Applied
 import type.gen.Free
 import type.gen.arg.TypeArgs
@@ -27,6 +28,7 @@ object ParseType : TinyParse<Unit, Type> {
     private fun parseType(ctx: ParseCtx) = when (ctx.kind()) {
         TokKind.APOSTROPHE -> parseFree(ctx)
         TokKind.TILDE -> parsePoison(ctx)
+        TokKind.EXCLAM -> parseCulprit(ctx)
         TokKind.LBRACKET -> parseListOrTable(ctx)
         else -> parseNamed(ctx)
     }
@@ -77,6 +79,25 @@ object ParseType : TinyParse<Unit, Type> {
         return ParseResult.Success(poison.covered(), ctx)
     }
 
+    private fun parseCulprit(ctx: ParseCtx): ParseResult<Type> {
+        val options = ctx.cliCtx.options
+
+        when {
+            !options.isEnabled(Options.COMPILER_TYPES) -> return requiresCompilerTypes(ctx)
+            !options.isEnabled(Options.CULPRITS) -> return requiresCulprits(ctx)
+        }
+
+        ctx.consume()
+        ctx.consume(TokKind.EXCLAM)
+
+        val type = parseType(ctx).success() ?: return fail(ctx)
+
+        return ParseResult.Success(
+            Culprit(type).covered(),
+            ctx
+        )
+    }
+
     private fun parseListOrTable(ctx: ParseCtx): ParseResult<Type> {
         ctx.consume()
         val type = parseType(ctx)
@@ -86,7 +107,7 @@ object ParseType : TinyParse<Unit, Type> {
         }
 
         // no support for lists yet
-        return ParseResult.Fail(ctx)
+        return fail(ctx)
     }
 
     private fun parseTable(ctx: ParseCtx, keyType: ParseResult<Type>): ParseResult<Type> {
@@ -94,7 +115,7 @@ object ParseType : TinyParse<Unit, Type> {
         ctx.consume(TokKind.RBRACKET)
 
         return if ((keyType to valType).any { it is ParseResult.Fail })
-            ParseResult.Fail(ctx)
+            fail(ctx)
         else
             ParseResult.Success(
                 Applied(
@@ -151,6 +172,18 @@ object ParseType : TinyParse<Unit, Type> {
             ParseErr.notEnabled(
                 feature = "compiler types",
                 arg = "--compiler-types",
+                ctx.here()
+            )
+        )
+
+        return fail(ctx)
+    }
+
+    private fun requiresCulprits(ctx: ParseCtx): ParseResult<Type> {
+        ctx.showMsg(
+            ParseErr.notEnabled(
+                feature = "culprits",
+                arg = "--culprits",
                 ctx.here()
             )
         )
