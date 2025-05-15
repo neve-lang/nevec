@@ -206,11 +206,12 @@ class Lex(contents: String) {
             return
         }
 
-        if (match('#')) {
+        takeWhile(Char::isInsignificant)
+
+        if (matchSeq("--")) {
             skipComment()
         }
 
-        takeWhile(Char::isInsignificant)
         sync()
     }
 
