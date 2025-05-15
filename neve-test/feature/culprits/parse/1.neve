@@ -1,0 +1,2 @@
+"Hello, " @[type == !!Str]
++ 1 @[type == !!Int]

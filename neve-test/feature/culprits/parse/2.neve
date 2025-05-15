@@ -1,0 +1,3 @@
+"Hello, " @[type == !!Str]
++ 1 @[type == !!Int]
++ 2 @[type == Int] -- not a culprit
