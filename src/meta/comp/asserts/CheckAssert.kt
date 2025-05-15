@@ -10,7 +10,15 @@ import err.msg.Msg
  * - A [failMsg] method when the assertion fails.
  */
 interface CheckAssert {
+    /**
+     * Checks the [MetaAssert] based on the [info] given.
+     *
+     * @return Whether the meta assert check did not fail.
+     */
     fun checkFor(info: Info): Boolean
 
+    /**
+     * @return An error [Msg] to be associated with a [MetaAssert]’s failure.
+     */
     fun failMsg(info: Info): Msg
 }
