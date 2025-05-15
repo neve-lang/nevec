@@ -33,6 +33,10 @@ sealed class MetaAssert : MetaComp, CheckAssert {
             return target == Target.PRIMARY
         }
 
+        override fun requiresInput(): Boolean {
+            return true
+        }
+
         override fun checkFor(info: Info): Boolean {
             return type.isSame(info.type())
         }
