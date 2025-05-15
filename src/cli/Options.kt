@@ -44,15 +44,26 @@ enum class Options {
      * ```
      * ~Unknown -- poisoned type
      * '0 -- free type
+     * ```
      */
-    COMPILER_TYPES;
+    COMPILER_TYPES,
+
+    /**
+     * Enables the “culprit” feature, which is a feature that makes the type checker mark the causes of
+     * [unknown types][type.poison.Poison.Unknown] or [poisoned types][type.poison.Poison] as
+     * [Culprits][type.poison.Culprit].
+     *
+     * This allows us to leverage meta assertions to determine the “culprit” of a type error.
+     */
+    CULPRITS;
 
     companion object {
         private val MAP = mapOf(
             "--no-opt" to NO_OPT,
             "--meta-asserts" to META_ASSERTS,
             "--check-only" to CHECK_ONLY,
-            "--compiler-types" to COMPILER_TYPES
+            "--compiler-types" to COMPILER_TYPES,
+            "--culprits" to CULPRITS
         )
 
         /**
