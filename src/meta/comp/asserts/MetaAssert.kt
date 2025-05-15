@@ -14,7 +14,7 @@ import err.report.Report
  * Represents a **meta assertion**, i.e.:
  *
  * ```
- * "Hello" @[type = Str]
+ * "Hello" @[type == Str]
  * ```
  *
  * One peculiarity of meta assertions is that they **always appear after their target**, whereas meta annotations
