@@ -63,6 +63,7 @@ class FeatureTest(private val name: String) {
             filename.toString(),
             "--meta-asserts",
             "--compiler-types",
+            "--culprits",
             "--no-opt"
         )
     }
