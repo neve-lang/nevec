@@ -1,12 +1,7 @@
 package feature
 
 import hook.TestHook
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
-import java.io.File
-import java.io.FileFilter
 import java.io.IOException
-import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.*
 
@@ -22,7 +17,7 @@ class FeatureTest(private val name: String) {
         )
     }
 
-    fun run(): Boolean {
+    fun succeeds(): Boolean {
         val folders = try {
             open()
         } catch (e: IOException) {
