@@ -21,11 +21,13 @@ object Lines {
      * @return A list with a single [Line] from a single [Note], with an optional [header].
      */
     fun single(note: Note, header: String? = null): List<Line> {
-        return listOf(
-            Line.builder(note.loc).add(
-                listOf(note)
-            ).header(header).build()
-        )
+        return note.loc.let {
+            listOf(
+                Line.builder(it).withLine(it.line()).add(
+                    listOf(note)
+                ).header(header).build()
+            )
+        }
     }
 
     private fun makeLines(notes: List<Note>, produced: List<Line> = emptyList()): List<Line> {
