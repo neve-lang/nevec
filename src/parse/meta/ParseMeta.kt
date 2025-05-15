@@ -7,6 +7,7 @@ import meta.Meta
 import meta.comp.MetaComp
 import meta.comp.asserts.MetaAssert
 import meta.fail.MetaFail
+import meta.input.Input
 import meta.result.MetaResult
 import meta.target.Target
 import parse.ctx.ParseCtx
@@ -16,6 +17,7 @@ import parse.help.TinyParse
 import parse.type.ParseType
 import tok.Tok
 import tok.TokKind
+import type.Type
 
 /**
  * Helper parser that takes care of parsing [MetaComps][MetaComp], into [Meta] data classes.
@@ -81,23 +83,29 @@ object ParseMeta : TinyParse<Pair<Infoful, Target>, Meta> {
         val from = ctx.consumeHere()
         val id = ctx.consume(TokKind.ID) ?: return parseFail(ctx)
 
-        ctx.consume(TokKind.EQ)
+        val inputGiven = determineInput(ctx)
 
         return when (id.lexeme) {
-            "type" -> parseTypeAssert(ctx, from, to)
+            "type" -> parseTypeAssert(ctx, from, to, inputGiven)
             else -> unknownAssert(id)
         }
     }
 
-    private fun parseTypeAssert(ctx: ParseCtx, from: Loc, to: Target): MetaResult {
-        val parsed = ParseType.parse(ctx.new(), Unit)
+    private fun parseTypeAssert(ctx: ParseCtx, from: Loc, to: Target, inputGiven: Boolean): MetaResult {
+        val (input, newCtx) = if (inputGiven) {
+            val parsed = ParseType.parse(ctx.new(), Unit)
 
-        val newCtx = parsed.newCtx()
-        val type = parsed.success() ?: return inputFail(ctx)
+            val newCtx = parsed.newCtx()
+            val type = parsed.success() ?: return inputFail(ctx)
+
+            Input.Present(type) to newCtx
+        } else {
+            Input.Absent<Type>() to ctx
+        }
 
         val loc = from.tryMerge(with = newCtx.here())
 
-        val assert = MetaAssert.TypeAssert(type, loc)
+        val assert = MetaAssert.TypeAssert(input, loc)
         closingBracket(newCtx)
 
         return applyOrFail(assert, to, loc)
@@ -112,6 +120,15 @@ object ParseMeta : TinyParse<Pair<Infoful, Target>, Meta> {
             Meta.from(comp).wrap()
         else
             MetaFail.Target(at).wrap()
+    }
+
+    private fun determineInput(ctx: ParseCtx): Boolean {
+        return if (ctx.match(TokKind.RBRACKET)) {
+            false
+        } else {
+            ctx.consume(TokKind.EQ)
+            true
+        }
     }
 
     private fun closingBracket(ctx: ParseCtx): Tok? {
