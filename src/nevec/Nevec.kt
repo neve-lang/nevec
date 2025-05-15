@@ -36,7 +36,12 @@ object Nevec {
             return Fail.IO.wrap()
         }
 
-        val parsed = Parse(src, ctx).parse()
+        val parse = Parse(src, ctx)
+        val parsed = parse.parse()
+
+        if (parse.hadErr()) {
+            return Fail.COMPILE.wrap()
+        }
 
         return if (Check.check(parsed, ctx))
             Aftermath.Success
