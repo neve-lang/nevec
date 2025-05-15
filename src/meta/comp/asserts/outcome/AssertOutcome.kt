@@ -7,6 +7,7 @@ package meta.comp.asserts.outcome
  * - [SUCCESS]—The assertion was successful.
  * - [FAIL]—The assertion was *not* successful.
  * - [MISSING_INPUT]—The assertion required some input but none was given.
+ * - [UNEXPECTED_INPUT]—The assertion required no input but some was given.
  */
 enum class AssertOutcome {
     /**
@@ -23,7 +24,13 @@ enum class AssertOutcome {
      * This outcome is given when the [meta assertion][meta.comp.asserts.MetaAssert] expected some input but the
      * user gave none.
      */
-    MISSING_INPUT;
+    MISSING_INPUT,
+
+    /**
+     * This outcome is given when the [meta assertion][meta.comp.asserts.MetaAssert] expected no input, but the user
+     * gave some.
+     */
+    UNEXPECTED_INPUT;
 
     companion object {
         /**
