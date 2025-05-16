@@ -124,7 +124,7 @@ class Parse(contents: String, cliCtx: Ctx) {
             val operator = Operator.from(op)!!
 
             val loc = (left.loc() + right.loc()).build()
-            left = into(AnyBinOp(left, operator, right, Info.at(loc))).wrap()
+            left = into(AnyBinOp(left, operator, right, Info.at(loc), op.loc)).wrap()
         }
 
         return left
@@ -141,8 +141,8 @@ class Parse(contents: String, cliCtx: Ctx) {
         val loc = op.loc.tryMerge(with = operand.loc())
 
         return when (op.kind) {
-            TokKind.NOT -> UnOp.Not(operand, Info.at(loc)).wrap()
-            TokKind.MINUS -> UnOp.Neg(operand, Info.at(loc)).wrap()
+            TokKind.NOT -> UnOp.Not(operand, Info.at(loc), op.loc).wrap()
+            TokKind.MINUS -> UnOp.Neg(operand, Info.at(loc), op.loc).wrap()
             // this, by definition, shouldn't ever happen--check() restricts our possible types down to TokKind.MINUS
             // and TokKind.NOT.
             else -> Expr.Empty(here())
