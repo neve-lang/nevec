@@ -50,7 +50,8 @@ class MetaAssertCheck : Visit<Program, Boolean> {
     }
 
     private fun visitParens(parens: Expr.Parens): Boolean {
-        return check(parens.info())
+        return check(parens.info()) and
+                visitExpr(parens.expr)
     }
 
     private fun visitUnOp(unOp: UnOp) = when (unOp) {
