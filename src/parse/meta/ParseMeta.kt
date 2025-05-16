@@ -179,8 +179,8 @@ object ParseMeta : TinyParse<Pair<Infoful, Target>, Meta> {
 
     private fun toClosingBracket(ctx: ParseCtx) {
         ctx.skipToClosing(
+            closing = TokKind.RBRACKET,
             opening = TokKind.LBRACKET,
-            closing = TokKind.RBRACKET
         )
     }
 
