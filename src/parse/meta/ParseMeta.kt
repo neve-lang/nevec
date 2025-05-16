@@ -94,9 +94,13 @@ object ParseMeta : TinyParse<Pair<Infoful, Target>, Meta> {
     private fun parseTypeAssert(ctx: ParseCtx, from: Loc, to: Target, inputGiven: Boolean): MetaResult {
         val (input, newCtx) = if (inputGiven) {
             val parsed = ParseType.parse(ctx.new(), Unit)
-
             val newCtx = parsed.newCtx()
-            val type = parsed.success() ?: return inputFail(ctx)
+
+            val type = parsed.success()
+            if (type == null) {
+                closingBracket(ctx)
+                return inputFail(ctx)
+            }
 
             Input.Present(type) to newCtx
         } else {
@@ -105,8 +109,8 @@ object ParseMeta : TinyParse<Pair<Infoful, Target>, Meta> {
 
         val loc = from.tryMerge(with = newCtx.here())
 
-        val assert = MetaAssert.TypeAssert(input, loc)
         closingBracket(newCtx)
+        val assert = MetaAssert.TypeAssert(input, loc)
 
         return applyOrFail(assert, to, loc)
     }
