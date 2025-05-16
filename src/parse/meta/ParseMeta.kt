@@ -99,7 +99,7 @@ object ParseMeta : TinyParse<Pair<Infoful, Target>, Meta> {
         ) ?: return inputFail(ctx)
 
         val loc = from.tryMerge(with = newCtx.here())
-        closingBracket(newCtx)
+        toClosingBracket(newCtx)
 
         val assert = MetaAssert.TypeAssert(input, loc)
         return applyOrFail(assert, to, loc)
@@ -149,11 +149,7 @@ object ParseMeta : TinyParse<Pair<Infoful, Target>, Meta> {
 
     private fun parseNoInput(ctx: ParseCtx, inputGiven: PossibleInput): Input<Unit> {
         return if (inputGiven.isGiven()) {
-            ctx.skipToClosing(
-                closing = TokKind.RBRACKET,
-                opening = TokKind.LBRACKET,
-            )
-
+            toClosingBracket(ctx)
             Input.Present(Unit)
         } else {
             Input.Absent()
@@ -170,13 +166,13 @@ object ParseMeta : TinyParse<Pair<Infoful, Target>, Meta> {
             val newCtx = parsed.newCtx()
 
             if (!parsed.isSuccess()) {
-                closingBracket(ctx)
+                toClosingBracket(ctx)
                 return null
             }
 
             Input.Present<T>(parsed.success()!!) to newCtx
         } else {
-            closingBracket(ctx)
+            toClosingBracket(ctx)
             Input.Absent<T>() to ctx
         }
     }
@@ -189,10 +185,12 @@ object ParseMeta : TinyParse<Pair<Infoful, Target>, Meta> {
     }
 
     private fun parseFail(ctx: ParseCtx): MetaResult {
+        toClosingBracket(ctx)
         return MetaFail.Parse(ctx.here()).wrap()
     }
 
     private fun inputFail(ctx: ParseCtx): MetaResult {
+        toClosingBracket(ctx)
         return MetaFail.Input(ctx.here()).wrap()
     }
 }
