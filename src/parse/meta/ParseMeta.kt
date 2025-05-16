@@ -17,7 +17,6 @@ import parse.help.TinyParse
 import parse.type.ParseType
 import tok.Tok
 import tok.TokKind
-import type.Type
 
 /**
  * Helper parser that takes care of parsing [MetaComps][MetaComp], into [Meta] data classes.
@@ -83,29 +82,20 @@ object ParseMeta : TinyParse<Pair<Infoful, Target>, Meta> {
         val from = ctx.consumeHere()
         val id = ctx.consume(TokKind.ID) ?: return parseFail(ctx)
 
-        val inputGiven = determineInput(ctx)
+        val input = determineInput(ctx)
 
         return when (id.lexeme) {
-            "type" -> parseTypeAssert(ctx, from, to, inputGiven)
+            "type" -> parseTypeAssert(ctx, from, to, input)
             else -> unknownAssert(id)
         }
     }
 
-    private fun parseTypeAssert(ctx: ParseCtx, from: Loc, to: Target, inputGiven: Boolean): MetaResult {
-        val (input, newCtx) = if (inputGiven) {
-            val parsed = ParseType.parse(ctx.new(), Unit)
-            val newCtx = parsed.newCtx()
-
-            val type = parsed.success()
-            if (type == null) {
-                closingBracket(ctx)
-                return inputFail(ctx)
-            }
-
-            Input.Present(type) to newCtx
-        } else {
-            Input.Absent<Type>() to ctx
-        }
+    private fun parseTypeAssert(ctx: ParseCtx, from: Loc, to: Target, inputGiven: PossibleInput): MetaResult {
+        val (input, newCtx) = parsePossibleInput(
+            ctx,
+            inputGiven,
+            with = ParseType::parse
+        ) ?: return inputFail(ctx)
 
         val loc = from.tryMerge(with = newCtx.here())
 
@@ -126,12 +116,33 @@ object ParseMeta : TinyParse<Pair<Infoful, Target>, Meta> {
             MetaFail.Target(at).wrap()
     }
 
-    private fun determineInput(ctx: ParseCtx): Boolean {
+    private fun determineInput(ctx: ParseCtx): PossibleInput {
         return if (ctx.match(TokKind.RBRACKET)) {
-            false
+            PossibleInput.Missing
         } else {
             ctx.consume(TokKind.EQ)
-            true
+            PossibleInput.Given
+        }
+    }
+
+    private fun <T> parsePossibleInput(
+        ctx: ParseCtx,
+        input: PossibleInput,
+        with: (ParseCtx, Unit) -> ParseResult<T>
+    ): Pair<Input<T>, ParseCtx>? {
+        return if (input.isGiven()) {
+            val parsed = with(ctx.new(), Unit)
+            val newCtx = parsed.newCtx()
+
+            if (parsed.isSuccess()) {
+                closingBracket(ctx)
+                return null
+            }
+
+            Input.Present<T>(parsed.success()!!) to newCtx
+        } else {
+            closingBracket(ctx)
+            Input.Absent<T>() to ctx
         }
     }
 
