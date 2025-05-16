@@ -67,7 +67,7 @@ object ParseType : TinyParse<Unit, Type> {
             // TODO: add an Example section
             ctx.showMsg(
                 SimpleMsg.at(
-                    ctx.here(),
+                    id.loc,
                     msg = "no such poisoned type",
                     saying = "${id.lexeme} is not a valid poisoned type"
                 )
