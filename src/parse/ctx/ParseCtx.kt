@@ -75,6 +75,16 @@ data class ParseCtx(
     }
 
     /**
+     * Advances for as long as the [closing] token [kind][TokKind] is not matched, or as long as the end of the
+     * [TokStream][tok.stream.TokStream] is not reached.
+     *
+     * @see Window.skipToClosing
+     */
+    fun skipToClosing(opening: TokKind, closing: TokKind) {
+        window.skipToClosing(opening, closing)
+    }
+
+    /**
      * This method call **advances** the [Window] position.
      *
      * @return The previous [Tok]’s (after advancing) position.
