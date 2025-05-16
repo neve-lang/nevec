@@ -33,7 +33,6 @@ sealed class Poison : Wrappable, NamedType, RecessType, Compare<Poison> {
          *
          * - `"Unknown"`
          * - `"Ignorable"`
-         * - `"Unresolved"`
          */
         fun fromName(name: String): Poison? {
             return NAMES[name]
