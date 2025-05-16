@@ -16,7 +16,6 @@ import meta.target.Target
 import parse.binop.AnyBinOp
 import parse.err.ParseErr
 import parse.ctx.ParseCtx
-import parse.err.ParseResult
 import parse.meta.ParseMeta
 import tok.Tok
 import tok.TokKind
@@ -255,10 +254,6 @@ class Parse(contents: String, cliCtx: Ctx) {
         val parsed = ParseMeta.parse(ctx.new(), node to target)
         val meta = parsed.success()!!
         ctx = parsed.newCtx()
-
-        if (parsed is ParseResult.SemiFail) {
-            sync()
-        }
 
         return node.update(
             node.info() + meta
