@@ -134,7 +134,7 @@ object ParseMeta : TinyParse<Pair<Infoful, Target>, Meta> {
             val parsed = with(ctx.new(), Unit)
             val newCtx = parsed.newCtx()
 
-            if (parsed.isSuccess()) {
+            if (!parsed.isSuccess()) {
                 closingBracket(ctx)
                 return null
             }
