@@ -4,11 +4,18 @@ import ast.hierarchy.binop.BinOp
 import ast.hierarchy.binop.operator.Operator
 import ast.hierarchy.expr.Expr
 import ast.info.Info
+import file.span.Loc
 
 /**
  * Intermediate helper class that simplifies the process of building a [BinOp] node.
  */
-class AnyBinOp(private val left: Expr, private val operator: Operator, private val right: Expr, private val info: Info) {
+class AnyBinOp(
+    private val left: Expr,
+    private val operator: Operator,
+    private val right: Expr,
+    private val info: Info,
+    private val op: Loc
+) {
     /**
      * @return a [BinOp.Bitwise] node if the operator is [OfBitwise][Operator.OfBitwise].
      *
@@ -23,7 +30,7 @@ class AnyBinOp(private val left: Expr, private val operator: Operator, private v
         // end
         //
         // hehe, i really, really can’t wait for this project ot be complete.
-        is Operator.OfBitwise -> BinOp.Bitwise(left, operator.itself(), right, info)
+        is Operator.OfBitwise -> BinOp.Bitwise(left, operator.itself(), right, info, op)
         else -> throw IllegalArgumentException()
     }
 
@@ -33,7 +40,7 @@ class AnyBinOp(private val left: Expr, private val operator: Operator, private v
      * @throws IllegalArgumentException otherwise.
      */
     fun arith() = when (operator) {
-        is Operator.OfArith -> BinOp.Arith(left, operator.itself(), right, info)
+        is Operator.OfArith -> BinOp.Arith(left, operator.itself(), right, info, op)
         else -> throw IllegalArgumentException()
     }
 
@@ -43,7 +50,7 @@ class AnyBinOp(private val left: Expr, private val operator: Operator, private v
      * @throws IllegalArgumentException otherwise.
      */
     fun comp() = when (operator) {
-        is Operator.OfComp -> BinOp.Comp(left, operator.itself(), right, info)
+        is Operator.OfComp -> BinOp.Comp(left, operator.itself(), right, info, op)
         else -> throw IllegalArgumentException()
     }
 }
