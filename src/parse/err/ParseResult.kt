@@ -40,6 +40,13 @@ sealed class ParseResult<T> {
     data class Fail<T>(val ctx: ParseCtx) : ParseResult<T>()
 
     /**
+     * @return Whether `this` is [Success].
+     */
+    fun isSuccess(): Boolean {
+        return this is Success
+    }
+
+    /**
      * “Unwraps” the value contained within the [ParseResult] if possible.
      *
      * @return The value wrapped by the [ParseResult] if `this` is [Success] or [SemiFail], `null` otherwise.
