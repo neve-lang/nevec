@@ -106,16 +106,7 @@ object ParseMeta : TinyParse<Pair<Infoful, Target>, Meta> {
     }
 
     private fun parseCulpritAssert(ctx: ParseCtx, from: Loc, to: Target, inputGiven: PossibleInput): MetaResult {
-        val input = if (inputGiven.isGiven()) {
-            ctx.skipToClosing(
-                TokKind.RBRACKET,
-                TokKind.LBRACKET,
-            )
-
-            Input.Present(Unit)
-        } else {
-            Input.Absent()
-        }
+        val input = parseNoInput(ctx, inputGiven)
 
         val loc = from.tryMerge(with = ctx.here())
 
@@ -140,6 +131,19 @@ object ParseMeta : TinyParse<Pair<Infoful, Target>, Meta> {
         } else {
             ctx.consume(TokKind.EQ)
             PossibleInput.Given
+        }
+    }
+
+    private fun parseNoInput(ctx: ParseCtx, inputGiven: PossibleInput): Input<Unit> {
+        return if (inputGiven.isGiven()) {
+            ctx.skipToClosing(
+                closing = TokKind.RBRACKET,
+                opening = TokKind.LBRACKET,
+            )
+
+            Input.Present(Unit)
+        } else {
+            Input.Absent()
         }
     }
 
