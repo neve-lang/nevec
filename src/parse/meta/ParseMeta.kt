@@ -86,6 +86,7 @@ object ParseMeta : TinyParse<Pair<Infoful, Target>, Meta> {
 
         return when (id.lexeme) {
             "type" -> parseTypeAssert(ctx, from, to, input)
+            "culprit" -> parseCulpritAssert(ctx, from, to, input)
             else -> unknownAssert(id)
         }
     }
@@ -98,10 +99,27 @@ object ParseMeta : TinyParse<Pair<Infoful, Target>, Meta> {
         ) ?: return inputFail(ctx)
 
         val loc = from.tryMerge(with = newCtx.here())
-
         closingBracket(newCtx)
-        val assert = MetaAssert.TypeAssert(input, loc)
 
+        val assert = MetaAssert.TypeAssert(input, loc)
+        return applyOrFail(assert, to, loc)
+    }
+
+    private fun parseCulpritAssert(ctx: ParseCtx, from: Loc, to: Target, inputGiven: PossibleInput): MetaResult {
+        val input = if (inputGiven.isGiven()) {
+            ctx.skipToClosing(
+                TokKind.RBRACKET,
+                TokKind.LBRACKET,
+            )
+
+            Input.Present(Unit)
+        } else {
+            Input.Absent()
+        }
+
+        val loc = from.tryMerge(with = ctx.here())
+
+        val assert = MetaAssert.CulpritAssert(input, loc)
         return applyOrFail(assert, to, loc)
     }
 
