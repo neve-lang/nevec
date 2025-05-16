@@ -74,27 +74,27 @@ class MetaAssertCheck : Visit<Program, Boolean> {
     }
 
     private fun visitBitwise(bitwise: BinOp.Bitwise): Boolean {
-        return check(bitwise.info())
-                && visitExpr(bitwise.left)
-                && visitExpr(bitwise.right)
+        return check(bitwise.info()) and
+                visitExpr(bitwise.left) and
+                visitExpr(bitwise.right)
     }
 
     private fun visitArith(arith: BinOp.Arith): Boolean {
-        return check(arith.info())
-                && visitExpr(arith.left)
-                && visitExpr(arith.right)
+        return check(arith.info()) and
+                visitExpr(arith.left) and
+                visitExpr(arith.right)
     }
 
     private fun visitComp(comp: BinOp.Comp): Boolean {
-        return check(comp.info())
-                && visitExpr(comp.left)
-                && visitExpr(comp.right)
+        return check(comp.info()) and
+                visitExpr(comp.left) and
+                visitExpr(comp.right)
     }
 
     private fun visitConcat(concat: BinOp.Concat): Boolean {
-        return check(concat.info())
-                && visitExpr(concat.left)
-                && visitExpr(concat.right)
+        return check(concat.info()) and
+                visitExpr(concat.left) and
+                visitExpr(concat.right)
     }
 
     private fun visitLit(lit: Lit) = when (lit) {
@@ -123,9 +123,9 @@ class MetaAssertCheck : Visit<Program, Boolean> {
     }
 
     private fun visitTable(table: Lit.TableLit): Boolean {
-        return check(table.info())
-                && table.keys.all { check(it.info()) }
-                && table.vals.all { check(it.info()) }
+        return check(table.info()) and
+                table.keys.all { check(it.info()) } and
+                table.vals.all { check(it.info()) }
     }
 
     private fun visitNil(nil: Lit.NilLit): Boolean {
@@ -138,9 +138,9 @@ class MetaAssertCheck : Visit<Program, Boolean> {
     }
 
     private fun visitSome(some: Interpol.Some): Boolean {
-        return check(some.info())
-                && visitExpr(some.expr)
-                && visitInterpol(some.next)
+        return check(some.info()) and
+                visitExpr(some.expr) and
+                visitInterpol(some.next)
     }
 
     private fun visitEnd(end: Interpol.End): Boolean {
