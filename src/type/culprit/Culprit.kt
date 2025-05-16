@@ -18,7 +18,7 @@ import type.kind.TypeKind
  */
 data class Culprit(val type: Type) : NamedType, Wrappable, Compare<Culprit> {
     override fun named(): String {
-        return "!!${type}"
+        return "!!${type.named()}"
     }
 
     override fun wrap(): TypeKind {
