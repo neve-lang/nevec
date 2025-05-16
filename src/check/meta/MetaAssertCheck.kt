@@ -124,9 +124,12 @@ class MetaAssertCheck : Visit<Program, Boolean> {
     }
 
     private fun visitTable(table: Lit.TableLit): Boolean {
+        // not using
+        // `table.keys.all { check(it.info()) }`
+        // to avoid short-circuiting.
         return check(table.info()) and
-                table.keys.all { check(it.info()) } and
-                table.vals.all { check(it.info()) }
+                table.keys.map { check(it.info()) }.all { it } and
+                table.vals.map { check(it.info()) }.all { it }
     }
 
     private fun visitNil(nil: Lit.NilLit): Boolean {
