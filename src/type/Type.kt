@@ -85,6 +85,15 @@ data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : Unw
     }
 
     /**
+     * @return whether [kind] is a [poisoned type][Poison] with [Poison.Ignorable] poison.
+     *
+     * @see Poison.Ignorable
+     */
+    fun isIgnorable(): Boolean {
+        return kind is TypeKind.OfPoison && kind.poison is Poison.Ignorable
+    }
+
+    /**
      * @return whether [kind] is of [TypeKind.OfCulprit].
      */
     fun isCulprit(): Boolean {
