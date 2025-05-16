@@ -1,0 +1,8 @@
+[
+    "One": 1,
+    "Two": 2,
+    3 @[culprit]: "Three" @[culprit],
+    "Four": 4,
+    "Five": 5,
+    6 @[culprit]: "Six" @[culprit]
+] @[type == [~Unknown: ~Unknown]]

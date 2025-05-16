@@ -1,0 +1,4 @@
+[
+    "Hello, " @[type == Str]: 1,
+    2 @[culprit]: "world!" @[culprit]
+] @[type == Table (~Unknown, ~Unknown)]
