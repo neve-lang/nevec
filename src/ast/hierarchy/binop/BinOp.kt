@@ -107,9 +107,9 @@ sealed class BinOp : Ast, Wrap<Expr>, Infoful {
     }
 
     override fun update(new: Info) = when (this) {
-        is Bitwise -> Bitwise(left, operator, right, new)
-        is Arith -> Arith(left, operator, right, new)
-        is Comp -> Comp(left, operator, right, new)
-        is Concat -> Concat(left, operator, right, new)
+        is Bitwise -> Bitwise(left, operator, right, new, op)
+        is Arith -> Arith(left, operator, right, new, op)
+        is Comp -> Comp(left, operator, right, new, op)
+        is Concat -> Concat(left, operator, right, new, op)
     }
 }

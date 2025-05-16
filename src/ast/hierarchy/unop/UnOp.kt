@@ -52,7 +52,7 @@ sealed class UnOp : Ast, Wrap<Expr>, Infoful {
     }
 
     override fun update(new: Info) = when (this) {
-        is Neg -> Neg(expr, new)
-        is Not -> Not(expr, new)
+        is Neg -> Neg(expr, new, op)
+        is Not -> Not(expr, new, op)
     }
 }
