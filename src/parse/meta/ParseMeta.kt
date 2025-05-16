@@ -181,8 +181,11 @@ object ParseMeta : TinyParse<Pair<Infoful, Target>, Meta> {
         }
     }
 
-    private fun closingBracket(ctx: ParseCtx): Tok? {
-        return ctx.consume(TokKind.RBRACKET)
+    private fun toClosingBracket(ctx: ParseCtx) {
+        ctx.skipToClosing(
+            opening = TokKind.LBRACKET,
+            closing = TokKind.RBRACKET
+        )
     }
 
     private fun parseFail(ctx: ParseCtx): MetaResult {
