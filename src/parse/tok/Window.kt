@@ -42,6 +42,36 @@ class Window(private val stream: TokStream) {
     }
 
     /**
+     * Advances for as long as the [closing] token [kind][TokKind] is not matched, or as long as the end of the
+     * [TokStream][tok.stream.TokStream] is not reached.
+     *
+     * If an [opening] token kind is matched, we increment the “depth,” effectively skipping nesting.
+     *
+     * An example of where the aforementioned behavior may be useful could be:
+     *
+     * ```
+     * -- we want to ensure that we skip until the “correct” closing token
+     * @[type == [K: V]]
+     * --              ^ so this token
+     * ```
+     */
+   fun skipToClosing(closing: TokKind, opening: TokKind, depth: Int = 1) {
+        if (depth == 0 || isAtEnd()) {
+            return
+        }
+
+        val newDepth = when (kind()) {
+            closing -> depth - 1
+            opening -> depth + 1
+            else -> depth
+        }
+
+        advance()
+
+        return skipToClosing(closing, opening, newDepth)
+   }
+
+    /**
      * **Advances** if [curr]’s kind matches one of [kinds].
      *
      * @return [curr] if [curr]’s kind matches one of [kinds].
