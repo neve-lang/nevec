@@ -3,6 +3,7 @@ package check
 import ast.hierarchy.program.Program
 import check.meta.MetaAssertCheck
 import check.sem.SemResolver
+import check.type.TypeCheck
 import cli.Options
 import ctx.Ctx
 
@@ -17,6 +18,11 @@ object Check {
      */
     fun check(what: Program, ctx: Ctx): Boolean {
         val resolved = SemResolver().visit(what)
+        val typesOkay = TypeCheck().visit(resolved)
+
+        if (!typesOkay) {
+            return false
+        }
 
         return if (ctx.options.isEnabled(Options.META_ASSERTS))
             MetaAssertCheck().visit(resolved)
