@@ -1,1 +1,0 @@
-("Hello, " @[culprit] + 1 @[culprit]) @[type == ~Unknown]

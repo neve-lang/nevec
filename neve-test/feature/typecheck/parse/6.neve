@@ -1,4 +1,0 @@
-[
-    "Hello, ": 1,
-    "world!": 2.0 @[culprit]
-] @[type == Table (Str, ~Unknown)]

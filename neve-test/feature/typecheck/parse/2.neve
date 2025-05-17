@@ -1,5 +1,0 @@
-(
-    "Hello" @[type == Str] @[culprit]
-    +
-    10 @[culprit]
-) @[type == ~Unknown]
