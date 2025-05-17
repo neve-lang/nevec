@@ -1,15 +1,12 @@
 package ast.hierarchy.binop
 
 import ast.hierarchy.Ast
-import ast.info.impl.Spanned
-import ast.info.impl.Typed
 import ast.hierarchy.Wrap
 import ast.hierarchy.binop.operator.*
 import ast.hierarchy.expr.Expr
 import ast.info.Info
 import ast.info.impl.Infoful
 import file.span.Loc
-import meta.Meta
 
 /**
  * This sealed class denotes all kinds of binary operations supported in Neve so far.

@@ -1,8 +1,6 @@
 package ast.hierarchy.unop
 
 import ast.hierarchy.Ast
-import ast.info.impl.Spanned
-import ast.info.impl.Typed
 import ast.hierarchy.Wrap
 import ast.hierarchy.expr.Expr
 import ast.info.Info

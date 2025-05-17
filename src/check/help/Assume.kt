@@ -54,16 +54,6 @@ data class Assume(
     }
 
     /**
-     * @return A new [Assume] with an extra predicate that determines whether all types of [infos] are
-     * **healthy types**, i.e. not [poisoned][Type.isPoisoned].
-     *
-     * @see Type.isPoisoned
-     */
-    fun areHealthy(): Assume {
-        return compose { !it.isPoisoned() }
-    }
-
-    /**
      * Check the [predicate], outputting an error if one was given.
      *
      * @param notes Additional information for the error message in case of a failure.

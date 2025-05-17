@@ -157,18 +157,6 @@ object ParseType : TinyParse<Unit, Type> {
         return fail(ctx)
     }
 
-    private fun requiresCulprits(ctx: ParseCtx): ParseResult<Type> {
-        ctx.showMsg(
-            ParseErr.notEnabled(
-                feature = "culprits",
-                arg = "--culprits",
-                ctx.here()
-            )
-        )
-
-        return fail(ctx)
-    }
-
     private fun fail(ctx: ParseCtx): ParseResult.Fail<Type> {
         return ParseResult.Fail(ctx)
     }

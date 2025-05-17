@@ -74,18 +74,6 @@ class Window(private val stream: TokStream) {
     /**
      * **Advances** if [curr]’s kind matches one of [kinds].
      *
-     * @return [curr] if [curr]’s kind matches one of [kinds].
-     */
-    fun take(vararg kinds: TokKind): Tok? {
-        return if (match(*kinds))
-            prevBeforeNewline
-        else
-            null
-    }
-
-    /**
-     * **Advances** if [curr]’s kind matches one of [kinds].
-     *
      * @return whether [curr]’s kind matches one of [kinds].
      */
     fun match(vararg kinds: TokKind): Boolean {
