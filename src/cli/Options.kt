@@ -44,6 +44,7 @@ enum class Options {
      * ```
      * ~Unknown -- poisoned type
      * '0 -- free type
+     * ```
      */
     COMPILER_TYPES;
 
@@ -52,7 +53,7 @@ enum class Options {
             "--no-opt" to NO_OPT,
             "--meta-asserts" to META_ASSERTS,
             "--check-only" to CHECK_ONLY,
-            "--compiler-types" to COMPILER_TYPES
+            "--compiler-types" to COMPILER_TYPES,
         )
 
         /**

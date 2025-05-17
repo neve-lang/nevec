@@ -9,6 +9,7 @@ import ast.hierarchy.program.Program
 import ast.hierarchy.stmt.Stmt
 import ast.hierarchy.unop.UnOp
 import ast.info.Info
+import err.msg.Msg
 import meta.comp.asserts.MetaAssert
 import visit.Visit
 
@@ -20,7 +21,10 @@ import visit.Visit
  */
 class MetaAssertCheck : Visit<Program, Boolean> {
     override fun visit(what: Program): Boolean {
-        return what.decls.all(::visitDecl)
+        // not using
+        // `what.decls.all(::visitDecl)`
+        // to avoid short-circuiting.
+        return what.decls.map(::visitDecl).all { it }
     }
 
     private fun visitDecl(decl: Decl) = when (decl) {
@@ -49,7 +53,8 @@ class MetaAssertCheck : Visit<Program, Boolean> {
     }
 
     private fun visitParens(parens: Expr.Parens): Boolean {
-        return check(parens.info())
+        return check(parens.info()) and
+                visitExpr(parens.expr)
     }
 
     private fun visitUnOp(unOp: UnOp) = when (unOp) {
@@ -73,27 +78,27 @@ class MetaAssertCheck : Visit<Program, Boolean> {
     }
 
     private fun visitBitwise(bitwise: BinOp.Bitwise): Boolean {
-        return check(bitwise.info())
-                && visitExpr(bitwise.left)
-                && visitExpr(bitwise.right)
+        return check(bitwise.info()) and
+                visitExpr(bitwise.left) and
+                visitExpr(bitwise.right)
     }
 
     private fun visitArith(arith: BinOp.Arith): Boolean {
-        return check(arith.info())
-                && visitExpr(arith.left)
-                && visitExpr(arith.right)
+        return check(arith.info()) and
+                visitExpr(arith.left) and
+                visitExpr(arith.right)
     }
 
     private fun visitComp(comp: BinOp.Comp): Boolean {
-        return check(comp.info())
-                && visitExpr(comp.left)
-                && visitExpr(comp.right)
+        return check(comp.info()) and
+                visitExpr(comp.left) and
+                visitExpr(comp.right)
     }
 
     private fun visitConcat(concat: BinOp.Concat): Boolean {
-        return check(concat.info())
-                && visitExpr(concat.left)
-                && visitExpr(concat.right)
+        return check(concat.info()) and
+                visitExpr(concat.left) and
+                visitExpr(concat.right)
     }
 
     private fun visitLit(lit: Lit) = when (lit) {
@@ -122,9 +127,12 @@ class MetaAssertCheck : Visit<Program, Boolean> {
     }
 
     private fun visitTable(table: Lit.TableLit): Boolean {
-        return check(table.info())
-                && table.keys.all { check(it.info()) }
-                && table.vals.all { check(it.info()) }
+        // not using
+        // `table.keys.all { check(it.info()) }`
+        // to avoid short-circuiting.
+        return check(table.info()) and
+                table.keys.map { check(it.info()) }.all { it } and
+                table.vals.map { check(it.info()) }.all { it }
     }
 
     private fun visitNil(nil: Lit.NilLit): Boolean {
@@ -137,9 +145,9 @@ class MetaAssertCheck : Visit<Program, Boolean> {
     }
 
     private fun visitSome(some: Interpol.Some): Boolean {
-        return check(some.info())
-                && visitExpr(some.expr)
-                && visitInterpol(some.next)
+        return check(some.info()) and
+                visitExpr(some.expr) and
+                visitInterpol(some.next)
     }
 
     private fun visitEnd(end: Interpol.End): Boolean {
@@ -155,16 +163,11 @@ class MetaAssertCheck : Visit<Program, Boolean> {
             return okay()
         }
 
-        val checks = info.meta().asserts().map {
-            it.checkFor(info) to it
+        val msgs = info.meta().asserts().mapNotNull {
+            it.pickMsg(info)?.let(Msg::print)
         }
 
-        checks.forEach {
-            (succeeded, assert) -> if (!succeeded)
-                assert.failMsg(info).print()
-        }
-
-        return checks.all { (succeeded, _) -> succeeded }
+        return msgs.isEmpty()
     }
 
     private fun okay(): Boolean {

@@ -6,6 +6,6 @@ import org.junit.jupiter.api.Test
 class SemResolverFeatureTest {
     @Test
     fun test() {
-        assert(FeatureTest("semresolver").run())
+        assert(FeatureTest("semresolver").succeeds())
     }
 }

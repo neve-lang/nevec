@@ -7,6 +7,7 @@ import meta.Meta
 import meta.comp.MetaComp
 import meta.comp.asserts.MetaAssert
 import meta.fail.MetaFail
+import meta.input.Input
 import meta.result.MetaResult
 import meta.target.Target
 import parse.ctx.ParseCtx
@@ -81,25 +82,25 @@ object ParseMeta : TinyParse<Pair<Infoful, Target>, Meta> {
         val from = ctx.consumeHere()
         val id = ctx.consume(TokKind.ID) ?: return parseFail(ctx)
 
-        ctx.consume(TokKind.EQ)
+        val input = determineInput(ctx)
 
         return when (id.lexeme) {
-            "type" -> parseTypeAssert(ctx, from, to)
+            "type" -> parseTypeAssert(ctx, from, to, input)
             else -> unknownAssert(id)
         }
     }
 
-    private fun parseTypeAssert(ctx: ParseCtx, from: Loc, to: Target): MetaResult {
-        val parsed = ParseType.parse(ctx.new(), Unit)
-
-        val newCtx = parsed.newCtx()
-        val type = parsed.success() ?: return inputFail(ctx)
+    private fun parseTypeAssert(ctx: ParseCtx, from: Loc, to: Target, inputGiven: PossibleInput): MetaResult {
+        val (input, newCtx) = parsePossibleInput(
+            ctx,
+            inputGiven,
+            with = ParseType::parse
+        ) ?: return inputFail(ctx)
 
         val loc = from.tryMerge(with = newCtx.here())
+        toClosingBracket(newCtx)
 
-        val assert = MetaAssert.TypeAssert(type, loc)
-        closingBracket(newCtx)
-
+        val assert = MetaAssert.TypeAssert(input, loc)
         return applyOrFail(assert, to, loc)
     }
 
@@ -114,15 +115,59 @@ object ParseMeta : TinyParse<Pair<Infoful, Target>, Meta> {
             MetaFail.Target(at).wrap()
     }
 
-    private fun closingBracket(ctx: ParseCtx): Tok? {
-        return ctx.consume(TokKind.RBRACKET)
+    private fun determineInput(ctx: ParseCtx): PossibleInput {
+        return if (ctx.match(TokKind.RBRACKET)) {
+            PossibleInput.Missing
+        } else {
+            ctx.consume(TokKind.EQ)
+            PossibleInput.Given
+        }
+    }
+
+    private fun parseNoInput(ctx: ParseCtx, inputGiven: PossibleInput): Input<Unit> {
+        return if (inputGiven.isGiven()) {
+            toClosingBracket(ctx)
+            Input.Present(Unit)
+        } else {
+            Input.Absent()
+        }
+    }
+
+    private fun <T> parsePossibleInput(
+        ctx: ParseCtx,
+        input: PossibleInput,
+        with: (ParseCtx, Unit) -> ParseResult<T>
+    ): Pair<Input<T>, ParseCtx>? {
+        return if (input.isGiven()) {
+            val parsed = with(ctx.new(), Unit)
+            val newCtx = parsed.newCtx()
+
+            if (!parsed.isSuccess()) {
+                toClosingBracket(ctx)
+                return null
+            }
+
+            Input.Present<T>(parsed.success()!!) to newCtx
+        } else {
+            toClosingBracket(ctx)
+            Input.Absent<T>() to ctx
+        }
+    }
+
+    private fun toClosingBracket(ctx: ParseCtx) {
+        ctx.skipToClosing(
+            closing = TokKind.RBRACKET,
+            opening = TokKind.LBRACKET,
+        )
     }
 
     private fun parseFail(ctx: ParseCtx): MetaResult {
+        toClosingBracket(ctx)
         return MetaFail.Parse(ctx.here()).wrap()
     }
 
     private fun inputFail(ctx: ParseCtx): MetaResult {
+        toClosingBracket(ctx)
         return MetaFail.Input(ctx.here()).wrap()
     }
 }

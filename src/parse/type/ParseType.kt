@@ -2,7 +2,6 @@ package parse.type
 
 import cli.Options
 import err.help.SimpleMsg
-import parse.Parse
 import parse.ctx.ParseCtx
 import parse.err.ParseErr
 import parse.err.ParseResult
@@ -65,7 +64,7 @@ object ParseType : TinyParse<Unit, Type> {
             // TODO: add an Example section
             ctx.showMsg(
                 SimpleMsg.at(
-                    ctx.here(),
+                    id.loc,
                     msg = "no such poisoned type",
                     saying = "${id.lexeme} is not a valid poisoned type"
                 )
@@ -86,7 +85,7 @@ object ParseType : TinyParse<Unit, Type> {
         }
 
         // no support for lists yet
-        return ParseResult.Fail(ctx)
+        return fail(ctx)
     }
 
     private fun parseTable(ctx: ParseCtx, keyType: ParseResult<Type>): ParseResult<Type> {
@@ -94,7 +93,7 @@ object ParseType : TinyParse<Unit, Type> {
         ctx.consume(TokKind.RBRACKET)
 
         return if ((keyType to valType).any { it is ParseResult.Fail })
-            ParseResult.Fail(ctx)
+            fail(ctx)
         else
             ParseResult.Success(
                 Applied(

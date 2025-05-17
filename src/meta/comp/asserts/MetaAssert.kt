@@ -9,12 +9,14 @@ import err.help.Lines
 import err.msg.Msg
 import err.note.Note
 import err.report.Report
+import meta.comp.asserts.outcome.AssertOutcome
+import meta.input.Input
 
 /**
  * Represents a **meta assertion**, i.e.:
  *
  * ```
- * "Hello" @[type = Str]
+ * "Hello" @[type == Str]
  * ```
  *
  * One peculiarity of meta assertions is that they **always appear after their target**, whereas meta annotations
@@ -28,29 +30,33 @@ sealed class MetaAssert : MetaComp, CheckAssert {
      *
      * @see type.Type
      */
-    data class TypeAssert(val type: Type, val loc: Loc) : MetaAssert() {
+    data class TypeAssert(val type: Input<Type>, val loc: Loc) : MetaAssert() {
         override fun appliesTo(target: Target): Boolean {
             return target == Target.PRIMARY
         }
 
-        override fun checkFor(info: Info): Boolean {
-            return type.isSame(info.type())
+        override fun requiresInput(): Boolean {
+            return true
+        }
+
+        override fun checkFor(info: Info) = when (type) {
+            is Input.Absent -> AssertOutcome.MISSING_INPUT
+            is Input.Present -> AssertOutcome.basedOn(
+                type.itself.isSame(info.type())
+            )
         }
 
         override fun failMsg(info: Info): Msg {
             return Report.err(loc, "meta type assertion failed").lines(
                 Lines.of(
                     Note.err(info.loc(), info.type().named()),
-                    Note.info(loc, "expected ${type.named()}")
+                    Note.info(loc, "expected ${type.presence()!!.named()}")
                 )
             ).build()
         }
     }
 
-    /**
-     * @return The [Loc] of the meta assertion.
-     */
-    fun loc() = when (this) {
+    override fun loc() = when (this) {
         is TypeAssert -> loc
     }
 }

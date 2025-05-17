@@ -16,7 +16,6 @@ import meta.target.Target
 import parse.binop.AnyBinOp
 import parse.err.ParseErr
 import parse.ctx.ParseCtx
-import parse.err.ParseResult
 import parse.meta.ParseMeta
 import tok.Tok
 import tok.TokKind
@@ -34,6 +33,13 @@ class Parse(contents: String, cliCtx: Ctx) {
 
     init {
         consume()
+    }
+
+    /**
+     * @return Whether parsing had at least one error.
+     */
+    fun hadErr(): Boolean {
+        return ctx.state().hadErr
     }
 
     /**
@@ -118,7 +124,7 @@ class Parse(contents: String, cliCtx: Ctx) {
             val operator = Operator.from(op)!!
 
             val loc = (left.loc() + right.loc()).build()
-            left = into(AnyBinOp(left, operator, right, Info.at(loc))).wrap()
+            left = into(AnyBinOp(left, operator, right, Info.at(loc), op.loc)).wrap()
         }
 
         return left
@@ -135,8 +141,8 @@ class Parse(contents: String, cliCtx: Ctx) {
         val loc = op.loc.tryMerge(with = operand.loc())
 
         return when (op.kind) {
-            TokKind.NOT -> UnOp.Not(operand, Info.at(loc)).wrap()
-            TokKind.MINUS -> UnOp.Neg(operand, Info.at(loc)).wrap()
+            TokKind.NOT -> UnOp.Not(operand, Info.at(loc), op.loc).wrap()
+            TokKind.MINUS -> UnOp.Neg(operand, Info.at(loc), op.loc).wrap()
             // this, by definition, shouldn't ever happen--check() restricts our possible types down to TokKind.MINUS
             // and TokKind.NOT.
             else -> Expr.Empty(here())
@@ -249,10 +255,6 @@ class Parse(contents: String, cliCtx: Ctx) {
         val meta = parsed.success()!!
         ctx = parsed.newCtx()
 
-        if (parsed is ParseResult.SemiFail) {
-            sync()
-        }
-
         return node.update(
             node.info() + meta
         )
@@ -272,10 +274,6 @@ class Parse(contents: String, cliCtx: Ctx) {
 
     private fun showMsg(msg: Msg) {
         ctx.showMsg(msg)
-    }
-
-    private fun hadErr(): Boolean {
-        return ctx.state().hadErr
     }
 
     private fun consume(kind: TokKind): Tok? {

@@ -1,6 +1,7 @@
 package meta.comp
 
 import meta.comp.asserts.MetaAssert
+import meta.input.ReqsInput
 import meta.target.AppliesTo
 
 /**
@@ -8,4 +9,4 @@ import meta.target.AppliesTo
  *
  * @see MetaAssert
  */
-interface MetaComp : AppliesTo
+interface MetaComp : AppliesTo, ReqsInput

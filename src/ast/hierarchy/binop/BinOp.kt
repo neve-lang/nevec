@@ -1,14 +1,12 @@
 package ast.hierarchy.binop
 
 import ast.hierarchy.Ast
-import ast.info.impl.Spanned
-import ast.info.impl.Typed
 import ast.hierarchy.Wrap
 import ast.hierarchy.binop.operator.*
 import ast.hierarchy.expr.Expr
 import ast.info.Info
 import ast.info.impl.Infoful
-import meta.Meta
+import file.span.Loc
 
 /**
  * This sealed class denotes all kinds of binary operations supported in Neve so far.
@@ -22,35 +20,45 @@ sealed class BinOp : Ast, Wrap<Expr>, Infoful {
     /**
      * A bitwise operation node.
      *
+     * @param op The [Loc] of the operator token.
+     *
      * @see BitwiseOperator
      */
     data class Bitwise(
-        val left: Expr, val operator: BitwiseOperator, val right: Expr, val info: Info
+        val left: Expr, val operator: BitwiseOperator, val right: Expr, val info: Info, val op: Loc
     ) : BinOp()
 
     /**
      * An arithmetic operation node.
      *
+     * @param op The [Loc] of the operator token.
+     *
      * @see ArithOperator
      */
     data class Arith(
-        val left: Expr, val operator: ArithOperator, val right: Expr, val info: Info
+        val left: Expr, val operator: ArithOperator, val right: Expr, val info: Info, val op: Loc
     ) : BinOp()
 
     /**
      * A comparison node.
      *
+     * @param op The [Loc] of the operator token.
+     *
      * @see CompOperator
      */
     data class Comp(
-        val left: Expr, val operator: CompOperator, val right: Expr, val info: Info
+        val left: Expr, val operator: CompOperator, val right: Expr, val info: Info, val op: Loc
     ) : BinOp()
 
     /**
      * A concatenation node.
+     *
+     * @param op The [Loc] of the operator token.
+     *
+     * @see ConcatOperator
      */
     data class Concat(
-        val left: Expr, val operator: ConcatOperator, val right: Expr, val info: Info
+        val left: Expr, val operator: ConcatOperator, val right: Expr, val info: Info, val op: Loc
     ) : BinOp()
 
     /**
@@ -96,9 +104,9 @@ sealed class BinOp : Ast, Wrap<Expr>, Infoful {
     }
 
     override fun update(new: Info) = when (this) {
-        is Bitwise -> Bitwise(left, operator, right, new)
-        is Arith -> Arith(left, operator, right, new)
-        is Comp -> Comp(left, operator, right, new)
-        is Concat -> Concat(left, operator, right, new)
+        is Bitwise -> Bitwise(left, operator, right, new, op)
+        is Arith -> Arith(left, operator, right, new, op)
+        is Comp -> Comp(left, operator, right, new, op)
+        is Concat -> Concat(left, operator, right, new, op)
     }
 }

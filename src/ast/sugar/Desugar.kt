@@ -41,7 +41,8 @@ object Desugar {
             from.left,
             of,
             from.right,
-            from.info.withType(of = Type.unresolved())
+            from.info.withType(of = Type.unresolved()),
+            from.op
         )
     }
 }

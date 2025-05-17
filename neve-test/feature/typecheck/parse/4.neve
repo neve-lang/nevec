@@ -1,0 +1,8 @@
+"Hello, #{"world"}!  This message took #{
+    (
+        1.5
+        *
+        2
+    ) @[type == ~Unknown]
+} minutes to #{"reach #{"Earth."}."}"
+@[type == Str]

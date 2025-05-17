@@ -20,10 +20,12 @@ import util.extension.suffixWith
  */
 sealed class Poison : Wrappable, NamedType, RecessType, Compare<Poison> {
     companion object {
-        private val NAMES = mapOf(
-            "Unknown" to Unknown,
-            "Ignorable" to Ignorable,
-        )
+        private val NAMES by lazy {
+            mapOf(
+                "Unknown" to Unknown,
+                "Ignorable" to Ignorable,
+            )
+        }
 
         /**
          * @return A [Poison] type from a string name, if it is one of the valid candidates.  Otherwise, it returns
@@ -33,7 +35,6 @@ sealed class Poison : Wrappable, NamedType, RecessType, Compare<Poison> {
          *
          * - `"Unknown"`
          * - `"Ignorable"`
-         * - `"Unresolved"`
          */
         fun fromName(name: String): Poison? {
             return NAMES[name]

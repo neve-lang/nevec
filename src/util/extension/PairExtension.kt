@@ -37,3 +37,10 @@ fun <A> Pair<A, A>.any(predicate: (A) -> Boolean): Boolean {
 fun <A> Pair<A, A>.all(predicate: (A) -> Boolean): Boolean {
     return predicate(first) && predicate(second)
 }
+
+/**
+ * @return An [Array] of two elements, containing both members of [this].
+ */
+inline fun <reified A> Pair<A, A>.unpacked(): Array<A> {
+    return arrayOf(first, second)
+}

@@ -1,0 +1,5 @@
+(
+    "Hello" @[type == Str]
+    +
+    10
+) @[type == ~Unknown]

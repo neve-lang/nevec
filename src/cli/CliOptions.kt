@@ -25,7 +25,7 @@ data class CliOptions(private val options: List<Options>) {
         fun test(): CliOptions {
             return CliOptions(listOf(
                 Options.META_ASSERTS,
-                Options.COMPILER_TYPES
+                Options.COMPILER_TYPES,
             ))
         }
 

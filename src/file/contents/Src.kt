@@ -57,7 +57,9 @@ object Src {
     fun lexeme(at: Loc): String {
         val (begin, end) = at.extremes().map(UInt::indexable)
 
-        return at.line().substring(begin..end)
+        return at.line().let {
+            it.substring(begin..end.coerceAtMost(it.length - 1))
+        }
     }
 
     /**

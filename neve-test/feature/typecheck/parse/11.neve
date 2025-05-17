@@ -1,0 +1,4 @@
+[
+    ["Hello, ": 1, true: false]: [1: "Hello,"],
+    ["world!": 2]: [2: "Mars!", false: true]
+]
