@@ -74,21 +74,23 @@ class SemResolver : Visit<Program, Program> {
 
     private fun visitNeg(neg: UnOp.Neg): UnOp.Neg {
         val expr = visitExpr(neg.expr)
-        val new = UnOp.Neg(expr, neg.info)
+        val new = UnOp.Neg(expr, neg.info, neg.op)
 
         return UnOp.Neg(
             new.expr,
-            FromInfo(new.info).infer(from = new.wrap(), with = infer)
+            FromInfo(new.info).infer(from = new.wrap(), with = infer),
+            new.op
         )
     }
 
     private fun visitNot(not: UnOp.Not): UnOp.Not {
         val expr = visitExpr(not.expr)
-        val new = UnOp.Not(expr, not.info)
+        val new = UnOp.Not(expr, not.info, not.op)
 
         return UnOp.Not(
             new.expr,
-            FromInfo(new.info).infer(from = new.wrap(), with = infer)
+            FromInfo(new.info).infer(from = new.wrap(), with = infer),
+            new.op
         )
     }
 
@@ -104,26 +106,28 @@ class SemResolver : Visit<Program, Program> {
 
     private fun visitBitwise(bitwise: BinOp.Bitwise): BinOp.Bitwise {
         val (left, right) = bitwise.operands().map(::visitExpr)
-        val new = BinOp.Bitwise(left, bitwise.operator, right, bitwise.info)
+        val new = BinOp.Bitwise(left, bitwise.operator, right, bitwise.info, bitwise.op)
 
         return BinOp.Bitwise(
             new.left,
             new.operator,
             new.right,
-            FromInfo(new.info).infer(from = new.wrap(), with = infer)
+            FromInfo(new.info).infer(from = new.wrap(), with = infer),
+            new.op
         )
     }
 
     private fun visitArith(arith: BinOp.Arith): BinOp {
         // TODO: once we implement type inference, implement Arith to Concat conversion.
         val (left, right) = arith.operands().map(::visitExpr)
-        val new = BinOp.Arith(left, arith.operator, right, arith.info)
+        val new = BinOp.Arith(left, arith.operator, right, arith.info, arith.op)
 
         val candidate = BinOp.Arith(
             new.left,
             new.operator,
             new.right,
-            FromInfo(new.info).infer(from = new.wrap(), with = infer)
+            FromInfo(new.info).infer(from = new.wrap(), with = infer),
+            new.op
         )
 
         val desugared = Desugar.arith(candidate)
@@ -135,13 +139,14 @@ class SemResolver : Visit<Program, Program> {
 
     private fun visitComp(comp: BinOp.Comp): BinOp.Comp {
         val (left, right) = comp.operands().map(::visitExpr)
-        val new = BinOp.Comp(left, comp.operator, right, comp.info)
+        val new = BinOp.Comp(left, comp.operator, right, comp.info, comp.op)
 
         return BinOp.Comp(
             new.left,
             new.operator,
             new.right,
-            FromInfo(new.info).infer(from = new.wrap(), with = infer)
+            FromInfo(new.info).infer(from = new.wrap(), with = infer),
+            new.op
         )
     }
 
@@ -150,7 +155,8 @@ class SemResolver : Visit<Program, Program> {
             concat.left,
             concat.operator,
             concat.right,
-            FromInfo(concat.info).infer(from = concat.wrap(), with = infer)
+            FromInfo(concat.info).infer(from = concat.wrap(), with = infer),
+            concat.op
         )
     }
 
