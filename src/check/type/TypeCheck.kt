@@ -18,6 +18,14 @@ import util.extension.unpacked
 import visit.Visit
 import ast.info.Info
 
+/**
+ * The type checking phase.
+ *
+ * This phase takes in a [Program] node, performs type checks, and returns a [Boolean] indicating whether the program
+ * is sound or not.
+ *
+ * If a type check fails, an [error message][err.msg.Msg] will be printed to the console.
+ */
 class TypeCheck : Visit<Program, Boolean> {
     override fun visit(what: Program): Boolean {
         return what.decls.map(::visitDecl).all { it }
