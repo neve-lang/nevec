@@ -21,7 +21,10 @@ import visit.Visit
  */
 class MetaAssertCheck : Visit<Program, Boolean> {
     override fun visit(what: Program): Boolean {
-        return what.decls.all(::visitDecl)
+        // not using
+        // `what.decls.all(::visitDecl)`
+        // to avoid short-circuiting.
+        return what.decls.map(::visitDecl).all { it }
     }
 
     private fun visitDecl(decl: Decl) = when (decl) {
