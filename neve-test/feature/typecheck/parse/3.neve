@@ -1,0 +1,9 @@
+(
+    (
+        1
+        +
+        "Hello"
+    ) @[type == ~Unknown]
+    +
+    2 @[type == Int] -- not a culprit
+) @[type == ~Ignorable]
