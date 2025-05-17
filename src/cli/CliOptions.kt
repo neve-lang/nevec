@@ -26,7 +26,6 @@ data class CliOptions(private val options: List<Options>) {
             return CliOptions(listOf(
                 Options.META_ASSERTS,
                 Options.COMPILER_TYPES,
-                Options.CULPRITS
             ))
         }
 

@@ -2,14 +2,12 @@ package parse.type
 
 import cli.Options
 import err.help.SimpleMsg
-import parse.Parse
 import parse.ctx.ParseCtx
 import parse.err.ParseErr
 import parse.err.ParseResult
 import parse.help.TinyParse
 import tok.TokKind
 import type.Type
-import type.culprit.Culprit
 import type.gen.Applied
 import type.gen.Free
 import type.gen.arg.TypeArgs
@@ -28,7 +26,6 @@ object ParseType : TinyParse<Unit, Type> {
     private fun parseType(ctx: ParseCtx) = when (ctx.kind()) {
         TokKind.APOSTROPHE -> parseFree(ctx)
         TokKind.TILDE -> parsePoison(ctx)
-        TokKind.EXCLAM -> parseCulprit(ctx)
         TokKind.LBRACKET -> parseListOrTable(ctx)
         else -> parseNamed(ctx)
     }
@@ -77,25 +74,6 @@ object ParseType : TinyParse<Unit, Type> {
         }
 
         return ParseResult.Success(poison.covered(), ctx)
-    }
-
-    private fun parseCulprit(ctx: ParseCtx): ParseResult<Type> {
-        val options = ctx.cliCtx.options
-
-        when {
-            !options.isEnabled(Options.COMPILER_TYPES) -> return requiresCompilerTypes(ctx)
-            !options.isEnabled(Options.CULPRITS) -> return requiresCulprits(ctx)
-        }
-
-        ctx.consume()
-        ctx.consume(TokKind.EXCLAM)
-
-        val type = parseType(ctx).success() ?: return fail(ctx)
-
-        return ParseResult.Success(
-            Culprit(type).covered(),
-            ctx
-        )
     }
 
     private fun parseListOrTable(ctx: ParseCtx): ParseResult<Type> {

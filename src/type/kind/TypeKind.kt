@@ -1,6 +1,5 @@
 package type.kind
 
-import type.culprit.Culprit
 import type.impl.NamedType
 import type.impl.Unwrappable
 import type.impl.Wrappable
@@ -148,19 +147,6 @@ sealed class TypeKind : NamedType, Compare<TypeKind> {
         }
     }
 
-    /**
-     * Wrapper around a **culprit type**.
-     *
-     * @param culprit The [Culprit] type being wrapped by the variant.
-     *
-     * @see Culprit
-     */
-    data class OfCulprit(val culprit: Culprit) : Unwrappable<Culprit>, TypeKind() {
-        override fun itself(): Culprit {
-            return culprit
-        }
-    }
-
     companion object {
         /**
          * @return An [Unresolved] type.
@@ -202,7 +188,6 @@ sealed class TypeKind : NamedType, Compare<TypeKind> {
         is OfFree -> itself()
         is OfQuant -> itself()
         is OfUnresolved -> itself()
-        is OfCulprit -> itself()
     }
 
     override fun named(): String = when (this) {
@@ -214,7 +199,6 @@ sealed class TypeKind : NamedType, Compare<TypeKind> {
         is OfFree -> free.named()
         is OfQuant -> quant.named()
         is OfUnresolved -> unresolved.named()
-        is OfCulprit -> culprit.named()
     }
 
     override fun isSame(other: TypeKind): Boolean {
@@ -231,7 +215,6 @@ sealed class TypeKind : NamedType, Compare<TypeKind> {
             is OfFree -> free.isSame(other.unwrapped() as Free)
             is OfQuant -> quant.isSame(other.unwrapped() as Quant)
             is OfUnresolved -> unresolved.isSame(other.unwrapped() as Unresolved)
-            is OfCulprit -> culprit.isSame(other.unwrapped() as Culprit)
         }
     }
 }

@@ -94,13 +94,6 @@ data class Type(val kind: TypeKind, val domain: Domain = Domain.Undefined) : Unw
     }
 
     /**
-     * @return whether [kind] is of [TypeKind.OfCulprit].
-     */
-    fun isCulprit(): Boolean {
-        return kind is TypeKind.OfCulprit
-    }
-
-    /**
      * @return whether [kind] is of [TypeKind.OfFree].
      */
     fun isFree(): Boolean {
