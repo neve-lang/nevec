@@ -55,7 +55,7 @@ class Window(private val stream: TokStream) {
      * --              ^ so this token
      * ```
      */
-   fun skipToClosing(closing: TokKind, opening: TokKind, depth: Int = 1) {
+   fun skipToClosing(closing: TokKind, opening: TokKind? = null, depth: Int = 1) {
         if (depth == 0 || isAtEnd()) {
             return
         }
