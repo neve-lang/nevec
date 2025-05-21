@@ -7,6 +7,7 @@ import ast.hierarchy.interpol.Interpol
 import ast.hierarchy.lit.Lit
 import ast.hierarchy.program.Program
 import ast.hierarchy.stmt.Stmt
+import ast.hierarchy.top.Top
 import ast.hierarchy.unop.UnOp
 import util.extension.*
 import visit.Visit
@@ -16,7 +17,22 @@ import visit.Visit
  */
 object Pretty : Visit<Program, String> {
     override fun visit(what: Program): String {
-        return what.decls.joinToString("\n") { visitDecl(it) }
+        return what.decls.joinToString("\n") { visitTop(it) }
+    }
+
+    private fun visitTop(top: Top) = when (top) {
+        is Top.Fun -> visitFun(top)
+        is Top.Empty -> visitTopEmpty(top)
+    }
+
+    private fun visitFun(node: Top.Fun): String {
+        return "fun ${node.name}\n" +
+                indented(node.decls.map(::visitDecl)) +
+               "end\n"
+    }
+
+    private fun visitTopEmpty(empty: Top.Empty): String {
+        return "(empty)"
     }
 
     private fun visitDecl(decl: Decl) = when (decl) {
@@ -122,5 +138,9 @@ object Pretty : Visit<Program, String> {
 
     private fun visitShow(show: Expr.Show): String {
         return "${visitExpr(show.expr)}.show"
+    }
+
+    private fun indented(strings: List<String>): String {
+        return strings.indent().joinToString("\n")
     }
 }

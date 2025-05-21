@@ -7,6 +7,7 @@ import ast.hierarchy.interpol.Interpol
 import ast.hierarchy.lit.Lit
 import ast.hierarchy.program.Program
 import ast.hierarchy.stmt.Stmt
+import ast.hierarchy.top.Top
 import ast.hierarchy.unop.UnOp
 import ast.info.Info
 import err.msg.Msg
@@ -22,9 +23,18 @@ import visit.Visit
 class MetaAssertCheck : Visit<Program, Boolean> {
     override fun visit(what: Program): Boolean {
         // not using
-        // `what.decls.all(::visitDecl)`
+        // `what.decls.all(::visitTop)`
         // to avoid short-circuiting.
-        return what.decls.map(::visitDecl).all { it }
+        return what.decls.map(::visitTop).all { it }
+    }
+
+    private fun visitTop(top: Top) = when (top) {
+        is Top.Fun -> visitFun(top)
+        else -> okay()
+    }
+
+    private fun visitFun(node: Top.Fun): Boolean {
+        return node.decls.map(::visitDecl).all { it }
     }
 
     private fun visitDecl(decl: Decl) = when (decl) {
