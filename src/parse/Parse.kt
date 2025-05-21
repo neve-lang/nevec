@@ -292,6 +292,10 @@ class Parse(contents: String, cliCtx: Ctx) {
         return tok.lexeme
     }
 
+    private fun skipToEnd() {
+        ctx.skipToClosing(TokKind.EOF)
+    }
+
     private fun check(vararg kinds: TokKind): Boolean {
         return ctx.check(*kinds)
     }
