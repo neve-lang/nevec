@@ -1,12 +1,12 @@
-# Those should be errors.
+rec Foo
+end
+
+-- Those should be errors.
 fun main
   true()
   false()
   nil()
   123()
-
-  rec Foo
-  end
 
   (Foo with ..)()
   "str"()
