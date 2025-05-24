@@ -239,6 +239,10 @@ class TypeCheck : Visit<Program, Boolean> {
     }
 
     private fun visitEntries(keys: List<Info>, vals: List<Info>): Boolean {
+        if (keys.isEmpty()) {
+            return okay()
+        }
+
         val (firstKey, firstVal) = keys.first() to vals.first()
 
         return Assume(keys).are(
