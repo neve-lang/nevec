@@ -13,7 +13,7 @@ import type.Type
  * t0 = 1
  * ```
  *
- * However, [Terms][Term] may not be confused with [Timeds][ir.cool.timed.Timed], as terms do not carry lifetimes,
+ * However, [Terms][Term] may not be confused with [Timeds][ir.term.cool.Timed], as terms do not carry lifetimes,
  * whereas timeds do.
  *
  * @property desiredName The [Term]’s desired name—it may not reflect the name in the IR output.  For temporary terms,

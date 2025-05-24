@@ -13,8 +13,8 @@ package ir.structure.compose
  * ["Hello, ": 10, "world!": 20]
  * ```
  *
- * [Zipping] allows us to emit the IR for it easily, *except that* we’re missing the IR [Op] that defines `t4`, the
- * term for the table:
+ * [Zipping] allows us to emit the IR for it easily, *except that* we’re missing the IR
+ * [Op][ir.structure.op.Op] that defines `t4`, the term for the table:
  *
  * ```
  * t0 = "Hello, "
@@ -43,13 +43,5 @@ data class Connection(private val a: Compose, private val b: Compose) {
      */
     fun plugInBetween(given: Compose): Compose {
         return a.merge(given).merge(b)
-    }
-
-    /**
-     * @return A new [Compose] built from plugging the [given] compose *before* both [Composes][Compose] of the
-     * [Connection], and merging all three.
-     */
-    fun plugAtFront(given: Compose): Compose {
-        return given.merge(a).merge(b)
     }
 }

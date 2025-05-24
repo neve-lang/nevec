@@ -10,8 +10,8 @@ import ir.term.TermLike
  *
  * Note that the Neve compiler uses a **Single Static Assignment** IR.
  *
- * @param T The kind of term the [Tac] should apply to.  This allows us to distinguish between the [Warm][ir.warm.Warm]
- * IR and the [Cool][ir.cool.Cool] IR.
+ * @param T The kind of term the [Tac] should apply to.  This allows us to distinguish between the
+ * [Warm][ir.term.warm.Warm] IR and the [Cool][ir.term.cool.Cool] IR.
  */
 sealed class Tac<T : TermLike> : Termful<T> {
     /**

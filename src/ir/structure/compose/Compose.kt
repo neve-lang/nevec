@@ -90,8 +90,4 @@ data class Compose(private val ops: List<Op<Warm>>) {
             ops = ops + callback()
         )
     }
-
-    private fun termsOf(op: Op<Warm>): Pair<Term, List<Term>> {
-        return op.term() to op.allTerms().drop(1)
-    }
 }

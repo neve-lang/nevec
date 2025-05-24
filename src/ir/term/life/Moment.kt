@@ -1,8 +1,8 @@
 package ir.term.life
 
 /**
- * A [Moment] is simply an integer that is intended to represent the index of a certain instruction in a [Block].
- * The index is 0-indexed.
+ * A [Moment] is simply an integer that is intended to represent the index of a certain instruction in a
+ * [Block][ir.structure.block.Block].  The index is 0-indexed.
  *
  * For example, if we refer to “moment `2`” of this basic block:
  *

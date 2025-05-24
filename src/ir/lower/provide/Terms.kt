@@ -5,7 +5,7 @@ import ir.term.warm.Term
 import type.Type
 
 /**
- * Takes care of **[Term][ir.warm.term.Term] management** by providing methods that allow creating new terms easily.
+ * Takes care of **[Term][ir.term.TermLike] management** by providing methods that allow creating new terms easily.
  */
 class Terms {
     private var nextId = 0

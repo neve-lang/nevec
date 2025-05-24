@@ -36,7 +36,7 @@ sealed class Change<T : TermLike> {
     /**
      * Represents a change in a term’s usage count.
      *
-     * @property by The integer representing the change—addition will be performed.
+     * @property new The integer representing the change—addition will be performed.
      */
     data class Uses<T : TermLike>(val new: Op<T>) : Change<T>() {
         override fun applyTo(previous: Stats<T>): Stats<T> {

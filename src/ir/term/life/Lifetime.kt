@@ -1,7 +1,7 @@
 package ir.term.life
 
 /**
- * Represents a [Term][ir.term.Term]’s lifetime in IR terms.
+ * Represents a [Term][ir.term.TermLike]’s lifetime in IR terms.
  *
  * A term’s **lifetime** is a simple construct composed of two values—a *beginning* [Moment], and another *ending*
  * [Moment].
