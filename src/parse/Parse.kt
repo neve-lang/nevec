@@ -7,6 +7,7 @@ import ast.hierarchy.interpol.Interpol
 import ast.hierarchy.lit.Lit
 import ast.hierarchy.program.Program
 import ast.hierarchy.stmt.Stmt
+import ast.hierarchy.top.Top
 import ast.hierarchy.unop.UnOp
 import ast.info.Info
 import ctx.Ctx
@@ -52,13 +53,41 @@ class Parse(contents: String, cliCtx: Ctx) {
      * @see Program
      */
     fun parse(): Program {
-        val decls = until(::isAtEnd, ::decl)
+        val decls = until(::isAtEnd, ::topDecl)
 
         if (hadErr()) {
             return Program.empty()
         }
 
         return Program(decls)
+    }
+
+    private fun topDecl() = when (kind()) {
+        TokKind.FUN -> funDecl()
+        else -> noDecl()
+    }
+
+    private fun funDecl(): Top.Fun {
+        val keyword = consume()
+        val id = consume(TokKind.ID)
+        val loc = keyword.loc.tryMerge(with = id?.loc)
+
+        val decls = until(::endKeyword, ::decl)
+        consume(TokKind.END)
+
+        return Top.Fun(
+            name = id?.lexeme ?: "(unexpected token)",
+            decls,
+            loc
+        )
+    }
+
+    private fun noDecl(): Top.Empty {
+        showMsg(ParseErr.expectedTopDecl(here().loc()))
+
+        return Top.Empty(here().loc()).also {
+            skipToEnd()
+        }
     }
 
     private fun decl() = when (kind()) {
@@ -284,12 +313,20 @@ class Parse(contents: String, cliCtx: Ctx) {
         return ctx.consume()
     }
 
+    private fun endKeyword(): Boolean {
+        return kind() == TokKind.END
+    }
+
     private fun funCallWithoutParens(): Boolean {
         return kind().isExprStarter() && !hadNewline()
     }
 
     private fun stringOf(tok: Tok): String {
         return tok.lexeme
+    }
+
+    private fun skipToEnd() {
+        ctx.skipToClosing(TokKind.EOF)
     }
 
     private fun check(vararg kinds: TokKind): Boolean {

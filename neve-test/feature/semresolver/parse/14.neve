@@ -1,1 +1,3 @@
-["Hello, ": 1 + 2.0, "world!": 2] @[type == Table (Str, ~Ignorable)]
+fun main
+  ["Hello, ": 1 + 2.0, "world!": 2] @[type == Table (Str, ~Ignorable)]
+end

@@ -16,17 +16,17 @@ object Check {
      *
      * @return whether [what] is a valid Neve program or not.
      */
-    fun check(what: Program, ctx: Ctx): Boolean {
+    fun check(what: Program, ctx: Ctx): Pair<Program, Boolean> {
         val resolved = SemResolver().visit(what)
         val typesOkay = TypeCheck().visit(resolved)
 
         if (!typesOkay) {
-            return false
+            return what to false
         }
 
         return if (ctx.options.isEnabled(Options.META_ASSERTS))
-            MetaAssertCheck().visit(resolved)
+            resolved to MetaAssertCheck().visit(resolved)
         else
-            true
+            resolved to true
     }
 }

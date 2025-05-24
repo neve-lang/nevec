@@ -1,1 +1,3 @@
-("Hello, " - "world!") @[type == ~Unknown]
+fun main
+  ("Hello, " - "world!") @[type == ~Unknown]
+end

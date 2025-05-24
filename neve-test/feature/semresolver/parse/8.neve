@@ -1,1 +1,3 @@
-("Hello, " + "world!") @[type == Str]
+fun main
+  ("Hello, " + "world!") @[type == Str]
+end

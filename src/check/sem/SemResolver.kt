@@ -7,6 +7,7 @@ import ast.hierarchy.interpol.Interpol
 import ast.hierarchy.lit.Lit
 import ast.hierarchy.program.Program
 import ast.hierarchy.stmt.Stmt
+import ast.hierarchy.top.Top
 import ast.hierarchy.unop.UnOp
 import ast.sugar.Desugar
 import infer.info.FromInfo
@@ -25,7 +26,24 @@ class SemResolver : Visit<Program, Program> {
     private val infer: Infer = Infer()
 
     override fun visit(what: Program): Program {
-        return Program(what.decls.map { visitDecl(it) })
+        return Program(what.decls.map(::visitTop))
+    }
+
+    private fun visitTop(top: Top) = when (top) {
+        is Top.Fun -> visitFun(top)
+        is Top.Empty -> visitTopEmpty(top)
+    }
+
+    private fun visitFun(node: Top.Fun): Top.Fun {
+        return Top.Fun(
+            node.name,
+            node.decls.map(::visitDecl),
+            node.loc
+        )
+    }
+
+    private fun visitTopEmpty(empty: Top.Empty): Top.Empty {
+        return empty
     }
 
     private fun visitDecl(decl: Decl) = when (decl) {

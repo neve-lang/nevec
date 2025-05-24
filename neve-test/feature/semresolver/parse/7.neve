@@ -1,1 +1,3 @@
-((1 + "Hello") @[type == ~Unknown] + 2) @[type == ~Ignorable]
+fun main
+  ((1 + "Hello") @[type == ~Unknown] + 2) @[type == ~Ignorable]
+end

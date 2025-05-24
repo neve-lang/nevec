@@ -1,4 +1,6 @@
-[
-    "Hello, ": 1,
-    2: "world!"
-] @[type == Table (~Unknown, ~Unknown)]
+fun main
+  [
+      "Hello, ": 1,
+      2: "world!"
+  ] @[type == Table (~Unknown, ~Unknown)]
+end

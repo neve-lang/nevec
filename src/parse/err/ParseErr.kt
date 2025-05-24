@@ -114,6 +114,16 @@ object ParseErr {
     }
 
     /**
+     * @return An error message for a situation where the Parser expected a top-level declaration, but something
+     * else was found.
+     */
+    fun expectedTopDecl(loc: Loc): Msg {
+        return Report.err(loc, "expected a top-level declaration").lines(
+            Lines.of(Note.err(loc, "here"))
+        ).build()
+    }
+
+    /**
      * @param loc The [Loc] of the node where the meta fail occurred.
      * @param fail The [MetaFail] in question.
      *

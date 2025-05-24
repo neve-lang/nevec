@@ -5,6 +5,8 @@ import cli.CliArgs
 import ctx.Ctx
 import err.report.Report
 import file.contents.Src
+import ir.lower.Lower
+import ir.rendition.Rendition
 import nevec.result.Aftermath
 import nevec.result.Fail
 import parse.Parse
@@ -43,9 +45,15 @@ object Nevec {
             return Fail.COMPILE.wrap()
         }
 
-        return if (Check.check(parsed, ctx))
-            Aftermath.Success
-        else
-            Fail.COMPILE.wrap()
+        val (resolved, success) = Check.check(parsed, ctx)
+        if (!success) {
+            return Fail.COMPILE.wrap()
+        }
+
+        val ir = Lower().visit(resolved)
+        val rendition = Rendition(ir).new()
+        println(rendition)
+
+        return Aftermath.Success
     }
 }

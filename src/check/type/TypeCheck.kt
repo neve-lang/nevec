@@ -8,6 +8,7 @@ import ast.hierarchy.interpol.Interpol
 import ast.hierarchy.lit.Lit
 import ast.hierarchy.program.Program
 import ast.hierarchy.stmt.Stmt
+import ast.hierarchy.top.Top
 import ast.hierarchy.unop.UnOp
 import check.help.Assume
 import err.note.Note
@@ -28,7 +29,20 @@ import ast.info.Info
  */
 class TypeCheck : Visit<Program, Boolean> {
     override fun visit(what: Program): Boolean {
-        return what.decls.map(::visitDecl).all { it }
+        return what.decls.map(::visitTop).all { it }
+    }
+
+    private fun visitTop(top: Top) = when (top) {
+        is Top.Fun -> visitFun(top)
+        is Top.Empty -> visitTopEmpty(top)
+    }
+
+    private fun visitFun(node: Top.Fun): Boolean {
+        return node.decls.map(::visitDecl).all { it }
+    }
+
+    private fun visitTopEmpty(empty: Top.Empty): Boolean {
+        return err()
     }
 
     private fun visitDecl(decl: Decl) = when (decl) {
@@ -225,6 +239,10 @@ class TypeCheck : Visit<Program, Boolean> {
     }
 
     private fun visitEntries(keys: List<Info>, vals: List<Info>): Boolean {
+        if (keys.isEmpty()) {
+            return okay()
+        }
+
         val (firstKey, firstVal) = keys.first() to vals.first()
 
         return Assume(keys).are(
@@ -267,11 +285,11 @@ class TypeCheck : Visit<Program, Boolean> {
     }
 
     private fun anyIsIgnorable(parent: Expr, vararg exprs: Expr): Boolean {
-        if (parent.type().isIgnorable()) {
+        if (exprs.map(::visitExpr).any { !it }) {
             return true
         }
 
-        if (exprs.map(::visitExpr).any { !it }) {
+        if (parent.type().isIgnorable()) {
             return true
         }
 

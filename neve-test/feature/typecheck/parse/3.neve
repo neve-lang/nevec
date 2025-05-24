@@ -1,9 +1,11 @@
-(
-    (
-        1
-        +
-        "Hello"
-    ) @[type == ~Unknown]
-    +
-    2 @[type == Int] -- not a culprit
-) @[type == ~Ignorable]
+fun main
+  (
+      (
+          1
+          +
+          "Hello"
+      ) @[type == ~Unknown]
+      +
+      2 @[type == Int]
+  ) @[type == ~Ignorable]
+end

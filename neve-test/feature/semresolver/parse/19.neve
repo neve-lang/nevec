@@ -1,4 +1,6 @@
-[
-    ["Hello, ": 1]: [1: "Hello,"],
-    ["world!": 2]: [2: "Mars!"]
-] @[type == [[Str: Int]: [Int: Str]]]
+fun main
+  [
+      ["Hello, ": 1]: [1: "Hello,"],
+      ["world!": 2]: [2: "Mars!"]
+  ] @[type == [[Str: Int]: [Int: Str]]]
+end

@@ -80,7 +80,7 @@ data class ParseCtx(
      *
      * @see Window.skipToClosing
      */
-    fun skipToClosing(closing: TokKind, opening: TokKind) {
+    fun skipToClosing(closing: TokKind, opening: TokKind? = null) {
         window.skipToClosing(closing, opening)
     }
 
