@@ -1,37 +1,37 @@
-# Expect no issue here
+-- Expect no issue here.
 rec Something T
-  list [T]
-  some_indices [InBoundsOf list]
+  list: [T]
+  indices: [InBoundsOf list]
 end
 
 fun main
-  # Expect no error
+  -- Expect no error.
   let something = Something with
     list = [1, 2, 3, 4]
-    some_indices = [0, 1, 2, 3]
+    indices = [0, 1, 2, 3]
   end
 
-  # Expect no error either
-  let something_else = Something with
+  -- Expect no error either.
+  let something = Something with
     list = [5, 6, 7, 8, 9]
-    some_indices = [3]
+    indices = [3]
   end
 
-  # Expect no error either
-  let another_something = Something with
+  -- Expect no error either.
+  let something = Something with
     list = [10, 11, 12, 13, 14]
-    some_indices = []
+    indices = []
   end
 
-  # Still expect no error
-  let fourth_something = Something with
+  -- Expect no error either.
+  let something = Something with
     list = [15, 16, 17, 18, 19]
-    some_indices = [-1, -2, -3, -4, -5]
+    indices = [-1, -2, -3, -4, -5]
   end
 
-  # Expect an error: cannot prove `InBoundsOf (list in error_thing)` for `some_indices`
+  -- Expect an error.
   let error_thing = Something with
     list = [5, 6, 7, 8, 9]
-    some_indices = [5, 2]
+    indices = [5, 2]
   end
 end
