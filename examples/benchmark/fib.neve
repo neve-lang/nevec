@@ -1,7 +1,7 @@
-fun fib(n Nat)
+fun fib(n: Nat)
   match
-    | n < 2 = n
-    | else = fib(n - 1) + fib(n - 2)
+    | n given n < 2 -> n
+    | _ -> fib(n - 1) + fib(n - 2)
   end
 end
 

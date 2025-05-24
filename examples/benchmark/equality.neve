@@ -8,8 +8,8 @@ fun main
     "str"; "str"; "str"; "stru"; "str"; 1; "str"; nil; "str"; true;
   end
 
-  var loop_time = clock - loop_start
-  var start = clock
+  let loop_time = clock - loop_start
+  let start = clock
 
   10000000.times do
     1 == 1; 1 == 2; nil == nil; true == true;

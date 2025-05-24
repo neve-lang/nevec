@@ -1,32 +1,37 @@
-rec Tree
-  item Int
-  depth Int
+union Tree
+  rec Leaf
+    item: Int
+    depth: Int
+  end
 
-  left Tree?
-  right Tree?
+  rec Branch
+    item: Int
+    depth: Int
+    left: Tree
+    right: Tree
+  end
 end
 
 idea for Tree
-  fun Tree.new(item Int, depth Int)
-    Tree with
-      item
-      depth
-
-      left = match depth
-        | 0 : nil
-        | else : Tree.new item + item - 1, depth
+  fun Self.new(item: Int, depth: Int)
+    match depth
+      | 0 -> Leaf with
+        item
+        depth
       end
-      right = match depth
-        | 0 : nil
-        | else : Tree.new item + item, depth
+      | _ -> Branch with
+        item
+        depth
+        left = Self.new(item + item - 1, depth)
+        right = Self.new(item + item, depth)
       end
     end
   end
 
   fun check
-    match self.left
-      | nil : self.item
-      | else : self.item + self.left.check - self.right.check
+    match self
+      | Leaf(item, ..) -> item
+      | Branch(item, _, left, right) -> self.item + self.left.check - self.right.check
     end
   end
 end
@@ -40,31 +45,39 @@ end
 fun main
   let start = clock
 
-  puts "stretch tree of depth: #{stretch_depth}"
-  puts "check: #{Tree.new 0, stretch_depth |> check}"
+  puts "Stretch tree of depth: #{StretchDepth}"
+  puts "Check: #{Tree.new(0, StretchDepth).check}"
 
-  let long_lived_tree = Tree.new 0, max_depth
+  let long_lived_tree = Tree.new(0, max_depth)
   let iterations = 2 ^ MaxDepth
 
-  let depth = MinDepth
+  stress iterations
 
-  while depth < StretchDepth
-    var check = 0
-    var i = 1
+  puts "Long lived tree of depth: #{max_depth}"
+  puts "Check: #{long_lived_tree.check}"
+  puts "Elapsed: #{clock - start}"
+end
 
-    iterations.times do
-      check = check + Tree.new i, depth |> check + Tree.new -i, depth |> check
-    end
-
-    puts "num trees: #{iterations * 2}"
-    puts "depth: #{depth}"
-    puts "check: #{check}"
-
-    iterations = iterations / 4
-    depth = depth + 2
+fun stress(
+  depth: Int = MinDepth,
+  iterations: Int
+)
+  if depth >= StretchDepth
+    return
   end
 
-  puts "long lived tree of depth: #{max_depth}"
-  puts "check: #{long_lived_tree.check}"
-  puts "elapsed: #{clock - start}"
+  let check = rec_check iterations
+
+  puts "Num trees: #{iterations * 2}"
+  puts "Depth: #{depth}"
+  puts "Check: #{check}"
+
+  stress(depth + 2, iterations / 4)
+end
+
+fun rec_check(iterations: Int)
+  match iterations
+    | 0 -> 0
+    | _ -> Tree.new(i, depth).check + Tree.new(-i, depth).check + rec_check(iterations - 1)
+  end
 end

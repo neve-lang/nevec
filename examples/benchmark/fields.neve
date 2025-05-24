@@ -1,36 +1,36 @@
-# This benchmark stresses both field and method lookup.
+-- This benchmark stresses both field and method lookup.
 
 rec Foo
-  field0 Int
-  field1 Int
-  field2 Int
-  field3 Int
-  field4 Int
-  field5 Int
-  field6 Int
-  field7 Int
-  field8 Int
-  field9 Int
-  field10 Int
-  field11 Int
-  field12 Int
-  field13 Int
-  field14 Int
-  field15 Int
-  field16 Int
-  field17 Int
-  field18 Int
-  field19 Int
-  field20 Int
-  field21 Int
-  field22 Int
-  field23 Int
-  field24 Int
-  field25 Int
-  field26 Int
-  field27 Int
-  field28 Int
-  field29 Int
+  field0: Int
+  field1: Int
+  field2: Int
+  field3: Int
+  field4: Int
+  field5: Int
+  field6: Int
+  field7: Int
+  field8: Int
+  field9: Int
+  field10: Int
+  field11: Int
+  field12: Int
+  field13: Int
+  field14: Int
+  field15: Int
+  field16: Int
+  field17: Int
+  field18: Int
+  field19: Int
+  field20: Int
+  field21: Int
+  field22: Int
+  field23: Int
+  field24: Int
+  field25: Int
+  field26: Int
+  field27: Int
+  field28: Int
+  field29: Int
 end
 
 idea for Foo
@@ -191,7 +191,7 @@ idea for Foo
 end
 
 fun main
-  let foo = Foo with .?.
+  let foo = Foo.new
 
   let start = clock
 
