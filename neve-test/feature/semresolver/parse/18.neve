@@ -1,1 +1,3 @@
-["Hello": 10] @[type == [Str: Int]]
+fun main
+  ["Hello": 10] @[type == [Str: Int]]
+end

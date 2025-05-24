@@ -1,1 +1,3 @@
-true @[type == Bool]
+fun main
+  true @[type == Bool]
+end

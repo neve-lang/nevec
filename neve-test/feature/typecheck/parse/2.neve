@@ -1,5 +1,7 @@
-(
-    "Hello" @[type == Str]
-    +
-    10
-) @[type == ~Unknown]
+fun main
+  (
+      "Hello" @[type == Str]
+      +
+      10
+  ) @[type == ~Unknown]
+end
