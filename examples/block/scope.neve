@@ -1,10 +1,10 @@
-nest
+fun main
   let a = "outer"
 
-  nest
+  if true
     let a = "inner"
-    puts a # inner
+    puts a -- inner
   end
 
-  puts a # outer
+  puts a -- outer
 end

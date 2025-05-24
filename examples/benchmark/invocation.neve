@@ -1,4 +1,7 @@
-# This benchmark stresses just method invocation.
+-- This benchmark stresses just associated function invocation.
+rec Foo
+end
+
 idea for Foo
   fun method0
   end

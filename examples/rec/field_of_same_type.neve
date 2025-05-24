@@ -1,24 +1,24 @@
 rec Foo
-  my Foo
+  my: Foo
 end
 
 fun main
   let my_foo = Foo with
     my = Foo with
-      # error
+      -- error
       my = nil
     end
   end
 end
 
 rec Bar
-  my Bar?
+  my: Bar?
 end
 
 fun main
   let my_bar = Bar with
     my = Bar with
-      # okay
+      -- okay
       my = nil
     end
   end

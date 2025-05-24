@@ -1,9 +1,9 @@
 rec Toggle
-  state Bool
+  state: Bool
 end
 
 idea for Toggle
-  fun Toggle.new(state Bool)
+  fun Toggle.new(state: Bool)
     Toggle with
       state
     end
@@ -13,98 +13,87 @@ idea for Toggle
     self.state
   end
 
-  fun activate(self var)
-    self.state = not self.state
-    self
+  fun activate
+    Toggle with
+      state = not self.state
+    end
   end
 end
 
 rec NthToggle
-  super Toggle
-  count Int
-  max_count Int
+  parent: Toggle
+  count: Int
+  max_count: Int
 end  
 
 idea for NthToggle
-  fun NthToggle.new(stat Bool, max_count Int)
+  fun NthToggle.new(stat: Bool, max_count: Int)
     NthToggle with
-      super = Toggle.new state
-      max_count = max_count
+      parent = Toggle.new state
       count = 0
+      max_count
     end
   end
 
-  fun activate(self var)
-    self.count += 1
+  fun activate
+    let new_count = self.count + 1
 
-    if self.count >= self.max_count
-      super.activate
-      self.count = 0
+    if new_count >= self.max_count
+      Toggle with
+        parent = parent.activate
+        count = 0
+        max_count
+      end
+    else
+      self
     end
-
-    self
   end
+end
+
+const
+  N = 100000
 end
 
 fun main
   let start = clock
-  let n = 100000
 
-  var val = true
-  let toggle = Toggle.new val
+  let toggle = Toggle.new true
+  puts toggle_n_times toggle
 
-  n.times do
-    val = toggle.activate.value
-    val = toggle.activate.value
-    val = toggle.activate.value
-    val = toggle.activate.value
-    val = toggle.activate.value
-    val = toggle.activate.value
-    val = toggle.activate.value
-    val = toggle.activate.value
-    val = toggle.activate.value
-    val = toggle.activate.value
-  end
-
-  puts toggle.value 
-  val = true
-  var ntoggle = NthToggle.new val, 3
-
-  n.times do
-    val = ntoggle.activate.value
-    val = ntoggle.activate.value
-    val = ntoggle.activate.value
-    val = ntoggle.activate.value
-    val = ntoggle.activate.value
-    val = ntoggle.activate.value
-    val = ntoggle.activate.value
-    val = ntoggle.activate.value
-    val = ntoggle.activate.value
-    val = ntoggle.activate.value
-  end
-
-  puts ntoggle.value
+  let ntoggle = NthToggle.new(true, 3)
+  puts ntoggle_n_times ntoggle
 
   puts clock - start
 end
 
-idea Repeat
-  fun times(f Fun)
-  fun times(f |Self|)
+fun toggle_n_times(toggle: Toggle)
+  N.times do
+    toggle
+      .activate
+      .activate
+      .activate
+      .activate
+      .activate
+      .activate
+      .activate
+      .activate
+      .activate
+      .activate
+  end
 end
 
-idea Repeat for Nat
-  fun times(f Fun)
-    var i = 0
-    for i <= self where i += 1
-      f
-    end
-  end
-
-  fun times(f |Self|)
-    var i = 0
-    for i <= self where i += 1
-      f i
-    end
+fun ntoggle_n_times(toggle: NthToggle)
+  N.times do
+    toggle
+      .activate
+      .activate
+      .activate
+      .activate
+      .activate
+      .activate
+      .activate
+      .activate
+      .activate
+      .activate
   end
 end
