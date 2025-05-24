@@ -1,6 +1,8 @@
-print 10 
-  + 
-"349" - 74009 
-print
-  29 / 239
-bor 23
+fun main
+    print 10
+      +
+    349 - 74009
+    print
+      29 / 239
+    bitor 23
+end
