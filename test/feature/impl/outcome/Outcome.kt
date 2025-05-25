@@ -18,7 +18,7 @@ sealed class Outcome {
     data object Success : Outcome()
 
     /**
-     * Represents an unsuccessful test execution, containing a [FailStage].
+     * Represents an unsuccessful test execution, containing a [ExecFail].
      */
-    data class Fail(val stage: FailStage) : Outcome()
+    data class Fail(val stage: ExecFail) : Outcome()
 }
