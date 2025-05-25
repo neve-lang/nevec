@@ -1,4 +1,4 @@
-package feature.impl.fail
+package feature.impl.outcome
 
 /**
  * Represents a stage at which executing a test can fail.
