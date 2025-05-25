@@ -1,14 +1,14 @@
 package feature.impl.result
 
-import feature.impl.fail.FailStage
+import feature.impl.file.FileId
+import feature.impl.outcome.Outcome
 
 /**
- * Represents a result of a test.
+ * Represents a result of a test pass.
  *
- * It stores the list of file IDs that failed the test, along with a [FailStage] denoting the stage at which they
- * failed.
+ * It stores a map of [FileId] and [Outcome], mapping each test file to its respective outcome.
  */
 data class TestResult(
-    private val failures: Map<Int, FailStage> = mapOf()
+    private val outcomes: Map<FileId, Outcome> = mapOf()
 ) {
 }
