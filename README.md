@@ -1,4 +1,4 @@
-<p style="text-align:center">
+<p align=center>
   <img src="images/folipa.svg" alt="Folipa, Neve’s logo (look, she’s waving with her upper left petal!!)">
 </p>
 
