@@ -14,7 +14,7 @@ package feature.impl.outcome
  * - At the compile-time phase: [COMPILE].
  * - At the runtime phase: [RUNTIME].
  */
-enum class FailStage {
+enum class ExecFail {
     /**
      * Represents an execution failure that occurred at the CLI stage: i.e. the user gave improper input to the `nevec`
      * command.
