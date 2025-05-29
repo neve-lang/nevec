@@ -14,6 +14,16 @@ import nevec.result.Aftermath
  * to expect a program’s compilation to fail.
  */
 sealed class Outcome {
+    companion object {
+        /**
+         * @return A new [Outcome] from an [Aftermath] data class.
+         */
+        fun from(aftermath: Aftermath) = when (aftermath) {
+            is Aftermath.Success -> Success
+            is Aftermath.OfFail -> Fail(stage = ExecFail.from(aftermath))
+        }
+    }
+
     /**
      * Represents a successful test execution.
      */
