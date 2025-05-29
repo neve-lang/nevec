@@ -15,10 +15,10 @@ data class Ctx(val options: CliOptions) {
          * @return A [Ctx] context data class with [options][CliOptions] corresponding to a compiler test.
          *
          * @see CliOptions
-         * @see CliOptions.test
+         * @see CliOptions.checkTest
          */
-        fun test(): Ctx {
-            return Ctx(CliOptions.test())
+        fun checkTest(): Ctx {
+            return Ctx(CliOptions.checkTest())
         }
     }
 }
