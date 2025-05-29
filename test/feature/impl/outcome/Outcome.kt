@@ -1,5 +1,7 @@
 package feature.impl.outcome
 
+import nevec.result.Aftermath
+
 /**
  * Represents a possible outcome when executing a test.
  *
@@ -9,7 +11,7 @@ package feature.impl.outcome
  * - Unsuccessful: [Fail]
  *
  * Keep in mind that an unsuccessful outcome **does not imply** that the **test itself failed**—it is perfectly common
- * to expect a test to fail.
+ * to expect a program’s compilation to fail.
  */
 sealed class Outcome {
     /**
