@@ -22,10 +22,11 @@ data class CliOptions(private val options: List<Options>) {
         /**
          * @return A [CliOptions] object containing usual options that are enabled during a compiler test.
          */
-        fun test(): CliOptions {
+        fun checkTest(): CliOptions {
             return CliOptions(listOf(
                 Options.META_ASSERTS,
                 Options.COMPILER_TYPES,
+                Options.CHECK_ONLY
             ))
         }
 
