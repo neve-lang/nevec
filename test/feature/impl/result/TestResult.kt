@@ -9,6 +9,14 @@ import feature.impl.outcome.Outcome
  * It stores a map of [FileId] and [Outcome], mapping each test file to its respective outcome.
  */
 data class TestResult(
-    private val outcomes: Map<FileId, Outcome> = mapOf()
+    val outcomes: Map<FileId, Outcome> = mapOf()
 ) {
+    companion object {
+        /**
+         * @return A new [TestResult] built from a list of [pairs].
+         */
+        fun from(pairs: List<Pair<FileId, Outcome>>): TestResult {
+            return TestResult(pairs.toMap())
+        }
+    }
 }
