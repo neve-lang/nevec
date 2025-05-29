@@ -2,6 +2,7 @@ package nevec
 
 import check.Check
 import cli.CliArgs
+import cli.CliOptions
 import ctx.Ctx
 import err.report.Report
 import file.contents.Src
@@ -29,9 +30,18 @@ object Nevec {
             return Fail.CLI.wrap()
         }
 
-        val ctx = Ctx(cliOptions)
+        return runWithOptions(file, cliOptions)
+    }
 
-        val (src, lines) = try {
+    /**
+     * Compiles the given Neve program with the given [CliOptions].
+     *
+     * @return An [Aftermath] data object or class indicating whether compilation was successful.
+     */
+    fun runWithOptions(file: String, options: CliOptions): Aftermath {
+        val ctx = Ctx(options)
+
+        val (src, _) = try {
             Src.read(file)
         } catch (e: IOException) {
             Report.cliFileErr(file)
