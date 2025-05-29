@@ -31,4 +31,13 @@ data class TestRoutine(private val routine: (file: Path) -> Outcome) {
             }
         }
     }
+
+    /**
+     * Applies `this` [TestRoutine] to the given [file].
+     *
+     * @return An [Outcome].
+     */
+    fun run(file: Path): Outcome {
+        return routine(file)
+    }
 }
