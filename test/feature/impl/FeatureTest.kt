@@ -1,6 +1,6 @@
-package feature
+package feature.impl
 
-import hook.TestHook
+import feature.impl.routine.TestRoutine
 import java.io.IOException
 import java.nio.file.Path
 import kotlin.io.path.*
@@ -12,12 +12,15 @@ import kotlin.io.path.*
  */
 class FeatureTest(private val name: String) {
     companion object {
-        private val TEST_FOLDERS = listOf(
-            "parse"
+        /**
+         * Maps test folder names to [TestRoutines][TestRoutine].
+         */
+        private val TEST_ROUTINES = mapOf(
+            "parse" to TestRoutine.forParseTests()
         )
     }
 
-    fun succeeds(): Boolean {
+    fun check(): Boolean {
         val folders = try {
             open()
         } catch (e: IOException) {
@@ -30,6 +33,8 @@ class FeatureTest(private val name: String) {
     }
 
     private fun testFolder(folder: Path): List<Boolean> {
+        println(" → Testing ${folder.name} folder:")
+
         return folder.listDirectoryEntries().sortedBy {
             it.nameWithoutExtension.toInt()
         }.map {
@@ -50,7 +55,7 @@ class FeatureTest(private val name: String) {
 
         return folder
             .listDirectoryEntries()
-            .filter { it.name in TEST_FOLDERS }
+            .filter { it.name in TEST_ROUTINES.keys }
             .map(Path::toRealPath)
     }
 
