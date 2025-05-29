@@ -21,4 +21,18 @@ data class ExpectMap(
             )
         }
     }
+
+    /**
+     * @return The folder names in the [ExpectMap].
+     */
+    fun folders(): List<String> {
+        return folderToExpect.keys.toList()
+    }
+
+    /**
+     * @return The [TestExpect] associated with the given [folder].
+     */
+    operator fun get(folder: String): TestExpect? {
+        return folderToExpect[folder]
+    }
 }
