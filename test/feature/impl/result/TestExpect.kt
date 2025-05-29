@@ -1,6 +1,7 @@
 package feature.impl.result
 
 import feature.impl.file.FileId
+import feature.impl.outcome.ExecFail
 import feature.impl.outcome.Outcome
 import feature.impl.outcome.Summary
 
@@ -16,19 +17,51 @@ data class TestExpect(
          * @return A new [TestExpect] whose [expected] has the following properties:
          *
          * - For the file IDs mentioned, those will be mapped to an [Outcome] of
+         *   [Success][Outcome.Success] failure.
+         * - The non-mentioned ones will, up to the given [testCount], be implicitly given an [Outcome] of
+         *   [COMPILE][feature.impl.outcome.ExecFail.COMPILE]
+         *
+         * @throws IllegalArgumentException if [testCount] is less than `0`.
+         */
+        fun successesAt(testCount: Int, vararg successes: FileId): TestExpect {
+            return forall(testCount) {
+                Outcome.basedOn(whether = it in successes)
+            }
+        }
+
+        /**
+         * @return A new [TestExpect] whose [expected] has the following properties:
+         *
+         * - For the file IDs mentioned, those will be mapped to an [Outcome] of
          *   [COMPILE][feature.impl.outcome.ExecFail.COMPILE] failure.
          * - The non-mentioned ones will, up to the given [testCount], be implicitly given an [Outcome] of
          *   [Success][Outcome.Success].
          *
          * @throws IllegalArgumentException if [testCount] is less than `0`.
          */
-        fun failuresAt(testCount: Int, vararg failures: FileId): TestExpect {
+        fun failsAt(testCount: Int, vararg failures: FileId): TestExpect {
+            return forall(testCount) {
+                Outcome.basedOn(whether = it !in failures)
+            }
+        }
+
+        /**
+         * @return A new [TestExpect] that maps all [FileIds][FileId], from `0` to [testCount], to [Outcome.Fail].
+         * The [ExecFail] stage given will be [ExecFail.COMPILE]
+         */
+        fun allFail(testCount: Int): TestExpect {
+            return forall(testCount) {
+                Outcome.Fail(stage = ExecFail.COMPILE)
+            }
+        }
+
+        private fun forall(testCount: Int, f: (Int) -> Outcome): TestExpect {
             require(testCount >= 0) {
-                "`TestExpect.failuresAt` requires a strictly positive `fileCount`."
+                "Constructing a `TestExpect` requires a strictly positive `testCount`."
             }
 
             return (0..testCount).associateWith {
-                Outcome.basedOn(whether = it !in failures)
+                f(it)
             }.toMap().let(::TestExpect)
         }
     }
