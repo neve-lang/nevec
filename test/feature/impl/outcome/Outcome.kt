@@ -21,6 +21,9 @@ sealed class Outcome {
         fun from(aftermath: Aftermath) = when (aftermath) {
             is Aftermath.Success -> Success
             is Aftermath.OfFail -> Fail(stage = ExecFail.from(aftermath))
+
+            // IntelliJ seems to complain here for some reason, even though all cases are covered?
+            else -> TODO()
         }
     }
 
