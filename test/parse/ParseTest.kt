@@ -57,7 +57,7 @@ class ParseTest {
 fun String.parse(): String {
     Src.setup("test.neve", lines())
 
-    val parse = Parse(this, Ctx.test())
+    val parse = Parse(this, Ctx.checkTest())
     val pretty = Pretty.visit(parse.parse())
     return pretty
 }

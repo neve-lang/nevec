@@ -62,7 +62,7 @@ class SemResolverTest {
 fun String.parse(): Program {
     Src.setup("test.neve", lines())
 
-    return Parse(this, Ctx.test()).parse()
+    return Parse(this, Ctx.checkTest()).parse()
 }
 
 fun Program.resolved(): Program {
