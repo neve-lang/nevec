@@ -1,5 +1,8 @@
 package feature.impl.outcome
 
+import nevec.result.Aftermath
+import nevec.result.Fail
+
 /**
  * Represents a kind of execution failure.
  *
@@ -96,5 +99,23 @@ enum class ExecFail {
     /**
      * Represents an error that was caused by a discrepancy between VM behavior and native behavior.
      */
-    IRREGULAR_BEHAVIOR
+    IRREGULAR_BEHAVIOR;
+
+    companion object {
+        /**
+         * @return An [ExecFail] variant from a **failed** [Aftermath] variant ([Aftermath.OfFail]).
+         *
+         * Due to the more limited nature of [Aftermath] variants, the only values that can be returned from this
+         * method are:
+         *
+         * - [CLI]
+         * - [STRUCTURAL]
+         * - [COMPILE]
+         */
+        fun from(aftermath: Aftermath.OfFail) = when (aftermath.fail) {
+            Fail.STRUCTURAL -> STRUCTURAL
+            Fail.COMPILE -> COMPILE
+            Fail.CLI, Fail.IO -> CLI
+        }
+    }
 }
