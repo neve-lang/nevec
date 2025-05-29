@@ -26,7 +26,7 @@ data class TestRoutine(private val routine: (file: Path) -> Outcome) {
                 println(" → Running `parse/` test ${FileId.from(file)}")
 
                 Outcome.from(
-                    Nevec.runWithOptions(file.toString(), options = CliOptions.test())
+                    Nevec.runWithOptions(file.toString(), options = CliOptions.checkTest())
                 )
             }
         }
