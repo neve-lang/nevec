@@ -25,6 +25,19 @@ sealed class Outcome {
             // IntelliJ seems to complain here for some reason, even though all cases are covered?
             else -> TODO()
         }
+
+        /**
+         * @return An [Outcome] from a [Boolean].  That is:
+         *
+         * - If the value given is `false`, An [Outcome] of [Fail] whose stage is [ExecFail.COMPILE] is returned.
+         * - Otherwise, an [Outcome] of [Success] is returned.
+        */
+        fun basedOn(whether: Boolean): Outcome {
+            return if (whether)
+                Success
+            else
+                Fail(stage = ExecFail.COMPILE)
+        }
     }
 
     /**
