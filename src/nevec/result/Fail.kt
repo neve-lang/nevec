@@ -15,6 +15,11 @@ enum class Fail {
     IO,
 
     /**
+     * Denotes a failure that occurred when the dependency graph was still being built.
+     */
+    STRUCTURAL,
+
+    /**
      * Denotes a failure that happened at the compilation stage—a syntax error, a semantic error, a type error, etc.
      */
     COMPILE;
