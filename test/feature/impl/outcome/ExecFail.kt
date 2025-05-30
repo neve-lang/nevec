@@ -14,7 +14,8 @@ import nevec.result.Fail
  *
  * - At the CLI stage: [CLI].
  * - At the structural phase: [STRUCTURAL].
- * - At the compile-time phase: [COMPILE].
+ * - At the parsing phase: [PARSE].
+ * - At the checking phase: [CHECK].
  * - A VM segmentation fault: [VM_SEGFAULT].
  * - A VM memory leak fault: [VM_LEAK].
  * - A native binary segmentation fault: [NATIVE_SEGFAULT].
@@ -38,9 +39,14 @@ enum class ExecFail {
     STRUCTURAL,
 
     /**
-     * Represents an execution failure that occurs at compile time.
+     * Represents an execution failure that occurs at the parsing stage.
      */
-    COMPILE,
+    PARSE,
+
+    /**
+     * Represents an execution failure that occurs during the checking stage.
+     */
+    CHECK,
 
     /**
      * Represents an execution failure that was caused by a segfault in the virtual machine.
@@ -110,11 +116,13 @@ enum class ExecFail {
          *
          * - [CLI]
          * - [STRUCTURAL]
-         * - [COMPILE]
+         * - [PARSE]
+         * - [CHECK]
          */
-        fun from(aftermath: Aftermath.OfFail) = when (aftermath.fail) {
+        fun <T> from(aftermath: Aftermath.OfFail<T>) = when (aftermath.fail) {
             Fail.STRUCTURAL -> STRUCTURAL
-            Fail.COMPILE -> COMPILE
+            Fail.PARSE -> PARSE
+            Fail.CHECK -> CHECK
             Fail.CLI, Fail.IO -> CLI
         }
     }
