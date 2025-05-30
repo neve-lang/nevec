@@ -15,8 +15,8 @@ sealed class Change<T : TermLike> {
         /**
          * @return A list of [Pair], each pair encoding the following information:
          *
-         * - The [first][Pair.first] element of the pair denotes the list of terms the [Change] should be applied to.
-         * - The [second][Pair.second] element of the pair is the [Change] itself.
+         * - The [first][Pair.first] element of the pair is the [Change] itself.
+         * - The [second][Pair.second] element of the pair denotes the list of terms the [Change] should be applied to.
          */
         fun <T : TermLike> deriveFrom(op: Op<T>): List<Pair<Change<T>, List<T>>> {
             val (receiver, rest) = termsOf(op)
