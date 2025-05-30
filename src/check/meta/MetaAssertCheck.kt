@@ -21,16 +21,16 @@ import stage.Stage
  * Small visitor pattern that traverses a [Program] and checks [meta assertions][MetaAssert], producing a compiler
  * error if for each fail.
  *
- * Its [visit] method returns `true` if no meta assertions failed, or it returns `false` otherwise.
+ * Its [perform] method returns `true` if no meta assertions failed, or it returns `false` otherwise.
  */
 class MetaAssertCheck : Stage<Program, Program> {
-    override fun perform(program: Program, ctx: Ctx): Aftermath<Program> {
+    override fun perform(data: Program, ctx: Ctx): Aftermath<Program> {
         // not using
         // `what.decls.all(::visitTop)`
         // to avoid short-circuiting.
-        return program.decls.map(::visitTop).all { it }.let { okay ->
+        return data.decls.map(::visitTop).all { it }.let { okay ->
             if (okay)
-                Aftermath.Success(program)
+                Aftermath.Success(data)
             else
                 Fail.CHECK.wrap()
         }
