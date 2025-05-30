@@ -1,6 +1,7 @@
 package ctx
 
 import cli.CliOptions
+import cli.Options
 
 /**
  * The Neve compiler’s **context object**.
@@ -20,5 +21,12 @@ data class Ctx(val options: CliOptions) {
         fun checkTest(): Ctx {
             return Ctx(CliOptions.checkTest())
         }
+    }
+
+    /**
+     * @return Whether `this` [Ctx]’s options has the given [option] enabled.
+     */
+    fun isEnabled(option: Options): Boolean {
+        return options.isEnabled(option)
     }
 }
