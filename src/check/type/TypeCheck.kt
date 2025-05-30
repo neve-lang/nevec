@@ -16,8 +16,11 @@ import type.Type
 import type.prelude.PreludeTypes
 import util.extension.map
 import util.extension.unpacked
-import visit.Visit
 import ast.info.Info
+import ctx.Ctx
+import nevec.result.Aftermath
+import nevec.result.Fail
+import stage.Stage
 
 /**
  * The type checking phase.
@@ -27,21 +30,26 @@ import ast.info.Info
  *
  * If a type check fails, an [error message][err.msg.Msg] will be printed to the console.
  */
-class TypeCheck : Visit<Program, Boolean> {
-    override fun visit(what: Program): Boolean {
-        return what.decls.map(::visitTop).all { it }
+class TypeCheck : Stage<Program, Program> {
+    override fun perform(data: Program, ctx: Ctx): Aftermath<Program> {
+        return data.decls.map(::visitTop).all { it }.let { okay ->
+            if (okay)
+                Aftermath.Success(data)
+            else
+                Aftermath.OfFail(Fail.CHECK)
+        }
     }
 
     private fun visitTop(top: Top) = when (top) {
         is Top.Fun -> visitFun(top)
-        is Top.Empty -> visitTopEmpty(top)
+        is Top.Empty -> visitTopEmpty()
     }
 
     private fun visitFun(node: Top.Fun): Boolean {
         return node.decls.map(::visitDecl).all { it }
     }
 
-    private fun visitTopEmpty(empty: Top.Empty): Boolean {
+    private fun visitTopEmpty(): Boolean {
         return err()
     }
 
@@ -67,7 +75,7 @@ class TypeCheck : Visit<Program, Boolean> {
         is Expr.OfLit -> visitLit(expr.lit)
         is Expr.OfInterpol -> visitInterpol(expr.interpol)
 
-        is Expr.Empty -> visitEmpty(expr)
+        is Expr.Empty -> visitEmpty()
     }
 
     private fun visitShow(show: Expr.Show): Boolean {
@@ -280,7 +288,7 @@ class TypeCheck : Visit<Program, Boolean> {
         return !end.type().isIgnorable()
     }
 
-    private fun visitEmpty(empty: Expr.Empty): Boolean {
+    private fun visitEmpty(): Boolean {
         return err()
     }
 

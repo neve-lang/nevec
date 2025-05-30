@@ -1,15 +1,18 @@
 package nevec
 
+import ast.hierarchy.program.Program
 import check.Check
 import cli.CliArgs
+import cli.CliOptions
+import cli.Options
 import ctx.Ctx
 import err.report.Report
 import file.contents.Src
 import ir.lower.Lower
-import ir.rendition.Rendition
 import nevec.result.Aftermath
 import nevec.result.Fail
-import parse.Parse
+import stage.travel.AliveTravel
+import parse.ParseStage
 import java.io.IOException
 
 /**
@@ -21,7 +24,7 @@ object Nevec {
      *
      * @return An [Aftermath] data object or class indicating whether compilation was successful.
      */
-    fun run(args: Array<String>): Aftermath {
+    fun run(args: Array<String>): Aftermath<Unit> {
         val (file, cliOptions) = try {
             CliArgs.parse(args)
         } catch (e: IllegalArgumentException) {
@@ -29,31 +32,46 @@ object Nevec {
             return Fail.CLI.wrap()
         }
 
-        val ctx = Ctx(cliOptions)
+        return runWithOptions(file, cliOptions)
+    }
 
-        val (src, lines) = try {
+    /**
+     * Compiles the given Neve program with the given [CliOptions].
+     *
+     * @return An [Aftermath] data object or class indicating whether compilation was successful.
+     */
+    fun runWithOptions(file: String, options: CliOptions): Aftermath<Unit> {
+        val ctx = Ctx(options)
+
+        val (src, _) = try {
             Src.read(file)
         } catch (e: IOException) {
             Report.cliFileErr(file)
             return Fail.IO.wrap()
         }
 
-        val parse = Parse(src, ctx)
-        val parsed = parse.parse()
+        return AliveTravel(src, ctx)
+            .proceedWith(::ParseStage)
+            .proceedWith(::Check)
+            .finish()
+            .let { aftermath ->
+                if (ctx.isEnabled(Options.CHECK_ONLY))
+                    aftermath.into(Unit)
+                else
+                    lowerStage(aftermath, ctx)
+            }
+    }
 
-        if (parse.hadErr()) {
-            return Fail.COMPILE.wrap()
+    private fun lowerStage(aftermath: Aftermath<Program>, ctx: Ctx): Aftermath<Unit> {
+        if (aftermath.isFail()) {
+            return aftermath.into(Unit)
         }
 
-        val (resolved, success) = Check.check(parsed, ctx)
-        if (!success) {
-            return Fail.COMPILE.wrap()
-        }
+        val program = aftermath.cure()!!.result
 
-        val ir = Lower().visit(resolved)
-        val rendition = Rendition(ir).new()
-        println(rendition)
-
-        return Aftermath.Success
+        return AliveTravel(program, ctx)
+            .proceedWith(::Lower)
+            .finish()
+            .into(Unit)
     }
 }

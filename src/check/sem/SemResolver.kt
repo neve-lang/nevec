@@ -10,10 +10,12 @@ import ast.hierarchy.stmt.Stmt
 import ast.hierarchy.top.Top
 import ast.hierarchy.unop.UnOp
 import ast.sugar.Desugar
+import ctx.Ctx
 import infer.info.FromInfo
 import infer.Infer
+import nevec.result.Aftermath
+import stage.Stage
 import util.extension.map
-import visit.Visit
 
 /**
  * The semantic resolving phase.
@@ -22,11 +24,13 @@ import visit.Visit
  *
  * It then produces a new [Program] node with types inferred and ambiguities solved.
  */
-class SemResolver : Visit<Program, Program> {
+class SemResolver : Stage<Program, Program> {
     private val infer: Infer = Infer()
 
-    override fun visit(what: Program): Program {
-        return Program(what.decls.map(::visitTop))
+    override fun perform(data: Program, ctx: Ctx): Aftermath<Program> {
+        return Program(data.decls.map(::visitTop)).let {
+            Aftermath.Success(it)
+        }
     }
 
     private fun visitTop(top: Top) = when (top) {

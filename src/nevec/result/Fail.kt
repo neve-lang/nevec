@@ -15,16 +15,26 @@ enum class Fail {
     IO,
 
     /**
-     * Denotes a failure that happened at the compilation stage—a syntax error, a semantic error, a type error, etc.
+     * Denotes a failure that occurred when the dependency graph was still being built.
      */
-    COMPILE;
+    STRUCTURAL,
+
+    /**
+     * Denotes a failure that occurred during the parsing stage—i.e., a syntax error.
+     */
+    PARSE,
+
+    /**
+     * Denotes a failure that occurred during the checking phase—this implies, semantic resolving, type checking, etc.
+     */
+    CHECK;
 
     /**
      * @return A [Fail] enum variant wrapped in an [Aftermath.OfFail].
      *
      * @see Aftermath
      */
-    fun wrap(): Aftermath.OfFail {
+    fun <T> wrap(): Aftermath.OfFail<T> {
         return Aftermath.OfFail(this)
     }
 }

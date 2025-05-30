@@ -10,19 +10,18 @@ import ast.hierarchy.stmt.Stmt
 import ast.hierarchy.top.Top
 import ast.hierarchy.unop.UnOp
 import util.extension.*
-import visit.Visit
 
 /**
  * A pretty-printer for the AST.
  */
-object Pretty : Visit<Program, String> {
-    override fun visit(what: Program): String {
-        return what.decls.joinToString("\n") { visitTop(it) }
+object Pretty {
+    fun visit(program: Program): String {
+        return program.decls.joinToString("\n") { visitTop(it) }
     }
 
     private fun visitTop(top: Top) = when (top) {
         is Top.Fun -> visitFun(top)
-        is Top.Empty -> visitTopEmpty(top)
+        is Top.Empty -> visitTopEmpty()
     }
 
     private fun visitFun(node: Top.Fun): String {
@@ -31,7 +30,7 @@ object Pretty : Visit<Program, String> {
                "end\n"
     }
 
-    private fun visitTopEmpty(empty: Top.Empty): String {
+    private fun visitTopEmpty(): String {
         return "(empty)"
     }
 

@@ -11,6 +11,7 @@ import ast.hierarchy.stmt.Stmt
 import ast.hierarchy.top.Top
 import ast.hierarchy.unop.UnOp
 import ast.info.impl.Infoful
+import ctx.Ctx
 import ir.info.IrInfo
 import ir.lower.provide.Blocks
 import ir.structure.Ir
@@ -23,10 +24,11 @@ import ir.lower.provide.Terms
 import ir.structure.`fun`.IrFun
 import ir.term.warm.Warm
 import ir.term.warm.Term
+import nevec.result.Aftermath
+import stage.Stage
 import util.extension.map
 import util.extension.trimQuotesAround
 import util.extension.wrappedInQuotes
-import visit.Visit
 
 /**
  * The AST lowering pass.
@@ -35,14 +37,16 @@ import visit.Visit
  *
  * @see ir.term.TermLike
  */
-class Lower : Visit<Program, Ir<Warm>> {
+class Lower : Stage<Program, Ir<Warm>> {
     private val terms = Terms()
     private val blocks = Blocks()
 
-    override fun visit(what: Program): Ir<Warm> {
-        val functions = what.decls.map(::visitTop)
+    override fun perform(data: Program, ctx: Ctx): Aftermath<Ir<Warm>> {
+        val functions = data.decls.map(::visitTop)
 
-        return Ir(functions)
+        return Ir(functions).let {
+            Aftermath.Success(it)
+        }
     }
 
     private fun visitTop(top: Top) = when (top) {

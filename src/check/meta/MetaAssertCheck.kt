@@ -10,22 +10,30 @@ import ast.hierarchy.stmt.Stmt
 import ast.hierarchy.top.Top
 import ast.hierarchy.unop.UnOp
 import ast.info.Info
+import ctx.Ctx
 import err.msg.Msg
 import meta.comp.asserts.MetaAssert
-import visit.Visit
+import nevec.result.Aftermath
+import nevec.result.Fail
+import stage.Stage
 
 /**
  * Small visitor pattern that traverses a [Program] and checks [meta assertions][MetaAssert], producing a compiler
  * error if for each fail.
  *
- * Its [visit] method returns `true` if no meta assertions failed, or it returns `false` otherwise.
+ * Its [perform] method returns `true` if no meta assertions failed, or it returns `false` otherwise.
  */
-class MetaAssertCheck : Visit<Program, Boolean> {
-    override fun visit(what: Program): Boolean {
+class MetaAssertCheck : Stage<Program, Program> {
+    override fun perform(data: Program, ctx: Ctx): Aftermath<Program> {
         // not using
         // `what.decls.all(::visitTop)`
         // to avoid short-circuiting.
-        return what.decls.map(::visitTop).all { it }
+        return data.decls.map(::visitTop).all { it }.let { okay ->
+            if (okay)
+                Aftermath.Success(data)
+            else
+                Fail.CHECK.wrap()
+        }
     }
 
     private fun visitTop(top: Top) = when (top) {
