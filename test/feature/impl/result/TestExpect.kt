@@ -46,12 +46,12 @@ data class TestExpect(
         }
 
         /**
-         * @return A new [TestExpect] that maps all [FileIds][FileId], from `0` to [testCount], to [Outcome.Fail].
+         * @return A new [TestExpect] that maps all [FileIds][FileId], from `0` to [testCount], to [Outcome.OfFail].
          * The [ExecFail] stage given will be [ExecFail.COMPILE]
          */
         fun allFail(testCount: Int): TestExpect {
             return forall(testCount) {
-                Outcome.Fail(stage = ExecFail.COMPILE)
+                Outcome.OfFail(stage = ExecFail.COMPILE)
             }
         }
 

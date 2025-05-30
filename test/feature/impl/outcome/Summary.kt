@@ -36,6 +36,6 @@ data class Summary(private val fails: Map<Outcome, List<FileId>>) {
 
     private fun formatOutcome(outcome: Outcome) = when (outcome) {
         is Outcome.Success -> "succeeded, when they should’ve failed."
-        is Outcome.Fail -> "failed by ${outcome.stage}."
+        is Outcome.OfFail -> "failed by ${outcome.stage}."
     }
 }
