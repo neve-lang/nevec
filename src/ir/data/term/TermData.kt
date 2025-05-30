@@ -1,5 +1,6 @@
 package ir.data.term
 
+import ir.data.change.Change
 import ir.structure.block.Block
 import ir.term.TermLike
 import ir.term.id.TermId

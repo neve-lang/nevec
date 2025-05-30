@@ -1,5 +1,6 @@
-package ir.data.term
+package ir.data.change
 
+import ir.data.term.Stats
 import ir.structure.op.Op
 import ir.term.TermLike
 

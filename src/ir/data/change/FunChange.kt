@@ -1,5 +1,6 @@
-package ir.data.`fun`
+package ir.data.change
 
+import ir.data.`fun`.FunData
 import ir.structure.consts.IrConst
 import ir.structure.op.Op
 import ir.term.TermLike
