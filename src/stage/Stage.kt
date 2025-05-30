@@ -10,7 +10,7 @@ import nevec.result.Aftermath
  * @param In The type of value that the compilation stage requires in order to [perform].
  * @param Out The type of value that the compilation stage should return.
  *
- * It provides a [perform] method that returns an [Aftermath] of the specified type [T].
+ * It provides a [perform] method that returns an [Aftermath] of the specified type [Out].
  */
 interface Stage<In, Out> {
     /**

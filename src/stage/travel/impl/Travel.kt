@@ -24,7 +24,7 @@ interface Travel<T> {
      * If `this` [Travel]’s [Aftermath] is [OfFail][Aftermath.OfFail], the next stage is not performed—a
      * [frozen travel] is returned instead.
      *
-     * @see nevec.travel.FrozenTravel
+     * @see stage.travel.FrozenTravel
      */
     fun <Out> proceedWith(stage: () -> Stage<T, Out>): Travel<Out>
 
@@ -45,10 +45,10 @@ interface Travel<T> {
     /**
      * @return An [Aftermath] determining whether all stages were successful.  That is:
      *
-     * - If `this` is [alive][nevec.travel.AliveTravel], an [Aftermath] of [Success][Aftermath.Success] is returned,
+     * - If `this` is [alive][stage.travel.AliveTravel], an [Aftermath] of [Success][Aftermath.Success] is returned,
      * containing the [Travel]’s data.
      * - Otherwise, an [Aftermath] of [OfFail][Aftermath.OfFail] is returned based on the
-     *   [frozen][nevec.travel.FrozenTravel] travel.
+     *   [frozen][stage.travel.FrozenTravel] travel.
      */
     fun finish(): Aftermath<T>
 }
