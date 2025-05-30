@@ -8,7 +8,7 @@ import nevec.result.Aftermath
  * It can either be:
  *
  * - Successful: [Success]
- * - Unsuccessful: [Fail]
+ * - Unsuccessful: [OfFail]
  *
  * Keep in mind that an unsuccessful outcome **does not imply** that the **test itself failed**—it is perfectly common
  * to expect a program’s compilation to fail.
@@ -29,14 +29,14 @@ sealed class Outcome {
         /**
          * @return An [Outcome] from a [Boolean].  That is:
          *
-         * - If the value given is `false`, An [Outcome] of [Fail] whose stage is [ExecFail.COMPILE] is returned.
+         * - If the value given is `false`, An [Outcome] of [OfFail] whose stage is [ExecFail.COMPILE] is returned.
          * - Otherwise, an [Outcome] of [Success] is returned.
         */
         fun basedOn(whether: Boolean): Outcome {
             return if (whether)
                 Success
             else
-                Fail(stage = ExecFail.COMPILE)
+                OfFail(stage = ExecFail.COMPILE)
         }
     }
 
@@ -48,5 +48,5 @@ sealed class Outcome {
     /**
      * Represents an unsuccessful test execution, containing a [ExecFail].
      */
-    data class Fail(val stage: ExecFail) : Outcome()
+    data class OfFail(val stage: ExecFail) : Outcome()
 }
