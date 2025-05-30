@@ -2,7 +2,6 @@ package infer
 
 import ast.hierarchy.binop.BinOp
 import ast.hierarchy.expr.Expr
-import ast.hierarchy.interpol.Interpol
 import ast.hierarchy.lit.Lit
 import ast.hierarchy.unop.UnOp
 import infer.gen.GenTracker
@@ -27,18 +26,18 @@ class Infer {
     private val gens = GenTracker()
 
     fun visit(expr: Expr) = when (expr) {
-        is Expr.Show -> visitShow(expr)
+        is Expr.Show -> visitShow()
         is Expr.Parens -> visitParens(expr)
 
         is Expr.OfUnOp -> visitUnOp(expr.unOp)
         is Expr.OfBinOp -> visitBinOp(expr.binOp)
         is Expr.OfLit -> visitLit(expr.lit)
-        is Expr.OfInterpol -> visitInterpol(expr.interpol)
+        is Expr.OfInterpol -> visitInterpol()
 
         is Expr.Empty -> Type.unknown()
     }
 
-    private fun visitShow(show: Expr.Show): Type {
+    private fun visitShow(): Type {
         return PreludeTypes.STR
     }
 
@@ -91,27 +90,27 @@ class Infer {
     }
 
     private fun visitLit(lit: Lit) = when (lit) {
-        is Lit.IntLit -> visitInt(lit)
-        is Lit.FloatLit -> visitFloat(lit)
-        is Lit.BoolLit -> visitBool(lit)
-        is Lit.StrLit -> visitStr(lit)
         is Lit.TableLit -> visitTable(lit)
-        is Lit.NilLit -> visitNil(lit)
+        is Lit.IntLit -> visitInt()
+        is Lit.FloatLit -> visitFloat()
+        is Lit.BoolLit -> visitBool()
+        is Lit.StrLit -> visitStr()
+        is Lit.NilLit -> visitNil()
     }
 
-    private fun visitInt(int: Lit.IntLit): Type {
+    private fun visitInt(): Type {
         return PreludeTypes.INT
     }
 
-    private fun visitFloat(float: Lit.FloatLit): Type {
+    private fun visitFloat(): Type {
         return PreludeTypes.FLOAT
     }
 
-    private fun visitBool(bool: Lit.BoolLit): Type {
+    private fun visitBool(): Type {
         return PreludeTypes.BOOL
     }
 
-    private fun visitStr(str: Lit.StrLit): Type {
+    private fun visitStr(): Type {
         return PreludeTypes.STR
     }
 
@@ -127,11 +126,11 @@ class Infer {
         return Applied(TypeArgs.from(keys, values), PreludeTypes.TABLE).covered()
     }
 
-    private fun visitNil(nil: Lit.NilLit): Type {
+    private fun visitNil(): Type {
         return PreludeTypes.NIL
     }
 
-    private fun visitInterpol(interpol: Interpol): Type {
+    private fun visitInterpol(): Type {
         return PreludeTypes.STR
     }
 }
