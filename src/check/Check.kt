@@ -6,27 +6,24 @@ import check.sem.SemResolver
 import check.type.TypeCheck
 import cli.Options
 import ctx.Ctx
+import nevec.result.Aftermath
+import stage.Stage
+import stage.travel.AliveTravel
 
 /**
- * Helper object to simplify the process of checking the source AST.
+ * The checking stage in the compilation process.
  */
-object Check {
+class Check : Stage<Program, Program> {
     /**
-     * Applies all compile-time check phases to the given [Program].
+     * Applies all compile-time check stages to the given [Program].
      *
-     * @return whether [what] is a valid Neve program or not.
+     * @return whether [data] is a valid Neve program or not.
      */
-    fun check(what: Program, ctx: Ctx): Pair<Program, Boolean> {
-        val resolved = SemResolver().visit(what)
-        val typesOkay = TypeCheck().visit(resolved)
-
-        if (!typesOkay) {
-            return what to false
-        }
-
-        return if (ctx.options.isEnabled(Options.META_ASSERTS))
-            resolved to MetaAssertCheck().visit(resolved)
-        else
-            resolved to true
+    override fun perform(data: Program, ctx: Ctx): Aftermath<Program> {
+        return AliveTravel(data, ctx)
+            .proceedWith(::SemResolver)
+            .proceedWith(::TypeCheck)
+            .ifEnabled(Options.META_ASSERTS, ::MetaAssertCheck)
+            .finish()
     }
 }
