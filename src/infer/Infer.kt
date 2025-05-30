@@ -7,7 +7,6 @@ import ast.hierarchy.lit.Lit
 import ast.hierarchy.unop.UnOp
 import infer.gen.GenTracker
 import infer.unify.Unify
-import visit.Visit
 import type.Type
 import type.gen.Applied
 import type.gen.arg.TypeArgs
@@ -24,17 +23,17 @@ import type.prelude.PreludeTypes
  * @see Unify
  * @see check.sem.SemResolver
  */
-class Infer : Visit<Expr, Type> {
+class Infer {
     private val gens = GenTracker()
 
-    override fun visit(what: Expr) = when (what) {
-        is Expr.Show -> visitShow(what)
-        is Expr.Parens -> visitParens(what)
+    fun visit(expr: Expr) = when (expr) {
+        is Expr.Show -> visitShow(expr)
+        is Expr.Parens -> visitParens(expr)
 
-        is Expr.OfUnOp -> visitUnOp(what.unOp)
-        is Expr.OfBinOp -> visitBinOp(what.binOp)
-        is Expr.OfLit -> visitLit(what.lit)
-        is Expr.OfInterpol -> visitInterpol(what.interpol)
+        is Expr.OfUnOp -> visitUnOp(expr.unOp)
+        is Expr.OfBinOp -> visitBinOp(expr.binOp)
+        is Expr.OfLit -> visitLit(expr.lit)
+        is Expr.OfInterpol -> visitInterpol(expr.interpol)
 
         is Expr.Empty -> Type.unknown()
     }
