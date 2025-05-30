@@ -19,7 +19,7 @@ data class TestExpect(
          * - For the file IDs mentioned, those will be mapped to an [Outcome] of
          *   [Success][Outcome.Success] failure.
          * - The non-mentioned ones will, up to the given [testCount], be implicitly given an [Outcome] of
-         *   [COMPILE][feature.impl.outcome.ExecFail.COMPILE]
+         *   [CHECK][feature.impl.outcome.ExecFail.CHECK]
          *
          * @throws IllegalArgumentException if [testCount] is less than `0`.
          */
@@ -33,7 +33,7 @@ data class TestExpect(
          * @return A new [TestExpect] whose [expected] has the following properties:
          *
          * - For the file IDs mentioned, those will be mapped to an [Outcome] of
-         *   [COMPILE][feature.impl.outcome.ExecFail.COMPILE] failure.
+         *   [CHECK][feature.impl.outcome.ExecFail.CHECK] failure.
          * - The non-mentioned ones will, up to the given [testCount], be implicitly given an [Outcome] of
          *   [Success][Outcome.Success].
          *
@@ -47,11 +47,11 @@ data class TestExpect(
 
         /**
          * @return A new [TestExpect] that maps all [FileIds][FileId], from `0` to [testCount], to [Outcome.OfFail].
-         * The [ExecFail] stage given will be [ExecFail.COMPILE]
+         * The [ExecFail] stage given will be [ExecFail.CHECK]
          */
         fun allFail(testCount: Int): TestExpect {
             return forall(testCount) {
-                Outcome.OfFail(stage = ExecFail.COMPILE)
+                Outcome.OfFail(stage = ExecFail.CHECK)
             }
         }
 
