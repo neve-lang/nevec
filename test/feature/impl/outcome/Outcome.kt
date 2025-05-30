@@ -18,9 +18,9 @@ sealed class Outcome {
         /**
          * @return A new [Outcome] from an [Aftermath] data class.
          */
-        fun from(aftermath: Aftermath) = when (aftermath) {
-            is Aftermath.Success -> Success
-            is Aftermath.OfFail -> Fail(stage = ExecFail.from(aftermath))
+        fun from(aftermath: Aftermath<*>) = when (aftermath) {
+            is Aftermath.Success<*> -> Success
+            is Aftermath.OfFail -> OfFail(stage = ExecFail.from(aftermath))
 
             // IntelliJ seems to complain here for some reason, even though all cases are covered?
             else -> TODO()
@@ -29,14 +29,14 @@ sealed class Outcome {
         /**
          * @return An [Outcome] from a [Boolean].  That is:
          *
-         * - If the value given is `false`, An [Outcome] of [OfFail] whose stage is [ExecFail.COMPILE] is returned.
+         * - If the value given is `false`, An [Outcome] of [OfFail] whose stage is [ExecFail.CHECK] is returned.
          * - Otherwise, an [Outcome] of [Success] is returned.
         */
         fun basedOn(whether: Boolean): Outcome {
             return if (whether)
                 Success
             else
-                OfFail(stage = ExecFail.COMPILE)
+                OfFail(stage = ExecFail.CHECK)
         }
     }
 
