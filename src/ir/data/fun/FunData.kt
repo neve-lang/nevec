@@ -1,6 +1,7 @@
 package ir.data.`fun`
 
 import ir.data.change.FunChange
+import ir.data.term.TermData
 import ir.structure.block.Block
 import ir.structure.consts.IrConst
 import ir.term.TermLike
@@ -12,16 +13,21 @@ import ir.term.TermLike
  * IrConsts of the same value stored.
  */
 data class FunData<T : TermLike>(
-    val constDefMap: Map<IrConst, List<T>>
+    val constDefMap: Map<IrConst, List<T>>,
+    val termData: TermData<T>
 ) {
     companion object {
         /**
          * @return A new [FunData] with the following properties:
          *
          * - An empty map for [constDefMap]
+         * - A fresh new [TermData] for [termData]
          */
         fun <T : TermLike> new(): FunData<T> {
-            return FunData(emptyMap())
+            return FunData(
+                constDefMap = emptyMap(),
+                termData = TermData.new()
+            )
         }
 
         /**
@@ -54,7 +60,8 @@ data class FunData<T : TermLike>(
      */
     operator fun plus(other: FunData<T>): FunData<T> {
         return FunData(
-            constDefMap + other.constDefMap
+            constDefMap + other.constDefMap,
+            termData + other.termData
         )
     }
 }
