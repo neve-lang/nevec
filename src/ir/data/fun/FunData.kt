@@ -8,17 +8,17 @@ import ir.term.TermLike
 /**
  * Describes IR function statistics—such as which constants are used and by what terms.
  *
- * @property consts Maps an [IrConst] to a list of terms.  Each distinct [IrConst] key is unique—there won’t be two
+ * @property constDefMap Maps an [IrConst] to a list of terms.  Each distinct [IrConst] key is unique—there won’t be two
  * IrConsts of the same value stored.
  */
 data class FunData<T : TermLike>(
-    val consts: Map<IrConst, List<T>>
+    val constDefMap: Map<IrConst, List<T>>
 ) {
     companion object {
         /**
          * @return A new [FunData] with the following properties:
          *
-         * - An empty map for [consts]
+         * - An empty map for [constDefMap]
          */
         fun <T : TermLike> new(): FunData<T> {
             return FunData(emptyMap())
@@ -43,10 +43,10 @@ data class FunData<T : TermLike>(
     }
 
     /**
-     * @return The [List] of [T] that maps the given [const] in [consts], or `null` if the entry does not exist.
+     * @return The [List] of [T] that maps the given [const] in [constDefMap], or `null` if the entry does not exist.
      */
     fun termsUsing(const: IrConst): List<T>? {
-        return consts[const]
+        return constDefMap[const]
     }
 
     /**
@@ -54,7 +54,7 @@ data class FunData<T : TermLike>(
      */
     operator fun plus(other: FunData<T>): FunData<T> {
         return FunData(
-            consts + other.consts
+            constDefMap + other.constDefMap
         )
     }
 }
