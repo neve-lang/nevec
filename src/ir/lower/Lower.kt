@@ -13,14 +13,15 @@ import ast.hierarchy.unop.UnOp
 import ast.info.impl.Infoful
 import ctx.Ctx
 import ir.info.IrInfo
-import ir.lower.provide.Blocks
+import ir.provide.Blocks
+import ir.provide.IdSystem
 import ir.structure.Ir
 import ir.structure.compose.Compose
 import ir.structure.compose.Zipping
 import ir.structure.consts.IrConst
 import ir.structure.op.Op
 import ir.structure.tac.Tac
-import ir.lower.provide.Terms
+import ir.provide.Terms
 import ir.structure.`fun`.IrFun
 import ir.term.warm.Warm
 import ir.term.warm.Term
@@ -38,8 +39,7 @@ import util.extension.wrappedInQuotes
  * @see ir.term.TermLike
  */
 class Lower : Stage<Program, Ir<Warm>> {
-    private val terms = Terms()
-    private val blocks = Blocks()
+    private val ids = IdSystem()
 
     override fun perform(data: Program, ctx: Ctx): Aftermath<Ir<Warm>> {
         val functions = data.decls.map(::visitTop)
@@ -60,9 +60,9 @@ class Lower : Stage<Program, Ir<Warm>> {
     private fun visitFun(node: Top.Fun): IrFun<Warm> {
         val compose = node.decls.map(::visitDecl).reduce(Compose::merge)
 
-        // TODO: use the mangled name instead
         return IrFun.from(
-            listOf(blocks.newBasic(compose.ops())),
+            listOf(ids.newBlock(compose.ops())),
+            // TODO: use the mangled name instead
             name = node.name,
         )
     }
@@ -308,6 +308,6 @@ class Lower : Stage<Program, Ir<Warm>> {
     }
 
     private fun newTemp(basedOn: Infoful): Term {
-        return terms.newTemporary(basedOn.type())
+        return ids.newTerm(basedOn.type())
     }
 }
