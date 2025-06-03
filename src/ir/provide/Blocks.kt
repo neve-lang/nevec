@@ -1,4 +1,4 @@
-package ir.lower.provide
+package ir.provide
 
 import ir.structure.block.Block
 import ir.structure.op.Op

@@ -1,4 +1,4 @@
-package ir.lower.provide
+package ir.provide
 
 import ir.term.life.Moment
 import ir.term.warm.Term
