@@ -1,6 +1,6 @@
 package ir.data.term
 
-import ir.data.change.Change
+import ir.data.change.TermChange
 import ir.structure.block.Block
 import ir.term.TermLike
 import ir.term.id.TermId
@@ -40,33 +40,33 @@ data class TermData<T : TermLike>(val themselves: Map<TermId, Stats<T>>) {
          */
         fun <T : TermLike> from(blocks: List<Block<T>>): TermData<T> {
             val ops = blocks.flatMap { it.ops }
-            val changes = ops.flatMap { Change.deriveFrom(it) }
+            val changes = ops.flatMap { TermChange.deriveFrom(it) }
 
             return updateAll(changes)
         }
 
-        private fun <T : TermLike> updateAll(changes: List<Pair<Change<T>, List<T>>>): TermData<T> {
+        private fun <T : TermLike> updateAll(changes: List<TermChange<T>>): TermData<T> {
             return if (changes.isEmpty())
                 new()
             else
-                changes.first().let {
-                    (change, terms) -> updateAll(changes.drop(1)).update(change, terms)
-                }
+                updateAll(changes.drop(1)).update(changes.first())
         }
     }
 
     /**
-     * Applies a same [Change] to the given list of terms.
+     * Applies a [TermChange] to `this`—i.e. it applies the [TermChange] to all the [Stats] of all the terms the
+     * change applies on.
      *
      * If a term is not registered, a default [Stats] is created and the change is applied to that default member.
      *
      * @return A new [TermData] with the changes applied.
      */
-    fun update(change: Change<T>, terms: List<T>): TermData<T> {
-        return this + terms.let {
-            listOfTerms -> listOfTerms.map(TermLike::id) zip
-                statsOf(listOfTerms).map { change.applyTo(it) }
-        }.toMap().let(::TermData)
+    fun update(termChange: TermChange<T>): TermData<T> {
+        return this +
+                (
+                    termChange.terms().map(TermLike::id) zip
+                            applyToTerms(termChange)
+                ).toMap().let(::TermData)
     }
 
     /**
@@ -76,6 +76,10 @@ data class TermData<T : TermLike>(val themselves: Map<TermId, Stats<T>>) {
         return TermData(
             themselves + other.themselves
         )
+    }
+
+    private fun applyToTerms(termChange: TermChange<T>): List<Stats<T>> {
+        return statsOf(termChange.terms()).map { termChange.applyTo(it) }
     }
 
     private fun statsOf(terms: List<T>): List<Stats<T>> {
