@@ -15,7 +15,6 @@ import ir.term.TermLike
 data class IrFun<T : TermLike>(
     val mangledName: String,
     val blocks: List<Block<T>>,
-    val termData: TermData<T>,
     val funData: FunData<T>
 ) {
     companion object {
@@ -26,7 +25,6 @@ data class IrFun<T : TermLike>(
             return IrFun(
                 name,
                 blocks,
-                TermData.from(blocks),
                 FunData.from(blocks)
             )
         }
