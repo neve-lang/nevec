@@ -2,7 +2,6 @@ package ir.structure.`fun`
 
 import ir.structure.block.Block
 import ir.data.`fun`.FunData
-import ir.data.term.TermData
 import ir.term.TermLike
 
 /**

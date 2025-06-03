@@ -13,7 +13,6 @@ import ast.hierarchy.unop.UnOp
 import ast.info.impl.Infoful
 import ctx.Ctx
 import ir.info.IrInfo
-import ir.provide.Blocks
 import ir.provide.IdSystem
 import ir.structure.Ir
 import ir.structure.compose.Compose
@@ -21,7 +20,6 @@ import ir.structure.compose.Zipping
 import ir.structure.consts.IrConst
 import ir.structure.op.Op
 import ir.structure.tac.Tac
-import ir.provide.Terms
 import ir.structure.`fun`.IrFun
 import ir.term.warm.Warm
 import ir.term.warm.Term
