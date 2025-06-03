@@ -1,67 +1,69 @@
 package ir.data.change
 
-import ir.data.term.Stats
+import ir.data.`fun`.FunData
+import ir.structure.consts.IrConst
 import ir.structure.op.Op
 import ir.term.TermLike
 
-/**
- * Refers to a specific change to a term’s **statistics**, such as a change in the number of usages, or a new
- * term definition.
- *
- * @see TermData
- * @see Stats
+/*
+ * Refers to a specific change in a function’s data, usually due to a modification applied by an optimization pass.
  */
 sealed class Change<T : TermLike> {
     companion object {
         /**
-         * @return A list of [Pair], each pair encoding the following information:
-         *
-         * - The [first][Pair.first] element of the pair is the [Change] itself.
-         * - The [second][Pair.second] element of the pair denotes the list of terms the [Change] should be applied to.
+         * @return A list of [Changes][Change] that could be derived from the given IR [Op][Op].  The list may be
+         * empty.
          */
-        fun <T : TermLike> deriveFrom(op: Op<T>): List<Pair<Change<T>, List<T>>> {
-            val (receiver, rest) = termsOf(op)
-            val useChanges = Uses(new = op) to rest
-
-            return if (op.isDefinition())
-                listOf(Def(op) to receiver) + useChanges
-            else
-                listOf(Uses(new = op) to receiver) + useChanges
+        fun <T : TermLike> deriveFrom(op: Op<T>): List<Change<T>> {
+            return when (op) {
+                is Op.Const -> deriveFromConst(op)
+                else -> TermChange.deriveFrom(op).map { it.wrap() }
+            }
         }
 
-        private fun <T : TermLike> termsOf(op: Op<T>): Pair<List<T>, List<T>> {
-            return listOf(op.term()) to op.allTerms().drop(1)
-        }
-    }
-
-    /**
-     * Represents a change in a term’s usage count.
-     *
-     * @property new The integer representing the change—addition will be performed.
-     */
-    data class Uses<T : TermLike>(val new: Op<T>) : Change<T>() {
-        override fun applyTo(previous: Stats<T>): Stats<T> {
-            return Stats(previous.def, uses = previous.uses + new)
+        private fun <T : TermLike> deriveFromConst(op: Op.Const<T>): List<Change<T>> {
+            return Const(
+                const = op.const,
+                term = op.term()
+            ).let(::listOf)
         }
     }
 
     /**
-     * Represents a change in a term’s definition.
+     * Applies a change in the [FunData]’s map of [IrConsts][IrConst].
      *
-     * @property op The IR [Op] that will replace the previous one.
+     * @property const The [IrConst] to be modified.
+     * @property term The new additional term to be associated with [const].
      */
-    data class Def<T : TermLike>(val op: Op<T>?) : Change<T>() {
-        override fun applyTo(previous: Stats<T>): Stats<T> {
-            return Stats(def = op, previous.uses)
+    data class Const<T : TermLike>(val const: IrConst, val term: T) : Change<T>() {
+        override fun applyTo(previous: FunData<T>): FunData<T> {
+            val previousTerms = previous.termsUsing(const)
+
+            return previous + FunData(
+                constDefMap = mapOf(const to previousTerms + term)
+            )
         }
     }
 
     /**
-     * Applies a `this` [Change] to a [Stats].
+     * Wrapper variant around [TermChange].
      *
-     * @param previous The [Stats] that will receive the change.
-     *
-     * @return A new [Stats] with the change applied.
+     * @property termChange The [TermChange] being wrapped.
      */
-    abstract fun applyTo(previous: Stats<T>): Stats<T>
+    data class OfTerm<T : TermLike>(val termChange: TermChange<T>) : Change<T>() {
+        override fun applyTo(previous: FunData<T>): FunData<T> {
+            return previous + FunData(
+                termData = previous.termData.update(termChange)
+            )
+        }
+    }
+
+    /**
+     * Applies `this` [TermChange] to a [FunData].
+     *
+     * @param previous The [FunData] that will experience the change.
+     *
+     * @return A new [FunData] with the change applied.
+     */
+    abstract fun applyTo(previous: FunData<T>): FunData<T>
 }
