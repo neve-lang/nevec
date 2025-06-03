@@ -9,6 +9,7 @@ import ctx.Ctx
 import err.report.Report
 import file.contents.Src
 import ir.lower.Lower
+import ir.rendition.Rendition
 import nevec.result.Aftermath
 import nevec.result.Fail
 import stage.travel.AliveTravel
@@ -71,6 +72,7 @@ object Nevec {
 
         return AliveTravel(program, ctx)
             .proceedWith(::Lower)
+            .proceedWith(::Rendition)
             .finish()
             .into(Unit)
     }
