@@ -42,7 +42,7 @@ class Lower : Stage<Program, Ir<Warm>> {
     override fun perform(data: Program, ctx: Ctx): Aftermath<Ir<Warm>> {
         val functions = data.decls.map(::visitTop)
 
-        return Ir(functions).let {
+        return Ir(functions, ids).let {
             Aftermath.Success(it)
         }
     }
