@@ -36,6 +36,13 @@ sealed class Transform<S : IrStructure> {
     data class Replace<S : IrStructure>(val new: S, val changes: List<Change<Warm>>) : Transform<S>()
 
     /**
+     * Refers to a transform that *removes* the [IR structure][IrStructure] in question.
+     *
+     * This [Transform] is often used in elimination passes, such as dead term elimination.
+     */
+    data class Remove<S : IrStructure>(val changes: List<Change<Warm>>) : Transform<S>()
+
+    /**
      * @return A list of [Change] that are associated with `this` [Transform].  The Changes are always [Warm].
      *
      * If a Transform does not have any changes associated with it—such as the [Retain] transform, an empty list
@@ -44,5 +51,18 @@ sealed class Transform<S : IrStructure> {
     fun changes() = when (this) {
         is Retain -> emptyList()
         is Replace -> changes
+        is Remove -> changes
+    }
+
+    /**
+     * @return A quasi-copy of this [Transform], with the additional [Change] provided.
+     *
+     * However, If this method is used on a [Transform] that does not have any Changes associated with it—such as the
+     * [Retain] transform, no modifications are made.
+     */
+    fun withChange(change: Change<Warm>) = when (this) {
+        is Retain -> this
+        is Replace -> copy(changes = changes + change)
+        is Remove -> copy(changes = changes + change)
     }
 }
