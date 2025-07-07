@@ -30,7 +30,7 @@ data class IrFun<T : TermLike>(
     }
 
     /**
-     * @return How many [Ops][Op] this [IrFun] contains within all of its [blocks].
+     * @return How many [Ops][ir.structure.op.Op] this [IrFun] contains within all of its [blocks].
      */
     fun opCount(): Int {
         return blocks.map { it.ops.size }.reduce { a, b -> a + b }

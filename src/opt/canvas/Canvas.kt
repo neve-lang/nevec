@@ -139,10 +139,10 @@ data class Canvas(
     }
 
     private fun nthModelOp(n: Int): Op<Warm> {
-        return flattenedModel(n)[n]
+        return flattenedModel()[n]
     }
 
-    private fun flattenedModel(n: Int): List<Op<Warm>> {
+    private fun flattenedModel(): List<Op<Warm>> {
         return model.blocks.map { it.ops }.flatten()
     }
 }

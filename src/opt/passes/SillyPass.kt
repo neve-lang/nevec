@@ -2,8 +2,6 @@ package opt.passes
 
 import ir.data.change.Change
 import ir.data.change.TermChange
-import ir.data.`fun`.FunData
-import ir.provide.IdSystem
 import ir.structure.consts.IrConst
 import ir.structure.op.Op
 import ir.term.warm.Warm

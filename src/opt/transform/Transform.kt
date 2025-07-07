@@ -2,11 +2,11 @@ package opt.transform
 
 import ir.data.change.Change
 import ir.structure.impl.IrStructure
-import ir.structure.op.Op
 import ir.term.warm.Warm
 
 /**
- * A Transform represents a pure modification that is applied to an [IrFun] during an optimization pass.
+ * A Transform represents a pure modification that is applied to an [IrFun][ir.structure.fun.IrFun] during an
+ * optimization pass.
  *
  * It allows us to implement optimization passes in a declarative way, while still maintaining flexibility on the
  * kind of [IR structure][IrStructure] we’re optimizing for.
