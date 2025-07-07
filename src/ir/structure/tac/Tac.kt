@@ -198,6 +198,32 @@ sealed class Tac<T : TermLike> : Termful<T> {
         return Op.OfTac(this)
     }
 
+    /**
+     * @return The [IrInfo] associated with this [Tac].
+     */
+    fun info() = when (this) {
+        is Neg -> info
+        is Not -> info
+        is Show -> info
+        is Add -> info
+        is Sub -> info
+        is Mul -> info
+        is Div -> info
+        is Shl -> info
+        is Shr -> info
+        is BitAnd -> info
+        is BitOr -> info
+        is BitXor -> info
+        is Neq -> info
+        is Eq -> info
+        is Gt -> info
+        is Gte -> info
+        is Lt -> info
+        is Lte -> info
+        is Concat -> info
+        is TableSet -> info
+    }
+
     override fun term() = when (this) {
         is Neg -> to
         is Not -> to
