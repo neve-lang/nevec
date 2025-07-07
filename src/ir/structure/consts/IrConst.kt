@@ -38,4 +38,38 @@ sealed class IrConst {
      * A nil constant.
      */
     data object OfNil : IrConst()
+
+    /**
+     * @return Whether both [IrConst] operands have the same variant, and the same value.
+     */
+    override fun equals(other: Any?): Boolean {
+        if (other !is IrConst) {
+            return false
+        }
+
+        if (this::class != other::class) {
+            return false
+        }
+
+        return when (this) {
+            is OfBool -> value == (other as OfBool).value
+            is OfInt -> value == (other as OfInt).value
+            is OfFloat -> value == (other as OfFloat).value
+            is OfStr -> value == (other as OfStr).value
+
+            is OfNil -> other is OfNil
+            is OfEmptyTable -> other is OfEmptyTable
+
+            is OfTable -> tableEquals(this, other as OfTable)
+        }
+    }
+
+    private fun tableEquals(left: OfTable, right: OfTable): Boolean {
+        return (left.keys zip right.keys).all { (a, b) -> a == b } &&
+                (left.vals zip right.vals).all { (a, b) -> a == b }
+    }
+
+    override fun hashCode(): Int {
+        return javaClass.hashCode()
+    }
 }
