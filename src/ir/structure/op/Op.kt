@@ -2,6 +2,7 @@ package ir.structure.op
 
 import ir.info.IrInfo
 import ir.structure.consts.IrConst
+import ir.structure.impl.IrStructure
 import ir.structure.impl.Termful
 import ir.structure.tac.Tac
 import ir.term.TermLike
@@ -12,7 +13,7 @@ import ir.term.TermLike
  * @param T The kind of term the [Op] should apply to.  This allows us to distinguish between the
  * [Warm][ir.term.warm.Warm] IR and the [Cool][ir.term.cool.Cool] IR.
  */
-sealed class Op<T : TermLike> : Termful<T> {
+sealed class Op<T : TermLike> : Termful<T>, IrStructure {
     /**
      * A return operation.
      *
