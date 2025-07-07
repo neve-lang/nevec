@@ -43,11 +43,22 @@ sealed class Op<T : TermLike> : Termful<T>, IrStructure {
      */
     data class Const<T : TermLike>(val to: T, val const: IrConst, val info: IrInfo) : Op<T>()
 
+    /**
+     * Represents a “dummy” IR operation—where nothing happens.
+     *
+     * Dummy IR operations are useful for stages that remove certain operations, as actually removing them from the
+     * list could lead to unexpected behavior in subsequent removals.
+     *
+     * The [Canvas][opt.canvas.Canvas] removes those dummy IR nodes after an optimization cycle completes.
+     */
+    data class Dummy<T : TermLike>(val term: T) : Op<T>()
+
     override fun term(): T = when (this) {
         is Ret -> term
         is Print -> term
         is Const -> to
         is OfTac -> tac.term()
+        is Dummy -> term
     }
 
     override fun allTerms() = when (this) {
@@ -55,6 +66,7 @@ sealed class Op<T : TermLike> : Termful<T>, IrStructure {
         is Print -> listOf(term)
         is Const -> listOf(to)
         is OfTac -> tac.allTerms()
+        is Dummy -> emptyList()
     }
 
     override fun isDefinition() = when (this) {
@@ -62,5 +74,6 @@ sealed class Op<T : TermLike> : Termful<T>, IrStructure {
         is Print -> false
         is Const -> true
         is OfTac -> tac.isDefinition()
+        is Dummy -> false
     }
 }
