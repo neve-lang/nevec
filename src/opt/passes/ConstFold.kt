@@ -1,6 +1,7 @@
 package opt.passes
 
 import ir.data.change.Change
+import ir.data.change.TermChange
 import ir.data.`fun`.FunData
 import ir.structure.consts.IrConst
 import ir.structure.op.Op
@@ -31,7 +32,10 @@ class ConstFold : Pass {
     override fun apply(to: Canvas): Canvas {
         return to.eachOp { _, data, op ->
             if (isArith(op))
-                constFoldIfPossible((op as Op.OfTac).tac, data)
+                constFoldIfPossible((op as Op.OfTac).tac, data).withChange(
+                    TermChange.Unuse(op.allTerms().drop(1), op)
+                        .wrap()
+                )
             else
                 Transform.Retain(op)
         }
@@ -289,7 +293,7 @@ class ConstFold : Pass {
         return when (const) {
             is IrConst.OfInt -> const.value.toString()
             is IrConst.OfFloat -> String.format("%.14g", const.value)
-            is IrConst.OfStr -> const.value
+            is IrConst.OfStr -> const.value.trimQuotesAround()
             is IrConst.OfBool -> const.value.toString()
             is IrConst.OfNil -> "nil"
             is IrConst.OfEmptyTable -> "[:]"
@@ -338,6 +342,8 @@ class ConstFold : Pass {
             const,
             from.info()
         )
+
+        val operands = from.allTerms().drop(1)
 
         return Transform.Replace(
             new = constOp,
