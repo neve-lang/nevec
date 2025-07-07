@@ -16,8 +16,8 @@ sealed class Change<T : TermLike> {
          */
         fun <T : TermLike> deriveFrom(op: Op<T>): List<Change<T>> {
             return when (op) {
-                is Op.Const -> deriveFromConst(op)
-                else -> TermChange.deriveFrom(op).map { it.wrap() }
+                is Op.Const -> deriveFromConst(op) + termChanges(op)
+                else -> termChanges(op)
             }
         }
 
@@ -26,6 +26,10 @@ sealed class Change<T : TermLike> {
                 const = op.const,
                 term = op.term()
             ).let(::listOf)
+        }
+
+        private fun <T : TermLike> termChanges(op: Op<T>): List<Change<T>> {
+            return TermChange.deriveFrom(op).map { it.wrap() }
         }
     }
 
