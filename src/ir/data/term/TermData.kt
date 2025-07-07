@@ -54,6 +54,15 @@ data class TermData<T : TermLike>(val themselves: Map<TermId, Stats<T>>) {
     }
 
     /**
+     * @return The [Stats] associated with the given [T] term.
+     *
+     * If no [Stats] are associated with that term, `null` is returned instead.
+     */
+    fun statsOf(term: T): Stats<T>? {
+        return themselves[term.id()]
+    }
+
+    /**
      * Applies a [TermChange] to `this`—i.e. it applies the [TermChange] to all the [Stats] of all the terms the
      * change applies on.
      *
