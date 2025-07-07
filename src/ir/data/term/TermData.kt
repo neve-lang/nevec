@@ -79,10 +79,10 @@ data class TermData<T : TermLike>(val themselves: Map<TermId, Stats<T>>) {
     }
 
     private fun applyToTerms(termChange: TermChange<T>): List<Stats<T>> {
-        return statsOf(termChange.terms()).map { termChange.applyTo(it) }
+        return statsOfAll(termChange.terms()).map { termChange.applyTo(it) }
     }
 
-    private fun statsOf(terms: List<T>): List<Stats<T>> {
+    private fun statsOfAll(terms: List<T>): List<Stats<T>> {
         return terms.map { themselves[it.id()] }.map {
             it ?: Stats()
         }
