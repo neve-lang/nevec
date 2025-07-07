@@ -19,6 +19,7 @@ class OpRender<T : TermLike>(private val termNames: Names) {
         is Op.Ret -> renderRet(op)
         is Op.Print -> renderPrint(op)
         is Op.Const -> renderConst(op)
+        is Op.Dummy -> renderDummy(op)
         is Op.OfTac -> renderTac(op.tac)
     }
 
@@ -32,6 +33,10 @@ class OpRender<T : TermLike>(private val termNames: Names) {
 
     private fun renderConst(op: Op.Const<T>): String {
         return "${nameOf(op.to)} = ${renderIrConst(op.const)}"
+    }
+
+    private fun renderDummy(op: Op.Dummy<T>): String {
+        return "${nameOf(op.term)} = (dummy)"
     }
 
     private fun renderTac(tac: Tac<T>) = when (tac) {
