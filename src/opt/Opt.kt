@@ -7,7 +7,7 @@ import ir.structure.`fun`.IrFun
 import ir.term.warm.Warm
 import nevec.result.Aftermath
 import opt.canvas.Canvas
-import opt.passes.SillyPass
+import opt.passes.ConstFold
 import opt.structure.pass.Pass
 import stage.Stage
 
@@ -24,7 +24,7 @@ import stage.Stage
 class Opt : Stage<Ir<Warm>, Ir<Warm>> {
     companion object {
         private val PASSES = listOf<Pass>(
-            SillyPass()
+            ConstFold()
         )
     }
 
