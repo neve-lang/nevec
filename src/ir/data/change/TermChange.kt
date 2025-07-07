@@ -56,6 +56,27 @@ sealed class TermChange<T : TermLike> {
     }
 
     /**
+     * Represents a change that removes a specific [Op] in a term’s list of usages.
+     *
+     * @property terms The terms whose usages should be updated.
+     * @property oldUse The IR [Op] that should be removed from the uses.
+     */
+    data class Unuse<T : TermLike>(val terms: List<T>, val oldUse: Op<T>) : TermChange<T>() {
+        override fun applyTo(previous: Stats<T>): Stats<T> {
+            return previous
+                .uses
+                .filter { it != oldUse }
+                .let {
+                    Stats(previous.def, it)
+                }
+        }
+
+        override fun terms(): List<T> {
+            return terms
+        }
+    }
+
+    /**
      * Represents a change in a term’s definition.
      *
      * This [TermChange] can always only apply to a single term.
