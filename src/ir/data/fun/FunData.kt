@@ -4,6 +4,7 @@ import ir.data.change.Change
 import ir.data.term.TermData
 import ir.structure.block.Block
 import ir.structure.consts.IrConst
+import ir.structure.op.Op
 import ir.term.TermLike
 
 /**
@@ -36,11 +37,27 @@ data class FunData<T : TermLike>(
     }
 
     /**
-     * @return The [List] of [T] that maps the given [const] in [constDefMap], or an empty list if the entry does not
+     * @return The [List] of [T] that is mapped by the given [const] in [constDefMap], or an empty list if the entry does not
      * exist.
      */
     fun termsUsing(const: IrConst): List<T> {
         return constDefMap[const] ?: emptyList()
+    }
+
+    /**
+     * @return The definition of the given [T] term.
+     *
+     * If no definition is associated with the given term, `null` is returned instead.
+     */
+    fun defOf(term: T): Op<T>? {
+        return termData.statsOf(term)?.def
+    }
+
+    /**
+     * @return The list containing the [Ops][Op] in which the given [T] term is used.
+     */
+    fun usesOf(term: T): List<Op<T>> {
+        return termData.statsOf(term)?.uses ?: emptyList()
     }
 
     /**
