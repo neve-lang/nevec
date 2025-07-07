@@ -12,6 +12,7 @@ import ir.lower.Lower
 import ir.rendition.Rendition
 import nevec.result.Aftermath
 import nevec.result.Fail
+import opt.Opt
 import stage.travel.AliveTravel
 import parse.ParseStage
 import java.io.IOException
@@ -72,6 +73,8 @@ object Nevec {
 
         return AliveTravel(program, ctx)
             .proceedWith(::Lower)
+            .proceedWith(::Rendition)
+            .proceedWith(::Opt)
             .proceedWith(::Rendition)
             .finish()
             .into(Unit)
