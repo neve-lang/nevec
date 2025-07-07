@@ -9,7 +9,7 @@ typealias Twice<A> = Pair<A, A>
  * Coerces a [List] into a [Twice].
  *
  * @return A [Twice] with the two first elements of the list of the list’s length is greater or equal to 2.
- * @throws IllegalArguemntException if the list is smaller than that.
+ * @throws IllegalArgumentException if the list is smaller than that.
  */
 fun <T> List<T>.twice(): Twice<T> {
     if (isEmpty()) {
