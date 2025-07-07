@@ -73,9 +73,9 @@ object Nevec {
 
         return AliveTravel(program, ctx)
             .proceedWith(::Lower)
-            .proceedWith(::Rendition)
+            .ifEnabled(Options.SHOW_IR, ::Rendition)
             .proceedWith(::Opt)
-            .proceedWith(::Rendition)
+            .ifEnabled(Options.SHOW_OPT_IR, ::Rendition)
             .finish()
             .into(Unit)
     }
