@@ -1,5 +1,6 @@
 package ir.structure
 
+import ir.provide.IdSystem
 import ir.structure.block.Block
 import ir.structure.`fun`.IrFun
 import ir.term.TermLike
@@ -9,8 +10,11 @@ import ir.term.TermLike
  *
  * An IR module is simply made of a list of functions.
  *
- * This is, however, subject to change in the future—namely, when we implement constants.
+ * This is, however, subject to change in the future—namely, when we implement user-defined constants.
  *
  * @see Block
  */
-data class Ir<T : TermLike>(val functions: List<IrFun<T>>)
+data class Ir<T : TermLike>(
+    val functions: List<IrFun<T>>,
+    val ids: IdSystem
+)
