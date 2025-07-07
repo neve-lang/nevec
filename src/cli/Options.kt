@@ -46,7 +46,17 @@ enum class Options {
      * '0 -- free type
      * ```
      */
-    COMPILER_TYPES;
+    COMPILER_TYPES,
+
+    /**
+     * Displays the **unoptimized** IR dump to standard output after lowering the AST to IR.
+     */
+    SHOW_IR,
+
+    /**
+     * Displays the **optimized** IR dump to standard output after the optimization stage.
+     */
+    SHOW_OPT_IR;
 
     companion object {
         private val MAP = mapOf(
@@ -54,6 +64,8 @@ enum class Options {
             "--meta-asserts" to META_ASSERTS,
             "--check-only" to CHECK_ONLY,
             "--compiler-types" to COMPILER_TYPES,
+            "--show-ir" to SHOW_IR,
+            "--show-opt-ir" to SHOW_OPT_IR,
         )
 
         /**
