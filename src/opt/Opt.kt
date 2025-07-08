@@ -81,6 +81,6 @@ class Opt : Stage<Ir<Warm>, Ir<Warm>> {
         return if (ctx.isEnabled(Options.NO_OPT))
             3
         else
-            8
+            10
     }
 }
