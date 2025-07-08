@@ -10,6 +10,7 @@ import nevec.result.Aftermath
 import opt.canvas.Canvas
 import opt.passes.ConstFold
 import opt.passes.DeadTermElim
+import opt.passes.TablePropagation
 import opt.structure.id.OptId.*
 import opt.structure.pass.Pass
 import stage.Stage
@@ -28,7 +29,8 @@ class Opt : Stage<Ir<Warm>, Ir<Warm>> {
     companion object {
         private val PASSES = mapOf(
             CONST_FOLD to ConstFold(),
-            DEAD_TERM_ELIM to DeadTermElim()
+            TABLE_PROPAGATION to TablePropagation(),
+            DEAD_TERM_ELIM to DeadTermElim(),
         )
     }
 
@@ -60,7 +62,6 @@ class Opt : Stage<Ir<Warm>, Ir<Warm>> {
         }
 
         val newCanvas = canvas.changeless()
-
         val optimized = passes.fold(initial = newCanvas) {
                 acc, pass -> pass.apply(to = acc).finish()
         }
