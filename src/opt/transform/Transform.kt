@@ -38,6 +38,8 @@ sealed class Transform<S : IrStructure> {
     /**
      * Refers to a transform that *removes* the [IR structure][IrStructure] in question.
      *
+     * It performs a “removal” by replacing the old IR structure with a dummy equivalent.
+     *
      * This [Transform] is often used in elimination passes, such as dead term elimination.
      */
     data class Remove<S : IrStructure>(val changes: List<Change<Warm>>) : Transform<S>()
