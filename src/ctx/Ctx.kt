@@ -2,6 +2,7 @@ package ctx
 
 import cli.CliOptions
 import cli.Options
+import opt.structure.id.OptId
 
 /**
  * The Neve compiler’s **context object**.
@@ -11,7 +12,8 @@ import cli.Options
  * @property options The CLI options the program was launched with.
  */
 data class Ctx(
-    val options: CliOptions
+    val options: CliOptions,
+    val enabledOpts: List<OptId> = OptId.fromCliOptions(options)
 ) {
     companion object {
         /**
@@ -21,7 +23,9 @@ data class Ctx(
          * @see CliOptions.checkTest
          */
         fun checkTest(): Ctx {
-            return Ctx(CliOptions.checkTest())
+            return Ctx(
+                CliOptions.checkTest()
+            )
         }
     }
 
