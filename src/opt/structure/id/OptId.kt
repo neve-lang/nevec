@@ -11,5 +11,10 @@ enum class OptId {
     /**
      * The constant-folding optimization pass ID.
      */
-    CONST_FOLD
+    CONST_FOLD,
+
+    /**
+     * The dead-term elimination optimization pass ID.
+     */
+    DEAD_TERM_ELIM
 }
