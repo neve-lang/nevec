@@ -35,7 +35,8 @@ enum class OptId {
          */
         private val DISABLING_FLAGS = mapOf(
             NO_OPT to listOf(CONST_FOLD),
-            OPT_NO_CONST_FOLD to listOf(CONST_FOLD)
+            OPT_NO_CONST_FOLD to listOf(CONST_FOLD),
+            OPT_NO_TABLE_PROPAGATION to listOf(TABLE_PROPAGATION)
         )
 
         /**
