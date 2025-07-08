@@ -12,7 +12,7 @@ typealias Twice<A> = Pair<A, A>
  * @throws IllegalArgumentException if the list is smaller than that.
  */
 fun <T> List<T>.twice(): Twice<T> {
-    if (isEmpty()) {
+    if (size < 2) {
         throw IllegalArgumentException("List has too few elements to be turned into a `Twice` (min. 2)")
     }
 
