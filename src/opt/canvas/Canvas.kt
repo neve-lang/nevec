@@ -25,10 +25,10 @@ import opt.transform.Transform
  * @property produced The produced [IrFun] after the Canvas transformations.
  */
 data class Canvas(
+    val changes: List<Change<Warm>>,
     private val model: IrFun<Warm>,
     private val produced: IrFun<Warm>,
     private val ids: IdSystem,
-    private val changes: List<Change<Warm>>
 ) {
     companion object {
         /**
@@ -36,19 +36,52 @@ data class Canvas(
          */
         fun from(model: IrFun<Warm>, ids: IdSystem): Canvas {
             return Canvas(
+                changes = emptyList(),
                 model,
                 produced = model,
                 ids,
-                changes = emptyList()
             )
         }
     }
 
     /**
-     * @return The produced [IrFun] after all optimizations took place.
+     * @return The [Canvas]’s model.
      */
-    fun extract(): IrFun<Warm> {
-        return produced
+    fun finalized(): IrFun<Warm> {
+        return model
+    }
+
+    /**
+     * @return Whether this [Canvas]’s list of changes [isEmpty].
+     */
+    fun isUnchanged(): Boolean {
+        return changes.isEmpty()
+    }
+
+    /**
+     * @return A quasi-copy of this [Canvas] where its list of changes is empty.
+     */
+    fun changeless(): Canvas {
+        return copy(changes = emptyList())
+    }
+
+    /**
+     * “Finishes” an optimization pass, by providing a copy of this [Canvas] with the following modifications:
+     *
+     * - All [Op.Dummy] IR operations are removed.
+     * - The [model] now corresponds to the [IrFun] that was [produced] by the [Canvas].
+     */
+    fun finish(): Canvas {
+        val produced = extract()
+        val blocks = produced.blocks.map {
+            block -> block.copy(
+                ops = block.ops.filter { it !is Op.Dummy }
+            )
+        }
+
+        val finished = produced.copy(blocks = blocks)
+
+        return copy(model = finished)
     }
 
     /**
@@ -86,17 +119,32 @@ data class Canvas(
         val nthOp = nthModelOp(n = iteration)
         val transform = callback(ids, produced.funData, nthOp)
 
-        return applyTransform(transform, iteration)
+        return applyTransform(nthOp.term(), transform, iteration)
     }
 
-    private fun applyTransform(transform: Transform<Op<Warm>>, iteration: Int): Pair<IrFun<Warm>, List<Change<Warm>>> {
+    private fun applyTransform(
+        term: Warm,
+        transform: Transform<Op<Warm>>,
+        iteration: Int
+    ): Pair<IrFun<Warm>, List<Change<Warm>>> {
         return when (transform) {
             is Transform.Retain -> produced
-            is Transform.Replace -> applyReplace(transform, iteration)
+
+            is Transform.Replace -> applyModification(
+                transform, replacement = listOf(transform.new), iteration
+            )
+
+            is Transform.Remove -> applyModification(
+                transform, replacement = listOf(Op.Dummy(term)), iteration
+            )
         } to transform.changes()
     }
 
-    private fun applyReplace(transform: Transform.Replace<Op<Warm>>, iteration: Int): IrFun<Warm> {
+    private fun applyModification(
+        transform: Transform<Op<Warm>>,
+        replacement: List<Op<Warm>>,
+        iteration: Int
+    ): IrFun<Warm> {
         val funData = applyChanges(transform.changes(), original = produced.funData)
 
         val startingIndices = produced
@@ -110,7 +158,7 @@ data class Canvas(
             if (iteration !in start..<end)
                 block
             else
-                replacementCopy(block, newOp = transform.new, at = iteration - start)
+                replacementCopy(block, replacement, at = iteration - start)
         }
 
         return IrFun(
@@ -120,9 +168,9 @@ data class Canvas(
         )
     }
 
-    private fun replacementCopy(previousBlock: Block<Warm>, newOp: Op<Warm>, at: Int): Block<Warm> {
+    private fun replacementCopy(previousBlock: Block<Warm>, replacement: List<Op<Warm>>, at: Int): Block<Warm> {
         val opList = previousBlock.ops.let {
-            ops -> ops.take(at) + newOp + ops.drop(at + 1)
+            ops -> ops.take(at) + replacement + ops.drop(at + 1)
         }
 
         return Block(previousBlock.id, previousBlock.desiredName, opList)
@@ -144,5 +192,9 @@ data class Canvas(
 
     private fun flattenedModel(): List<Op<Warm>> {
         return model.blocks.map { it.ops }.flatten()
+    }
+
+    private fun extract(): IrFun<Warm> {
+        return produced
     }
 }
