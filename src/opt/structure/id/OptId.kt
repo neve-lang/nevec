@@ -17,6 +17,13 @@ enum class OptId {
     CONST_FOLD,
 
     /**
+     * The table propagation optimization pass ID.
+     *
+     * @see opt.passes.TablePropagation
+     */
+    TABLE_PROPAGATION,
+
+    /**
      * The dead-term elimination optimization pass ID.
      */
     DEAD_TERM_ELIM;
