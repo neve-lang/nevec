@@ -1,5 +1,8 @@
 package opt.structure.id
 
+import cli.CliOptions
+import cli.Options.*
+
 /**
  * Represents an optimization pass’s ID.
  *
@@ -16,5 +19,31 @@ enum class OptId {
     /**
      * The dead-term elimination optimization pass ID.
      */
-    DEAD_TERM_ELIM
+    DEAD_TERM_ELIM;
+
+    companion object {
+        /**
+         * Maps each [Options][cli.Options] to a set of [OptIds][OptId] that are to be excluded if the CLI option is
+         * enabled.
+         */
+        private val DISABLING_FLAGS = mapOf(
+            NO_OPT to listOf(CONST_FOLD),
+            OPT_NO_CONST_FOLD to listOf(CONST_FOLD)
+        )
+
+        /**
+         * @return A list of [OptIds][OptId] that are derived from the given [CliOptions] enabled.
+         *
+         * For example:
+         *
+         * - If the user has the `--no-opt` flag, most optimizations are disabled.
+         */
+        fun fromCliOptions(options: CliOptions): List<OptId> {
+            val disabled = options.enabledOptions().mapNotNull {
+                DISABLING_FLAGS[it]
+            }.flatten()
+
+            return OptId.entries - disabled.toSet()
+        }
+    }
 }
