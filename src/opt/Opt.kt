@@ -1,5 +1,6 @@
 package opt
 
+import cli.Options
 import ctx.Ctx
 import ir.provide.IdSystem
 import ir.structure.Ir
@@ -77,7 +78,9 @@ class Opt : Stage<Ir<Warm>, Ir<Warm>> {
     }
 
     private fun repetitionThreshold(ctx: Ctx): Int {
-        // for now, return 3 by default.
-        return 3
+        return if (ctx.isEnabled(Options.NO_OPT))
+            3
+        else
+            8
     }
 }
