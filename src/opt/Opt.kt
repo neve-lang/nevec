@@ -8,7 +8,7 @@ import ir.term.warm.Warm
 import nevec.result.Aftermath
 import opt.canvas.Canvas
 import opt.passes.ConstFold
-import opt.structure.pass.Pass
+import opt.passes.DeadTermElim
 import stage.Stage
 
 /**
@@ -23,8 +23,9 @@ import stage.Stage
  */
 class Opt : Stage<Ir<Warm>, Ir<Warm>> {
     companion object {
-        private val PASSES = listOf<Pass>(
-            ConstFold()
+        private val PASSES = listOf(
+            ConstFold(),
+            DeadTermElim()
         )
     }
 
@@ -42,7 +43,7 @@ class Opt : Stage<Ir<Warm>, Ir<Warm>> {
             Canvas.from(irFun, ids),
             ctx,
             repetition = 0
-        ).extract()
+        ).finalized()
     }
 
     private fun repeatedOptimization(canvas: Canvas, ctx: Ctx, repetition: Int): Canvas {
@@ -50,7 +51,12 @@ class Opt : Stage<Ir<Warm>, Ir<Warm>> {
             return canvas
         }
 
-        val optimized = PASSES.fold(initial = canvas) { acc, pass -> pass.apply(to = acc) }
+        if (repetition > 0 && canvas.isUnchanged()) {
+            return canvas
+        }
+
+        val newCanvas = canvas.changeless()
+        val optimized = PASSES.fold(initial = newCanvas) { acc, pass -> pass.apply(to = acc).finish() }
         return repeatedOptimization(
             optimized,
             ctx,
