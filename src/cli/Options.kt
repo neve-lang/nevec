@@ -62,7 +62,12 @@ enum class Options {
     /**
      * Disables the constant folding IR optimization.
      */
-    OPT_NO_CONST_FOLD;
+    OPT_NO_CONST_FOLD,
+
+    /**
+     * Disables the table propagation IR optimization.
+     */
+    OPT_NO_TABLE_PROPAGATION;
 
     companion object {
         private val MAP = mapOf(
@@ -72,7 +77,8 @@ enum class Options {
             "--compiler-types" to COMPILER_TYPES,
             "--show-ir" to SHOW_IR,
             "--show-opt-ir" to SHOW_OPT_IR,
-            "--opt-no-const-fold" to OPT_NO_CONST_FOLD
+            "--opt-no-const-fold" to OPT_NO_CONST_FOLD,
+            "--opt-no-table-propagation" to OPT_NO_TABLE_PROPAGATION
         )
 
         /**
