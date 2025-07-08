@@ -9,6 +9,8 @@ import nevec.result.Aftermath
 import opt.canvas.Canvas
 import opt.passes.ConstFold
 import opt.passes.DeadTermElim
+import opt.structure.id.OptId.*
+import opt.structure.pass.Pass
 import stage.Stage
 
 /**
@@ -23,9 +25,9 @@ import stage.Stage
  */
 class Opt : Stage<Ir<Warm>, Ir<Warm>> {
     companion object {
-        private val PASSES = listOf(
-            ConstFold(),
-            DeadTermElim()
+        private val PASSES = mapOf(
+            CONST_FOLD to ConstFold(),
+            DEAD_TERM_ELIM to DeadTermElim()
         )
     }
 
@@ -42,11 +44,12 @@ class Opt : Stage<Ir<Warm>, Ir<Warm>> {
         return repeatedOptimization(
             Canvas.from(irFun, ids),
             ctx,
+            passes = enabledPasses(ctx),
             repetition = 0
         ).finalized()
     }
 
-    private fun repeatedOptimization(canvas: Canvas, ctx: Ctx, repetition: Int): Canvas {
+    private fun repeatedOptimization(canvas: Canvas, ctx: Ctx, passes: List<Pass>, repetition: Int): Canvas {
         if (repetition == repetitionThreshold(ctx)) {
             return canvas
         }
@@ -56,12 +59,21 @@ class Opt : Stage<Ir<Warm>, Ir<Warm>> {
         }
 
         val newCanvas = canvas.changeless()
-        val optimized = PASSES.fold(initial = newCanvas) { acc, pass -> pass.apply(to = acc).finish() }
+
+        val optimized = passes.fold(initial = newCanvas) {
+                acc, pass -> pass.apply(to = acc).finish()
+        }
+
         return repeatedOptimization(
             optimized,
             ctx,
+            passes,
             repetition + 1
         )
+    }
+
+    private fun enabledPasses(ctx: Ctx): List<Pass> {
+        return ctx.enabledOpts.mapNotNull { PASSES[it] }
     }
 
     private fun repetitionThreshold(ctx: Ctx): Int {
