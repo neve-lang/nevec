@@ -74,6 +74,12 @@ fun List<String>.indent(): List<String> {
  * @return a new list with the two new first and last elements modified as described.
  */
 fun List<String>.wrappedIn(begin: String, end: String): List<String> {
+    if (size == 1) {
+        return first().prefixWith(begin).suffixWith(end).let {
+            listOf(it)
+        }
+    }
+
     val first = firstOrNull() ?: ""
     val last = lastOrNull() ?: ""
 
