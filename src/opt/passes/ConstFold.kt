@@ -251,6 +251,9 @@ class ConstFold : Pass {
         }
 
         val folded = foldShowFormat((operand as Op.Const).const)
+            // first trim the quotes if it's a string...
+            .trimQuotesAround()
+            // ...  then wrap it in quotes so the quotes are there if `operand` is not a string
             .wrappedInQuotes()
             .let { IrConst.OfStr(it) }
 
@@ -293,7 +296,7 @@ class ConstFold : Pass {
         return when (const) {
             is IrConst.OfInt -> const.value.toString()
             is IrConst.OfFloat -> String.format("%.14g", const.value)
-            is IrConst.OfStr -> const.value.trimQuotesAround()
+            is IrConst.OfStr -> const.value
             is IrConst.OfBool -> const.value.toString()
             is IrConst.OfNil -> "nil"
             is IrConst.OfEmptyTable -> "[:]"
@@ -303,7 +306,7 @@ class ConstFold : Pass {
 
     private fun foldTableShowFormat(table: IrConst.OfTable): String {
         val keys = table.keys.map(::foldShowFormat)
-        val vals = table.keys.map(::foldShowFormat)
+        val vals = table.vals.map(::foldShowFormat)
 
         return (keys zip vals)
             .map { it.infixWith(": ") }
