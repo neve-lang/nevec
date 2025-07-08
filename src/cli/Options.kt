@@ -56,7 +56,12 @@ enum class Options {
     /**
      * Displays the **optimized** IR dump to standard output after the optimization stage.
      */
-    SHOW_OPT_IR;
+    SHOW_OPT_IR,
+
+    /**
+     * Disables the constant folding IR optimization.
+     */
+    OPT_NO_CONST_FOLD;
 
     companion object {
         private val MAP = mapOf(
@@ -66,6 +71,7 @@ enum class Options {
             "--compiler-types" to COMPILER_TYPES,
             "--show-ir" to SHOW_IR,
             "--show-opt-ir" to SHOW_OPT_IR,
+            "--opt-no-const-fold" to OPT_NO_CONST_FOLD
         )
 
         /**
