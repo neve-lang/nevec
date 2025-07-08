@@ -81,7 +81,12 @@ data class Canvas(
 
         val finished = produced.copy(blocks = blocks)
 
-        return copy(model = finished)
+        return Canvas(
+            changes,
+            model = finished,
+            produced = finished,
+            ids
+        )
     }
 
     /**
