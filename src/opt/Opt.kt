@@ -9,6 +9,7 @@ import ir.term.warm.Warm
 import nevec.result.Aftermath
 import opt.canvas.Canvas
 import opt.passes.ConstFold
+import opt.passes.ConstReuse
 import opt.passes.DeadTermElim
 import opt.passes.TablePropagation
 import opt.structure.id.OptId.*
@@ -31,6 +32,7 @@ class Opt : Stage<Ir<Warm>, Ir<Warm>> {
             CONST_FOLD to ConstFold(),
             TABLE_PROPAGATION to TablePropagation(),
             DEAD_TERM_ELIM to DeadTermElim(),
+            CONST_REUSE to ConstReuse()
         )
     }
 
