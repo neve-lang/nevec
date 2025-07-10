@@ -10,6 +10,7 @@ enum class Options {
      * Optimizations that *will remain* include:
      *  - Constant propagation
      *  - Dead term elimination
+     *  - Constant reuse
      */
     NO_OPT,
 
@@ -67,7 +68,12 @@ enum class Options {
     /**
      * Disables the table propagation IR optimization.
      */
-    OPT_NO_TABLE_PROPAGATION;
+    OPT_NO_TABLE_PROPAGATION,
+
+    /**
+     * Disables the constant reuse IR optimization.
+     */
+    OPT_NO_CONST_REUSE;
 
     companion object {
         private val MAP = mapOf(
@@ -78,7 +84,8 @@ enum class Options {
             "--show-ir" to SHOW_IR,
             "--show-opt-ir" to SHOW_OPT_IR,
             "--opt-no-const-fold" to OPT_NO_CONST_FOLD,
-            "--opt-no-table-propagation" to OPT_NO_TABLE_PROPAGATION
+            "--opt-no-table-propagation" to OPT_NO_TABLE_PROPAGATION,
+            "--opt-no-const-reuse" to OPT_NO_CONST_REUSE
         )
 
         /**
