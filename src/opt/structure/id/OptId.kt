@@ -24,6 +24,13 @@ enum class OptId {
     TABLE_PROPAGATION,
 
     /**
+     * The constant reuse optimization pass ID.
+     *
+     * @see opt.passes.ConstReuse
+     */
+    CONST_REUSE,
+
+    /**
      * The dead-term elimination optimization pass ID.
      */
     DEAD_TERM_ELIM;
@@ -36,7 +43,8 @@ enum class OptId {
         private val DISABLING_FLAGS = mapOf(
             NO_OPT to listOf(CONST_FOLD),
             OPT_NO_CONST_FOLD to listOf(CONST_FOLD),
-            OPT_NO_TABLE_PROPAGATION to listOf(TABLE_PROPAGATION)
+            OPT_NO_TABLE_PROPAGATION to listOf(TABLE_PROPAGATION),
+            OPT_NO_CONST_REUSE to listOf(CONST_REUSE)
         )
 
         /**
