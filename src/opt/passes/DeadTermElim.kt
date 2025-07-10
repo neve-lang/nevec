@@ -1,5 +1,6 @@
 package opt.passes
 
+import ir.data.change.Change
 import ir.data.change.TermChange
 import ir.structure.op.Op
 import ir.term.warm.Warm
@@ -21,17 +22,24 @@ class DeadTermElim : Pass {
     override fun apply(to: Canvas): Canvas {
         return to.eachOp { _, data, op ->
             if (op.isDefinition() && data.usesOf(op.term()).isEmpty())
-                removeTerm(op.term())
+                removeTerm(op)
             else
                 Transform.Retain(op)
         }
     }
 
-    private fun removeTerm(term: Warm): Transform.Remove<Op<Warm>> {
-        val changes = TermChange.Def(term, null)
-            .wrap()
-            .let { listOf(it) }
+    private fun removeTerm(op: Op<Warm>): Transform.Remove<Op<Warm>> {
+        val changes = listOf(
+            TermChange.Def(op.term(), null).wrap(),
+        ) + unconstChange(op)
 
         return Transform.Remove(changes)
+    }
+
+    private fun unconstChange(op: Op<Warm>): List<Change<Warm>> {
+        return if (op is Op.Const)
+            listOf(Change.Unconst(op.const, op.term()))
+        else
+            emptyList()
     }
 }
