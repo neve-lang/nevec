@@ -34,7 +34,7 @@ sealed class Change<T : TermLike> {
     }
 
     /**
-     * Applies a change in the [FunData]’s map of [IrConsts][IrConst].
+     * Inserts an additional term in the [FunData]’s map of [IrConsts][IrConst].
      *
      * @property const The [IrConst] to be modified.
      * @property term The new additional term to be associated with [const].
@@ -45,6 +45,22 @@ sealed class Change<T : TermLike> {
 
             return previous + FunData(
                 constDefMap = mapOf(const to previousTerms + term)
+            )
+        }
+    }
+
+    /**
+     * Removes the specified term from the [FunData]’s map of [IrConsts][IrConst].
+     *
+     * @property const The [IrConst] to be modified.
+     * @property term The term to be removed.
+     */
+    data class Unconst<T : TermLike>(val const: IrConst, val term: T) : Change<T>() {
+        override fun applyTo(previous: FunData<T>): FunData<T> {
+            val previousTerms = previous.termsUsing(const)
+
+            return previous.copy(
+                constDefMap = previous.constDefMap + mapOf(const to previousTerms - term)
             )
         }
     }
