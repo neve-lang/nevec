@@ -85,7 +85,7 @@ class TablePropagation : Pass {
 
         return Transform.Replace(
             new = newOp,
-            changes = Change.deriveFrom(newOp)
+            changes = Change.deriveFrom(newOp) + tablePropagateConstChange(op)
         )
     }
 
@@ -113,6 +113,10 @@ class TablePropagation : Pass {
             .let { listOf(it) }
 
         return Transform.Remove(changes)
+    }
+
+    private fun tablePropagateConstChange(op: Op.Const<Warm>): Change<Warm> {
+        return Change.Unconst(op.const, op.term())
     }
 
     private fun keysAndVals(op: Op.Const<Warm>, data: FunData<Warm>): Twice<List<IrConst>> {
