@@ -32,10 +32,27 @@ fun <A> Pair<A, A>.any(predicate: (A) -> Boolean): Boolean {
 }
 
 /**
+ * @return Whether no member of [this] applied to [predicate] is true.
+ */
+fun <A> Pair<A, A>.none(predicate: (A) -> Boolean): Boolean {
+    return !any(predicate)
+}
+
+/**
  * @return Whether both members of [this] applied to [predicate] are true.
  */
 fun <A> Pair<A, A>.all(predicate: (A) -> Boolean): Boolean {
     return predicate(first) && predicate(second)
+}
+
+/**
+ * @return A copy of this [Pair] where:
+ *
+ * - The first element is the second,
+ * - The second element is the first.
+ */
+fun <A, B> Pair<A, B>.flip(): Pair<B, A> {
+    return second to first
 }
 
 /**

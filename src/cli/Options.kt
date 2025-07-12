@@ -48,32 +48,7 @@ enum class Options {
      * '0 -- free type
      * ```
      */
-    COMPILER_TYPES,
-
-    /**
-     * Displays the **unoptimized** IR dump to standard output after lowering the AST to IR.
-     */
-    SHOW_IR,
-
-    /**
-     * Displays the **optimized** IR dump to standard output after the optimization stage.
-     */
-    SHOW_OPT_IR,
-
-    /**
-     * Disables the constant folding IR optimization.
-     */
-    OPT_NO_CONST_FOLD,
-
-    /**
-     * Disables the table propagation IR optimization.
-     */
-    OPT_NO_TABLE_PROPAGATION,
-
-    /**
-     * Disables the constant reuse IR optimization.
-     */
-    OPT_NO_CONST_REUSE;
+    COMPILER_TYPES;
 
     companion object {
         private val MAP = mapOf(
@@ -81,11 +56,6 @@ enum class Options {
             "--meta-asserts" to META_ASSERTS,
             "--check-only" to CHECK_ONLY,
             "--compiler-types" to COMPILER_TYPES,
-            "--show-ir" to SHOW_IR,
-            "--show-opt-ir" to SHOW_OPT_IR,
-            "--opt-no-const-fold" to OPT_NO_CONST_FOLD,
-            "--opt-no-table-propagation" to OPT_NO_TABLE_PROPAGATION,
-            "--opt-no-const-reuse" to OPT_NO_CONST_REUSE
         )
 
         /**
