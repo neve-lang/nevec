@@ -9,6 +9,8 @@ enum class Options {
      *
      * Optimizations that *will remain* include:
      *  - Constant propagation
+     *  - Dead term elimination
+     *  - Constant reuse
      */
     NO_OPT,
 

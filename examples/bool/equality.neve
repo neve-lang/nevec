@@ -1,8 +1,8 @@
 fun main
-  puts true == true    # expect: true
-  puts true == false   # expect: false
-  puts false == true   # expect: false
-  puts false == false  # expect: true
+  puts true == true    -- expect: true
+  puts true == false   -- expect: false
+  puts false == true   -- expect: false
+  puts false == false  -- expect: true
 
   -- Not equal to other types.
   -- Those should be errors.
@@ -12,16 +12,16 @@ fun main
   puts false == "false"
   puts false == ""
 
-  puts true != true    # expect: false
-  puts true != false   # expect: true
-  puts false != true   # expect: true
-  puts false != false  # expect: false
+  puts true != true    -- expect: false
+  puts true != false   -- expect: true
+  puts false != true   -- expect: true
+  puts false != false  -- expect: false
 
   -- Not equal to other types.
   -- Those should be errors.
-  puts true != 1        # expect: true
-  puts false != 0       # expect: true
-  puts true != "true"   # expect: true
-  puts false != "false" # expect: true
-  puts false != ""      # expect: true
+  puts true != 1        -- expect: true
+  puts false != 0       -- expect: true
+  puts true != "true"   -- expect: true
+  puts false != "false" -- expect: true
+  puts false != ""      -- expect: true
 end

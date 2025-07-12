@@ -27,7 +27,7 @@ rec NthToggle
 end  
 
 idea for NthToggle
-  fun NthToggle.new(stat: Bool, max_count: Int)
+  fun NthToggle.new(state: Bool, max_count: Int)
     NthToggle with
       parent = Toggle.new state
       count = 0
@@ -57,7 +57,7 @@ end
 fun main
   let start = clock
 
-  let toggle = Toggle.new true
+  let toggle = Toggle.new state: true
   puts toggle_n_times toggle
 
   let ntoggle = NthToggle.new(true, 3)

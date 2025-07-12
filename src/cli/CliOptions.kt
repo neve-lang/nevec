@@ -36,7 +36,14 @@ data class CliOptions(private val options: List<Options>) {
     }
 
     /**
-     * @return whether [option] is enabled.
+     * @return The list of enabled [Options].
+     */
+    fun enabledOptions(): List<Options> {
+        return options
+    }
+
+    /**
+     * @return Whether [option] is enabled.
      */
     fun isEnabled(option: Options): Boolean {
         return option in options

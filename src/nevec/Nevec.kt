@@ -1,14 +1,11 @@
 package nevec
 
-import ast.hierarchy.program.Program
 import check.Check
 import cli.CliArgs
 import cli.CliOptions
-import cli.Options
 import ctx.Ctx
 import err.report.Report
 import file.contents.Src
-import ir.lower.Lower
 import nevec.result.Aftermath
 import nevec.result.Fail
 import stage.travel.AliveTravel
@@ -53,24 +50,6 @@ object Nevec {
         return AliveTravel(src, ctx)
             .proceedWith(::ParseStage)
             .proceedWith(::Check)
-            .finish()
-            .let { aftermath ->
-                if (ctx.isEnabled(Options.CHECK_ONLY))
-                    aftermath.into(Unit)
-                else
-                    lowerStage(aftermath, ctx)
-            }
-    }
-
-    private fun lowerStage(aftermath: Aftermath<Program>, ctx: Ctx): Aftermath<Unit> {
-        if (aftermath.isFail()) {
-            return aftermath.into(Unit)
-        }
-
-        val program = aftermath.cure()!!.result
-
-        return AliveTravel(program, ctx)
-            .proceedWith(::Lower)
             .finish()
             .into(Unit)
     }
