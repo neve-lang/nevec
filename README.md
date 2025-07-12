@@ -9,27 +9,15 @@ makes your code predictable and fun to work with.
 
 ## Development
 
-Currently, Neve is being rewritten from its [previous 
-Python implementation](https://github.com/neve-lang/nevec-py-archive)
-to a more robust Kotlin implementation.  We still have 
-the following tasks to complete before the new Kotlin 
-implementation is fully compliant with the previous 
-Python one:
+I’ve recently decided to ditch the idea of implementing everything at once—I was
+genuinely overwhelmed.  It’s completely true that I’ve made a lot of progress 
+with the IR and the optimization stage, but it just constantly felt like things
+kept getting more complex, and it was overwhelming to know that I still had so 
+many things to implement.
 
-- [ ] Implement the optimization phase.
-- [ ] Implement the register allocation phase.
-- [ ] Output `.geadasm` human-readable bytecode.
-- [ ] Implement the `geadasm` textual bytecode assembler—should be its own project.
-- [ ] Test the new implementation.
-
-Once these four tasks are complete, we will take a significant
-leap in Neve’s design—that is, **adding support for native 
-compilation using LLVM**.  
-
-Similarly to OCaml, Neve will still provide a VM interpreter for `.geada` bytecode,
-which will be invaluable for development environments and a more seamless debugging experience.
-However, a project’s final version may be compiled into a native binary, leveraging the LLVM 
-toolchain.
-
-Users will still have the choice to opt out of the native compilation for their projects, in
-case they intend their program to run on the Neve VM regardless.
+And so I’ve decided to do things differently—instead of Neve code running
+on the VM *right away*, I’ll first **transpile to Haskell** as a **stepping
+stone**, so Neve code will compile to a Haskell project.  Things will stay 
+that way, until I finally decide to self-host Neve—this is where I’ll
+finally implement the VM and LLVM support, as Neve’s design will be much more
+stable once that happens.
