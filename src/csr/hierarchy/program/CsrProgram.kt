@@ -1,5 +1,5 @@
 package csr.hierarchy.program
 
-import ast.hierarchy.decl.Decl
+import ast.hierarchy.top.Top
 
-data class CsrProgram(val decls: List<Decl>)
+data class CsrProgram(val decls: List<Top>)
