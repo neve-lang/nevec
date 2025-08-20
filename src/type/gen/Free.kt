@@ -10,7 +10,6 @@ import util.extension.prefixWith
 /**
  * Describes a **free type variable**, i.e. a type variable that wasn’t generalized yet in Hindley-Milner parlance.
  *
- *
  * @property id The free type variable’s id.
  * @property level The free type variable’s level.
  */
