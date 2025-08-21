@@ -55,10 +55,29 @@ class Transpile : Stage<CsrProgram, String> {
     }
 
     private fun visitExpr(expr: CsrExpr) = when (expr) {
+        is CsrExpr.Print -> visitPrint(expr)
         is CsrExpr.Parens -> visitParens(expr)
         is CsrExpr.OfUnOp -> visitUnOp(expr.unOp)
         is CsrExpr.OfLit -> visitLit(expr.lit)
         is CsrExpr.OfBinOp -> visitBinOp(expr.binOp)
+    }
+
+    private fun visitPrint(print: CsrExpr.Print) {
+        builder.append(when (print.expr.type()) {
+            PreludeTypes.INT -> "Printf.printf \"%d\" "
+            PreludeTypes.FLOAT -> "Printf.printf \"%.14d\" "
+            PreludeTypes.STR -> "print_endline "
+            PreludeTypes.BOOL -> "Printf.printf \"%b\" "
+
+            // silly emulation
+            PreludeTypes.NIL -> "print_endline \"nil\" "
+
+            else -> throw UnsupportedOperationException("Unsupported type in `Transpile.visitPrint`")
+        })
+
+        if (!print.expr.type().isSame(PreludeTypes.NIL)) {
+            visitExpr(print.expr)
+        }
     }
 
     private fun visitParens(parens: CsrExpr.Parens) {
