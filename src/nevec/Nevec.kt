@@ -6,10 +6,12 @@ import cli.CliOptions
 import ctx.Ctx
 import err.report.Report
 import file.contents.Src
+import lower.Lower
 import nevec.result.Aftermath
 import nevec.result.Fail
 import stage.travel.AliveTravel
 import parse.ParseStage
+import transpile.Transpile
 import java.io.IOException
 
 /**
@@ -50,6 +52,8 @@ object Nevec {
         return AliveTravel(src, ctx)
             .proceedWith(::ParseStage)
             .proceedWith(::Check)
+            .proceedWith(::Lower)
+            .proceedWith(::Transpile)
             .finish()
             .into(Unit)
     }
