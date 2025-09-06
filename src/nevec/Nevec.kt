@@ -12,6 +12,7 @@ import nevec.result.Fail
 import stage.travel.AliveTravel
 import parse.ParseStage
 import transpile.Transpile
+import write.Out
 import java.io.IOException
 
 /**
@@ -54,6 +55,7 @@ object Nevec {
             .proceedWith(::Check)
             .proceedWith(::Lower)
             .proceedWith(::Transpile)
+            .proceedWith(::Out)
             .finish()
             .into(Unit)
     }
