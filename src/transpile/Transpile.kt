@@ -64,10 +64,10 @@ class Transpile : Stage<CsrProgram, String> {
 
     private fun visitPrint(print: CsrExpr.Print) {
         builder.append(when (print.expr.type()) {
-            PreludeTypes.INT -> "Printf.printf \"%d\" "
-            PreludeTypes.FLOAT -> "Printf.printf \"%.14d\" "
+            PreludeTypes.INT -> "Printf.printf \"%d\\n\" "
+            PreludeTypes.FLOAT -> "Printf.printf \"%.14g\\n\" "
             PreludeTypes.STR -> "print_endline "
-            PreludeTypes.BOOL -> "Printf.printf \"%b\" "
+            PreludeTypes.BOOL -> "Printf.printf \"%b\\n\" "
 
             // silly emulation
             PreludeTypes.NIL -> "print_endline \"nil\" "
@@ -76,7 +76,9 @@ class Transpile : Stage<CsrProgram, String> {
         })
 
         if (!print.expr.type().isSame(PreludeTypes.NIL)) {
-            visitExpr(print.expr)
+            parenthesized {
+                visitExpr(print.expr)
+            }
         }
     }
 
@@ -112,7 +114,7 @@ class Transpile : Stage<CsrProgram, String> {
     }
 
     private fun visitStr(str: CsrLit.CsrStr) {
-        builder.append("\"$str\"")
+        builder.append(str.value)
     }
 
     private fun visitNil(nil: CsrLit.CsrNil) {
