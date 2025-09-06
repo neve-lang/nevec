@@ -14,7 +14,7 @@ sealed class CsrExpr {
      *
      * [LetUnit] is useful for addressing cases where a body has more than one statement in the Neve source code.
      */
-    data class LetUnit(val discarded: CsrExpr) : CsrExpr()
+    data class LetUnit(val expr: CsrExpr) : CsrExpr()
 
     data class In(val left: CsrExpr, val right: CsrExpr) : CsrExpr()
 
@@ -26,6 +26,7 @@ sealed class CsrExpr {
         is Print -> expr.type()
         is Parens -> expr.type()
         is LetUnit -> expr.type()
+        is In -> right.type()
         is OfUnOp -> type
         is OfBinOp -> type
         is OfLit -> type
