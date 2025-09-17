@@ -21,6 +21,7 @@ import type.prelude.PreludeTypes
  */
 class Transpile : Stage<CsrProgram, String> {
     private val builder = StringBuilder()
+    private var indentationLevel = 0;
 
     override fun perform(data: CsrProgram, ctx: Ctx): Aftermath<String> {
         data.decls.forEach(::visitTop)
@@ -36,18 +37,18 @@ class Transpile : Stage<CsrProgram, String> {
     }
 
     private fun visitMainFun(mainFun: CsrTop.MainFun) {
-        builder.appendLine("let main () =")
+        writeLine("let main () =")
 
         indent {
             visitExpr(mainFun.body)
         }
 
-        builder.appendLine()
-        builder.appendLine("let () = main ()")
+        blankLine()
+        writeLine("let () = main ()")
     }
 
     private fun visitFun(topFun: CsrTop.Fun) {
-        builder.appendLine("let ${topFun.name} () =")
+        writeLine("let ${topFun.name} () =")
 
         indent {
             visitExpr(topFun.body)
@@ -57,13 +58,15 @@ class Transpile : Stage<CsrProgram, String> {
     private fun visitExpr(expr: CsrExpr) = when (expr) {
         is CsrExpr.Print -> visitPrint(expr)
         is CsrExpr.Parens -> visitParens(expr)
+        is CsrExpr.LetUnit -> visitLetUnit(expr)
+        is CsrExpr.In -> visitIn(expr)
         is CsrExpr.OfUnOp -> visitUnOp(expr.unOp)
         is CsrExpr.OfLit -> visitLit(expr.lit)
         is CsrExpr.OfBinOp -> visitBinOp(expr.binOp)
     }
 
     private fun visitPrint(print: CsrExpr.Print) {
-        builder.append(when (print.expr.type()) {
+        write(when (print.expr.type()) {
             PreludeTypes.INT -> "Printf.printf \"%d\\n\" "
             PreludeTypes.FLOAT -> "Printf.printf \"%.14g\\n\" "
             PreludeTypes.STR -> "print_endline "
@@ -88,6 +91,18 @@ class Transpile : Stage<CsrProgram, String> {
         }
     }
 
+    private fun visitLetUnit(letUnit: CsrExpr.LetUnit) {
+        prefixWith("let () = ") {
+            visitExpr(letUnit.expr)
+        }
+    }
+
+    private fun visitIn(inNode: CsrExpr.In) {
+        visitExpr(inNode.left)
+        writeLine(" in")
+        visitExpr(inNode.right)
+    }
+
     private fun visitUnOp(unOp: CsrUnOp) = when (unOp) {
         is CsrUnOp.Neg -> visitNeg(unOp)
         is CsrUnOp.Not -> visitNot(unOp)
@@ -102,34 +117,34 @@ class Transpile : Stage<CsrProgram, String> {
     }
 
     private fun visitInt(int: CsrLit.CsrInt) {
-        builder.append(int.value)
+        write(int.value)
     }
 
     private fun visitFloat(float: CsrLit.CsrFloat) {
-        builder.append(float.value)
+        write(float.value)
     }
 
     private fun visitBool(bool: CsrLit.CsrBool) {
-        builder.append(bool.value)
+        write(bool.value)
     }
 
     private fun visitStr(str: CsrLit.CsrStr) {
-        builder.append(str.value)
+        write(str.value)
     }
 
     private fun visitNil(nil: CsrLit.CsrNil) {
-        builder.append("None")
+        write("None")
     }
 
     private fun visitNeg(neg: CsrUnOp.Neg) {
         val dot = dotIfFloatingPointArithmetic(neg.operand.type())
-        builder.append("~-$dot")
+        write("~-$dot")
 
         visitExpr(neg.operand)
     }
 
     private fun visitNot(not: CsrUnOp.Not) {
-        builder.append("not ")
+        write("not ")
         visitExpr(not.operand)
     }
 
@@ -143,7 +158,7 @@ class Transpile : Stage<CsrProgram, String> {
     private fun visitBitwise(bitwise: CsrBinOp.Bitwise) {
         visitExpr(bitwise.left)
 
-        builder.append(when (bitwise.operator) {
+        write(when (bitwise.operator) {
             BitwiseOperator.SHR -> " lsr "
             BitwiseOperator.SHL -> " lsl "
             BitwiseOperator.BIT_AND -> " land "
@@ -157,7 +172,7 @@ class Transpile : Stage<CsrProgram, String> {
     private fun visitComp(comp: CsrBinOp.Comp) {
         visitExpr(comp.left)
 
-        builder.append(when (comp.operator) {
+        write(when (comp.operator) {
             CompOperator.EQ -> " = "
             CompOperator.NEQ -> " <> "
             CompOperator.GT -> " > "
@@ -172,7 +187,7 @@ class Transpile : Stage<CsrProgram, String> {
     private fun visitConcat(concat: CsrBinOp.Concat) {
         visitExpr(concat.left)
 
-        builder.append(when (concat.operator) {
+        write(when (concat.operator) {
             ConcatOperator.STR -> " ^ "
             ConcatOperator.LIST -> " @ "
         })
@@ -184,7 +199,7 @@ class Transpile : Stage<CsrProgram, String> {
         visitExpr(arith.left)
 
         val dot = dotIfFloatingPointArithmetic(arith.type)
-        builder.append(when (arith.operator) {
+        write(when (arith.operator) {
             ArithOperator.ADD -> " +"
             ArithOperator.SUB -> " -"
             ArithOperator.MUL -> " *"
@@ -201,14 +216,38 @@ class Transpile : Stage<CsrProgram, String> {
             " "
     }
 
-    private fun parenthesized(callback: () -> Unit) {
-        builder.append("(")
+    private fun prefixWith(prefix: String, callback: () -> Unit) {
+        write(prefix)
         callback()
-        builder.append(")")
+    }
+
+    private fun parenthesized(callback: () -> Unit) {
+        write("(")
+        callback()
+        write(")")
     }
 
     private fun indent(callback: () -> Unit) {
-        builder.append("  ")
+        indentationLevel++
+        indentation()
         callback()
+        indentationLevel--
+    }
+
+    private fun blankLine() {
+        builder.appendLine()
+    }
+
+    private fun writeLine(s: String) {
+        builder.appendLine(s)
+        indentation()
+    }
+
+    private fun indentation() {
+        write("  ".repeat(indentationLevel))
+    }
+
+    private fun write(s: Any) {
+        builder.append(s.toString())
     }
 }
