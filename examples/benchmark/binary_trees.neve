@@ -15,11 +15,11 @@ end
 idea for Tree
   fun Self.new(item: Int, depth: Int)
     match depth
-      | 0 -> Leaf with
+      0 -> Leaf with
         item
         depth
       end
-      | _ -> Branch with
+      _ -> Branch with
         item
         depth
         left = Self.new(item + item - 1, depth)
@@ -30,8 +30,8 @@ idea for Tree
 
   fun check
     match self
-      | Leaf(item, ..) -> item
-      | Branch(item, _, left, right) -> self.item + self.left.check - self.right.check
+      Leaf(item, ..) -> item
+      Branch(item, _, left, right) -> self.item + self.left.check - self.right.check
     end
   end
 end
@@ -77,7 +77,7 @@ end
 
 fun rec_check(iterations: Int)
   match iterations
-    | 0 -> 0
-    | _ -> Tree.new(i, depth).check + Tree.new(-i, depth).check + rec_check(iterations - 1)
+    0 -> 0
+    _ -> Tree.new(i, depth).check + Tree.new(-i, depth).check + rec_check(iterations - 1)
   end
 end

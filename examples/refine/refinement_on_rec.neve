@@ -1,7 +1,7 @@
 -- Expect no issue here.
 rec Something T
   list: [T]
-  indices: [InBoundsOf list]
+  indices: [InBoundsOf self.list]
 end
 
 fun main

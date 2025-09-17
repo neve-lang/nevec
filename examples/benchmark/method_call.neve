@@ -39,7 +39,7 @@ idea for NthToggle
     let new_count = self.count + 1
 
     if new_count >= self.max_count
-      Toggle with
+      NthToggle with
         parent = parent.activate
         count = 0
         max_count
