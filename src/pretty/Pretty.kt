@@ -89,19 +89,6 @@ object Pretty {
         is Lit.BoolLit -> lit.value.toString()
 
         is Lit.NilLit -> "nil"
-        is Lit.TableLit -> visitTableLit(lit)
-    }
-
-    private fun visitTableLit(table: Lit.TableLit): String {
-        if (table.keys.isEmpty()) {
-            return "[:]"
-        }
-
-        val keys = table.keys.map { visitExpr(it) }
-        val vals = table.vals.map { visitExpr(it) }
-
-        val pairs = keys.zip(vals)
-        return pairs.map { it.infixWith(": ") }.wrappedIn("[", "]").joinToString(", ")
     }
 
     private fun visitInterpol(interpol: Interpol): String {

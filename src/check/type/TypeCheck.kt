@@ -215,7 +215,6 @@ class TypeCheck : Stage<Program, Program> {
         is Lit.FloatLit -> visitFloat(lit)
         is Lit.BoolLit -> visitBool(lit)
         is Lit.StrLit -> visitStr(lit)
-        is Lit.TableLit -> visitTable(lit)
         is Lit.NilLit -> visitNil(lit)
     }
 
@@ -233,17 +232,6 @@ class TypeCheck : Stage<Program, Program> {
 
     private fun visitStr(str: Lit.StrLit): Boolean {
         return !str.type().isIgnorable()
-    }
-
-    private fun visitTable(table: Lit.TableLit): Boolean {
-        val (keys, vals) = table.keys.toTypedArray() to table.vals.toTypedArray()
-
-        if (anyIsIgnorable(table.wrap(), *keys, *vals)) {
-            return err()
-        }
-
-        val (keyInfos, valInfos) = keys.map(Expr::info) to vals.map(Expr::info)
-        return visitEntries(keyInfos, valInfos)
     }
 
     private fun visitEntries(keys: List<Info>, vals: List<Info>): Boolean {

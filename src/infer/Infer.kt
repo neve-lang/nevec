@@ -7,8 +7,6 @@ import ast.hierarchy.unop.UnOp
 import infer.gen.GenTracker
 import infer.unify.Unify
 import type.Type
-import type.gen.Applied
-import type.gen.arg.TypeArgs
 import type.prelude.PreludeTypes
 
 /**
@@ -90,7 +88,6 @@ class Infer {
     }
 
     private fun visitLit(lit: Lit) = when (lit) {
-        is Lit.TableLit -> visitTable(lit)
         is Lit.IntLit -> visitInt()
         is Lit.FloatLit -> visitFloat()
         is Lit.BoolLit -> visitBool()
@@ -112,18 +109,6 @@ class Infer {
 
     private fun visitStr(): Type {
         return PreludeTypes.STR
-    }
-
-    private fun visitTable(table: Lit.TableLit): Type {
-        if (table.keys.isEmpty()) {
-            val args = TypeArgs.frees(gens.order(2).frees())
-            return Applied(args, PreludeTypes.TABLE).covered()
-        }
-
-        val keys = Unify.all(table.keys.map(Expr::type))
-        val values = Unify.all(table.vals.map(Expr::type))
-
-        return Applied(TypeArgs.from(keys, values), PreludeTypes.TABLE).covered()
     }
 
     private fun visitNil(): Type {

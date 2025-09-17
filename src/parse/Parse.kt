@@ -12,7 +12,6 @@ import ast.hierarchy.unop.UnOp
 import ast.info.Info
 import ctx.Ctx
 import err.msg.Msg
-import file.span.Loc
 import meta.target.Target
 import parse.binop.AnyBinOp
 import parse.err.ParseErr
@@ -192,7 +191,6 @@ class Parse(contents: String, cliCtx: Ctx) {
 
             TokKind.INT -> intLit().wrap()
             TokKind.FLOAT -> floatLit().wrap()
-            TokKind.LBRACKET -> listOrTable().wrap()
             TokKind.STR -> strLit().wrap()
             TokKind.INTERPOL -> interpol().wrap()
 
@@ -238,45 +236,6 @@ class Parse(contents: String, cliCtx: Ctx) {
 
         val loc = begin.tryMerge(with = next.loc())
         return Interpol.Some(string, expr, next, Info.at(loc))
-    }
-
-    private fun listOrTable(): Lit {
-        val leftBracket = consume().loc
-
-        if (match(TokKind.COL)) {
-            return emptyTable(leftBracket)
-        }
-
-        val firstExpr = expr()
-
-        // unconditional now--support for lists will come later
-        consume(TokKind.COL)
-        return table(leftBracket, firstExpr)
-    }
-
-    private fun emptyTable(leftBracket: Loc): Lit.TableLit {
-        val rightBracket = consume(TokKind.RBRACKET)?.loc
-        val loc = leftBracket.tryMerge(with = rightBracket)
-
-        return Lit.TableLit(emptyList(), emptyList(), Info.at(loc))
-    }
-
-    private fun table(leftBracket: Loc, firstKey: Expr): Lit.TableLit {
-        val firstVal = expr()
-
-        val keys = mutableListOf(firstKey)
-        val vals = mutableListOf(firstVal)
-
-        while (match(TokKind.COMMA)) {
-            keys.add(expr())
-            consume(TokKind.COL)
-            vals.add(expr())
-        }
-
-        val rightBracket = consume(TokKind.RBRACKET)?.loc
-        val loc = leftBracket.tryMerge(with = rightBracket)
-
-        return Lit.TableLit(keys, vals, Info.at(loc))
     }
 
     private fun exprMeta(node: Expr, target: Target): Expr {

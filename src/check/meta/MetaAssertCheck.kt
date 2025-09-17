@@ -124,7 +124,6 @@ class MetaAssertCheck : Stage<Program, Program> {
         is Lit.FloatLit -> visitFloat(lit)
         is Lit.BoolLit -> visitBool(lit)
         is Lit.StrLit -> visitStr(lit)
-        is Lit.TableLit -> visitTable(lit)
         is Lit.NilLit -> visitNil(lit)
     }
 
@@ -142,15 +141,6 @@ class MetaAssertCheck : Stage<Program, Program> {
 
     private fun visitStr(str: Lit.StrLit): Boolean {
         return check(str.info())
-    }
-
-    private fun visitTable(table: Lit.TableLit): Boolean {
-        // not using
-        // `table.keys.all { check(it.info()) }`
-        // to avoid short-circuiting.
-        return check(table.info()) and
-                table.keys.map { check(it.info()) }.all { it } and
-                table.vals.map { check(it.info()) }.all { it }
     }
 
     private fun visitNil(nil: Lit.NilLit): Boolean {

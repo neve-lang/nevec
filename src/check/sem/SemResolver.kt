@@ -187,7 +187,6 @@ class SemResolver : Stage<Program, Program> {
         is Lit.FloatLit -> visitFloat(lit)
         is Lit.BoolLit -> visitBool(lit)
         is Lit.StrLit -> visitStr(lit)
-        is Lit.TableLit -> visitTable(lit)
         is Lit.NilLit -> visitNil(lit)
     }
 
@@ -216,18 +215,6 @@ class SemResolver : Stage<Program, Program> {
         return Lit.StrLit(
             str.value,
             FromInfo(str.info).infer(from = str.wrap(), with = infer)
-        )
-    }
-
-    private fun visitTable(table: Lit.TableLit): Lit.TableLit {
-        val keys = table.keys.map(::visitExpr)
-        val vals = table.vals.map(::visitExpr)
-        val new = Lit.TableLit(keys, vals, table.info)
-
-        return Lit.TableLit(
-            new.keys,
-            new.vals,
-            FromInfo(new.info).infer(from = new.wrap(), with = infer)
         )
     }
 

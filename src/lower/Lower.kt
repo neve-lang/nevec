@@ -153,9 +153,6 @@ class Lower : Stage<Program, CsrProgram> {
         is Lit.IntLit -> visitInt(lit)
         is Lit.StrLit -> visitStr(lit)
         is Lit.NilLit -> visitNil(lit)
-        is Lit.TableLit -> throw UnsupportedOperationException(
-            "Neve tables will no longer be a primitive type in future development versions."
-        )
     }
 
     private fun visitBool(bool: Lit.BoolLit): CsrExpr.OfLit {
