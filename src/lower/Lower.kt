@@ -46,18 +46,21 @@ class Lower : Stage<Program, CsrProgram> {
     }
 
     private fun visitFun(topFun: Top.Fun): CsrTop {
-        if (topFun.decls.size > 1) {
-            throw UnsupportedOperationException(
-                "Only single-expression functions are supported at the moment."
-            )
-        }
+        val last = topFun.decls.last()
+        val expr = topFun.decls
+            .dropLast(1)
+            .foldRight(visitDecl(last)) {
+                decl, acc -> CsrExpr.In(
+                    // in the future, we will make the LetUnit(..) wrapping conditional
+                    left = CsrExpr.LetUnit(visitDecl(decl)),
+                    right = acc
+                )
+            }
 
-        return visitDecl(topFun.decls.first()).let {
-            if (isMainFun(topFun))
-                CsrTop.MainFun(it)
-            else
-                CsrTop.Fun(topFun.name, it, visitType(it.type()))
-        }
+        return if (isMainFun(topFun))
+            CsrTop.MainFun(expr)
+        else
+            CsrTop.Fun(topFun.name, expr, visitType(expr.type()))
     }
 
     private fun visitDecl(decl: Decl) = when (decl) {
