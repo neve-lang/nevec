@@ -1,13 +1,10 @@
 package ast.hierarchy.lit
 
 import ast.hierarchy.Ast
-import ast.info.impl.Spanned
-import ast.info.impl.Typed
 import ast.hierarchy.Wrap
 import ast.hierarchy.expr.Expr
 import ast.info.Info
 import ast.info.impl.Infoful
-import meta.Meta
 
 /**
  * This sealed class denotes all supported expression literals in Neve so far.
@@ -38,11 +35,6 @@ sealed class Lit : Ast, Wrap<Expr>, Infoful {
      */
     data class NilLit(val info: Info) : Lit()
 
-    /**
-     * A table literal.
-     */
-    data class TableLit(val keys: List<Expr>, val vals: List<Expr>, val info: Info) : Lit()
-
     override fun wrap(): Expr.OfLit {
         return Expr.OfLit(this)
     }
@@ -53,7 +45,6 @@ sealed class Lit : Ast, Wrap<Expr>, Infoful {
         is BoolLit -> info.loc()
         is StrLit -> info.loc()
         is NilLit -> info.loc()
-        is TableLit -> info.loc()
     }
 
     override fun type() = when (this) {
@@ -61,7 +52,6 @@ sealed class Lit : Ast, Wrap<Expr>, Infoful {
         is FloatLit -> info.type()
         is BoolLit -> info.type()
         is StrLit -> info.type()
-        is TableLit -> info.type()
         is NilLit -> info.type()
     }
 
@@ -70,7 +60,6 @@ sealed class Lit : Ast, Wrap<Expr>, Infoful {
         is FloatLit -> info.meta()
         is BoolLit -> info.meta()
         is StrLit -> info.meta()
-        is TableLit -> info.meta()
         is NilLit -> info.meta()
     }
 
@@ -79,7 +68,6 @@ sealed class Lit : Ast, Wrap<Expr>, Infoful {
         is FloatLit -> info
         is BoolLit -> info
         is StrLit -> info
-        is TableLit -> info
         is NilLit -> info
     }
 
@@ -88,7 +76,6 @@ sealed class Lit : Ast, Wrap<Expr>, Infoful {
         is FloatLit -> FloatLit(value, new)
         is BoolLit -> BoolLit(value, new)
         is StrLit -> StrLit(value, new)
-        is TableLit -> TableLit(keys, vals, new)
         is NilLit -> NilLit(new)
     }
 }
